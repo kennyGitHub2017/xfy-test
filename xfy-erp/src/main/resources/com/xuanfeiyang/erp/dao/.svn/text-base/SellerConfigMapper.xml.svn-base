@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.SellerConfigDao">
+
+<!-- 设置发货方式 -->
+<insert id="saveShip">
+INSERT INTO SELLER_CONFIG(SELLER_ID,SHIP_TYPE,CARRIER_NAME)VALUES(#{param.sellerId},#{param.shipType},#{param.carrierName})
+</insert>
+
+<!-- 根据SellerId 查看信息 -->
+<select id="getById" resultType="SellerConfig">
+SELECT * FROM SELLER_CONFIG WHERE SELLER_ID=#{id}
+</select>
+
+<!-- 修改发货设置 -->
+<update id="updateShip">
+UPDATE SELLER_CONFIG SET SHIP_TYPE = #{param.shipType} , CARRIER_NAME=#{param.carrierName} WHERE SELLER_ID =#{param.sellerId}
+</update>
+
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.SysInformationDao">
+
+	<select id="findPage" resultType="SysInformation">
+		select * from SYS_INFORMATION
+		<where>
+			<if test="params.type!=null">
+				and TYPE = #{params.type, jdbcType=INTEGER}
+			</if>
+			<if test="params.lastUpdatedTimeStart!=null">
+				and LAST_UPDATED_TIME >= #{params.lastUpdatedTimeStart, jdbcType=TIMESTAMP}
+			</if>
+			<if test="params.lastUpdatedTimeEnd!=null">
+				and LAST_UPDATED_TIME <![CDATA[<]]> #{params.lastUpdatedTimeEnd, jdbcType=TIMESTAMP} + 1
+			</if>
+			<if test="params.keywords!=null and params.keywords!=''">
+				and TITLE like '%' || #{params.keywords,jdbcType=VARCHAR} || '%'
+			</if>
+		</where>
+		order by LAST_UPDATED_TIME desc
+	</select>
+
+	<select id="load" resultType="SysInformation">
+		select * from SYS_INFORMATION
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<select id="findNew" resultType="SysInformation">
+		select * from (
+		select * from SYS_INFORMATION
+		<where>
+			<if test="type != null">
+				and type = #{type,jdbcType=INTEGER}
+			</if>
+			<if test="keywords!=null and keywords!=''">
+				and (TITLE like '%' || #{keywords,jdbcType=VARCHAR} || '%' or CONTENT like '%' || #{keywords,jdbcType=VARCHAR})
+			</if>
+		</where>
+		order by LAST_UPDATED_TIME desc
+		) t 
+		<if test="number != null">
+		where rownum &lt;= #{number,jdbcType=INTEGER}
+		</if>
+	</select>
+	<insert id="insert" parameterType="SysInformation">
+		insert into SYS_INFORMATION (ID, TITLE, CONTENT,
+		TYPE, CREATE_TIME,LAST_UPDATED_TIME)
+		values (SEQ_SYSINFO.nextval, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+		#{type,jdbcType=DECIMAL}, sysdate,sysdate)
+	</insert>
+
+	<update id="update" parameterType="SysInformation">
+		update SYS_INFORMATION
+		<set>
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=DECIMAL},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from SYS_INFORMATION where id=#{id,jdbcType=INTEGER}
+	</delete>
+</mapper>

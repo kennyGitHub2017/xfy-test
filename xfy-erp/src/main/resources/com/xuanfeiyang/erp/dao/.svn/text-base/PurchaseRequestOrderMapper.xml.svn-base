@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.PurchaseRequestOrderDao">
+	
+	
+	<sql id="base_sql">
+		select a.*,
+    	c.company_name as supplier_name,u.name as created_user_name,e.name as buyuser_name,d.ORDER_NO as purchase_order_no
+    	from PURCHASE_REQUEST_ORDERS a
+		left join  GOODS_SUPPLIER c on a.supplier_id=c.id
+		left join USER_INFO u on a.created_user_id=u.user_id
+		left join USER_INFO e on a.buy_user_id=e.user_id
+		left join PURCHASE_ORDERS d on d.ID=a.purchase_order_id
+	</sql>
+	
+	<sql id="_detail_sql">
+	select a.*,b.goods_sku,b.goods_name,b.goods_unit,b.goods_count,b.goods_cost,
+	c.company_name as supplier_name,u.name as created_user_name,e.name as buyuser_name,
+	g.rules,g.model,g.color,g.goods_Size,g.IMG_COUNT,g.IMG_URL
+	from PURCHASE_REQUEST_ORDERS a
+	inner join   PURCHASE_REQUEST_ITEMS b on a.order_no = b.order_no
+	left join  GOODS_SUPPLIER c on a.supplier_id=c.id
+	left join USER_INFO u on a.created_user_id=u.user_id
+	left join USER_INFO e on a.buy_user_id=e.user_id
+	left join goods g on  g.goods_sku = b.goods_sku
+	</sql>
+	
+    <select id="findPage"  resultType="PurchaseRequestOrder">
+    	<include refid="base_sql"/>
+		 where 1=1
+		 <if test="param.orderNo!= null and param.orderNo!=''">
+            and a.ORDER_NO=#{param.orderNo}
+          </if>
+          <if test="param.applyDateFrom != null and param.applyDateFrom!=''">
+           	and a.CREATED_TIME&gt;=TO_DATE(#{param.applyDateFrom},'yyyy-mm-dd hh24:mi:ss')
+          </if>
+          <if test="param.applyDateTo != null and param.applyDateTo!=''">
+            and a.CREATED_TIME&lt;=TO_DATE(#{param.applyDateTo},'yyyy-mm-dd hh24:mi:ss')
+          </if>
+          <if test="param.applier != null and param.applier!=''">
+            and u.NAME like #{param.applier}||'%'
+          </if>
+          <if test="param.goodsSku != null and param.goodsSku!=''">
+             and exists(
+          			select 1 from purchase_request_items i
+          			where i.order_no = a.order_no and i.GOODS_SKU=#{param.goodsSku}
+          		)
+          </if>
+          <if test="param.deliveryDateFrom != null and param.deliveryDateFrom!=''">
+           	and a.DELIVERY_DATE&gt;=TO_DATE(#{param.deliveryDateFrom},'yyyy-mm-dd hh24:mi:ss')
+          </if>
+          <if test="param.deliveryDateTo != null and param.deliveryDateTo!=''">
+            and a.DELIVERY_DATE&lt;=TO_DATE(#{param.deliveryDateTo},'yyyy-mm-dd hh24:mi:ss')	
+          </if>
+           <if test="param.status != null and param.status!=''">
+            and a.STATUS=#{param.status}
+          </if>
+          <if test="param.supplierId != null and param.supplierId!=''">
+            and a.SUPPLIER_ID=#{param.supplierId}
+          </if>
+          <choose>
+          	<when test="param.thirdCategory != null">
+          		 and exists(
+	      				select 1 from purchase_request_items i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.category_id = #{param.thirdCategory}
+	       		)
+          	</when>
+          	<when test="param.secondCategory != null">
+          			 and exists(
+	      				select 1 from purchase_request_items i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.MID_CATEGORY_ID = #{param.secondCategory}
+	    		)
+          	</when>
+          	<when test="param.firstCategory != null">
+	          	 and exists(
+	      				select 1 from purchase_request_items i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.BASE_CATEGORY_ID = #{param.firstCategory}
+	    		)
+          	</when>
+          </choose>
+          order by a.CREATED_TIME desc
+	</select>
+	
+    <select id="get" parameterType="int" resultType="PurchaseRequestOrder">
+         <include refid="base_sql"/>
+         where a.id=#{id}
+    </select>
+    
+    <select id="findBySupplierId" resultType="PurchaseRequestOrder">
+    	 <include refid="base_sql"/>
+    	 where a.TYPE=2 and a.STATUS=1
+    	 and a.SUPPLIER_ID=#{supplierId}
+    </select>
+    
+    <select id="detail"  resultType="PurchaseRequestOrder">
+    	<include refid="_detail_sql"/>
+           where a.id=#{id}
+          order by a.CREATED_TIME desc,a.id
+    </select>
+    <!-- INSERT  Operate -->
+    <insert id="insert" parameterType="PurchaseRequestOrder"
+        useGeneratedKeys="true" keyProperty="id">
+        <selectKey resultType="int" order="BEFORE" keyProperty="id">
+       		select SEQ_PURCHASE_REQUEST_ORDERS.Nextval as ID from DUAL
+   		</selectKey>
+   				insert into PURCHASE_REQUEST_ORDERS
+   				(ID,ORDER_NO,TYPE,SUPPLIER_ID,BUY_USER_ID,STATUS,SELL_ORDER_ID,DELIVERY_DATE,PURCHASE_ORDER_ID,PURCHASE_DATE,NOTE,CREATED_USER_ID,CREATED_TIME,LAST_UPDATED_TIME)
+             	values(#{id},#{orderNo},#{type,jdbcType=INTEGER},#{supplierId,jdbcType=INTEGER},#{buyUserId,jdbcType=INTEGER},#{status,jdbcType=INTEGER}
+             	,#{sellOrderId,jdbcType=INTEGER},#{deliveryDate,jdbcType=DATE},#{purchaseOrderId,jdbcType=INTEGER},#{purchaseDate,jdbcType=DATE},#{note,jdbcType=VARCHAR},#{createdUserId,jdbcType=INTEGER},sysdate,sysdate)
+    </insert>
+    
+    <delete id="deleteItem" parameterType="string">
+    	delete from PURCHASE_REQUEST_ITEMS where order_no=#{orderNo}
+    </delete>
+    
+    <insert id="insertItem" parameterType="PurchaseRequestOrderItem"
+        useGeneratedKeys="true" keyProperty="id">
+        <selectKey resultType="int" order="BEFORE" keyProperty="id">
+       		select SEQ_PURCHASE_REQUEST_ORDERS.Nextval as ID from DUAL
+   		</selectKey>
+    	insert into PURCHASE_REQUEST_ITEMS(ID,ORDER_NO,GOODS_SKU,GOODS_NAME,GOODS_COST,GOODS_COUNT,GOODS_UNIT,GOODS_CATEGORY,DELIVERY_DATE)
+    	values (#{id,jdbcType=INTEGER},#{orderNo,jdbcType=VARCHAR},#{goodsSku,jdbcType=VARCHAR},#{goodsName,jdbcType=VARCHAR},#{goodsCost,jdbcType=NUMERIC},
+    	#{goodsCount,jdbcType=INTEGER},#{goodsUnit,jdbcType=VARCHAR},#{goodsCategory,jdbcType=INTEGER},#{deliveryDate,jdbcType=DATE})
+    </insert>
+    
+    <select id="getItem" parameterType="int" resultType="PurchaseRequestOrderItem">
+    	select * from PURCHASE_REQUEST_ITEMS where id=#{itemId}
+    </select>
+    
+    <select id="findItem" parameterType="int" resultType="PurchaseRequestOrderItem">
+		select t.*,g.color,g.model,g.rules,g.goods_size  from (
+		select a.* from PURCHASE_REQUEST_ITEMS a where exists(
+		select * from PURCHASE_REQUEST_ORDERS b
+		where b.id=#{id}
+		and a.ORDER_NO=b.ORDER_NO))t left join goods g on g.goods_sku = t.goods_sku
+    </select>
+    <update id="update" parameterType="PurchaseRequestOrder">
+    	update PURCHASE_REQUEST_ORDERS
+    	<set>
+    		<if test="buyUserId!=null">
+    			buy_user_id=#{buyUserId},
+    		</if>
+    		<if test="supplierId!=null">
+    			supplier_id=#{supplierId},
+    		</if>
+    		<if test="deliveryDate!=null and deliveryDate!=''">
+    			delivery_date=#{deliveryDate},
+    		</if>
+    		<if test="note!=null and note!=''">
+    			note=#{note},
+    		</if>
+    		<if test="status!=null">
+    			STATUS=#{status},
+    		</if>
+    		<if test="purchaseOrderId!=null and purchaseOrderId!=''">
+    			PURCHASE_ORDER_ID=#{purchaseOrderId},
+    		</if>
+    		<if test="purchaseDate!=null">
+    			PURCHASE_DATE=#{purchaseDate},
+    		</if>
+    		<if test="lastUpdatedTime!=null">
+    			LAST_UPDATED_TIME=sysdate
+    		</if>
+    	</set>
+    	where id=#{id}
+    </update>
+    <delete id="delete" parameterType="int">
+    	delete from PURCHASE_REQUEST_ORDERS where id=#{id}
+    </delete>
+</mapper>

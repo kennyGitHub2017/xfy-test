@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanfeiyang.erp.dao.ShippingFeeDao">
+
+	<insert id="insert">
+	insert into SHIPPING_FEE (ID,SHIPPING_ID, REGION, 
+	COUNTRY, FIRST_WEIGHT, FIRST_WEIGHT_AMOUNT, 
+	ADD_WEIGHT, ADD_WEIGHT_AMOUNT, REGISTERED_FEE, 
+	SERVICE_FEE, DISCOUNT, DISCOUNT_RATE, 
+	MIN_WEIGHT, MIN_WEIGHT_AMOUNT,ADD_FEE,SUBTRACT_FEE,POSTFEE,TYPE)
+	values (SEQ_ID.nextval, #{param.shippingId,jdbcType=INTEGER}, #{param.region,jdbcType=VARCHAR}, 
+	#{param.country,jdbcType=OTHER}, #{param.firstWeight,jdbcType=DECIMAL}, #{param.firstWeightAmount,jdbcType=DECIMAL}, 
+	#{param.addWeight,jdbcType=DECIMAL}, #{param.addWeightAmount,jdbcType=DECIMAL}, #{param.registeredFee,jdbcType=DECIMAL}, 
+	#{param.serviceFee,jdbcType=DECIMAL}, #{param.discount,jdbcType=DECIMAL}, #{param.discountRate,jdbcType=DECIMAL}, 
+	#{param.minWeight,jdbcType=DECIMAL}, #{param.minWeightAmount,jdbcType=DECIMAL},
+	#{param.addFee,jdbcType=DECIMAL}, #{param.subtractFee,jdbcType=DECIMAL},#{param.postFee,jdbcType=DECIMAL}, 
+	#{param.type,jdbcType=DECIMAL})
+	</insert>
+
+
+	<select id="getByShipId" resultType="ShippingFee">
+	SELECT * FROM  SHIPPING_FEE WHERE SHIPPING_ID = #{shipId} order by id
+	</select>
+
+	<delete id="delete">
+	DELETE FROM SHIPPING_FEE WHERE ID=#{id}
+	</delete>
+	
+	<!-- 根据国家查费用 取第一条-->
+	<select id="getByCountry" resultType="ShippingFee">
+	SELECT * FROM SHIPPING_FEE WHERE (COUNTRY like '%'||#{country}||',%') AND SHIPPING_ID=#{shipId} AND rownum=1
+	</select>
+	
+	<select id="getById" resultType="ShippingFee">
+	SELECT * FROM SHIPPING_FEE WHERE ID=#{id}
+	</select>
+	
+	<update id="update">
+	UPDATE SHIPPING_FEE 
+	SET REGION = #{param.region,jdbcType=VARCHAR},
+	COUNTRY = #{param.country,jdbcType=VARCHAR},
+	FIRST_WEIGHT = #{param.firstWeight,jdbcType=DECIMAL},
+	FIRST_WEIGHT_AMOUNT = #{param.firstWeightAmount,jdbcType=DECIMAL},
+	ADD_WEIGHT = #{param.addWeight,jdbcType=DECIMAL},
+	ADD_WEIGHT_AMOUNT = #{param.addWeightAmount,jdbcType=DECIMAL},
+	REGISTERED_FEE = #{param.registeredFee,jdbcType=DECIMAL},
+	SERVICE_FEE =#{param.serviceFee,jdbcType=DECIMAL},
+	DISCOUNT = #{param.discount,jdbcType=DECIMAL},
+	DISCOUNT_RATE = #{param.discountRate,jdbcType=DECIMAL},
+	MIN_WEIGHT = #{param.minWeight,jdbcType=DECIMAL},
+	MIN_WEIGHT_AMOUNT = #{param.minWeightAmount,jdbcType=DECIMAL},
+	ADD_FEE = #{param.addFee,jdbcType=DECIMAL},
+	SUBTRACT_FEE = #{param.subtractFee,jdbcType=DECIMAL},
+	POSTFEE = #{param.postFee,jdbcType=DECIMAL},
+	TYPE = #{param.type,jdbcType=DECIMAL}
+	where id = #{param.id,jdbcType=INTEGER}
+	</update>
+
+</mapper>

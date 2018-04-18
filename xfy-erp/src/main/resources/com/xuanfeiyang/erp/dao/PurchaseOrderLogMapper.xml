@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.PurchaseOrderLogDao">
+
+  <sql id="Base_Column_List" >
+    ID, ORDER_SN, CREATED_TIME, OLD_STATUS, NEW_STATUS, CONTENT, OPER_USER
+  </sql>
+  
+  <select id="load" resultType="PurchaseOrderLog" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from PURCHASE_ORDER_LOGS
+    where ORDER_SN = #{id,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="findByOrderNo" resultType="PurchaseOrderLog">
+  	select 
+    <include refid="Base_Column_List" />
+    from PURCHASE_ORDER_LOGS
+    where ORDER_SN = #{orderNo,jdbcType=VARCHAR}
+    order by CREATED_TIME desc
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from PURCHASE_ORDER_LOGS
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insert" parameterType="PurchaseOrderLog" >
+    insert into PURCHASE_ORDER_LOGS (ID, ORDER_SN, CREATED_TIME, 
+      OLD_STATUS, NEW_STATUS, CONTENT, 
+      OPER_USER)
+    values (seq_purchase_order_logs.nextval, #{orderSn,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+      #{oldStatus,jdbcType=DECIMAL}, #{newStatus,jdbcType=DECIMAL}, #{content,jdbcType=VARCHAR}, 
+      #{operUser,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="update" parameterType="PurchaseOrderLog" >
+    update PURCHASE_ORDER_LOGS
+    <set >
+      <if test="orderSn != null" >
+        ORDER_SN = #{orderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="oldStatus != null" >
+        OLD_STATUS = #{oldStatus,jdbcType=DECIMAL},
+      </if>
+      <if test="newStatus != null" >
+        NEW_STATUS = #{newStatus,jdbcType=DECIMAL},
+      </if>
+      <if test="content != null" >
+        CONTENT = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="operUser != null" >
+        OPER_USER = #{operUser,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

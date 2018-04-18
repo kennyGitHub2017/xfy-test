@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.ShippingDao">
+
+	<!-- 查询发货方式 -->
+	<select id="find" resultType="Shipping">
+		select * from SHIPPINGS order by SHIPPING_NAME
+	</select>
+
+	<!--添加发货方式 -->
+	<insert id="save">
+		INSERT INTO SHIPPINGS(ID,SHIPPING_NAME,EBAY_VALUE,SMT_VALUE,WISH_VALUE,
+		COUNTRY,PROVINCE,CITY,NAME,TEL,STREET,ADDRESS,AMOUNT_MAX,
+		AMOUNT_MIN,CARRIER_SN,SIGNATURE,NOTE,SUPPORTED_ACCOUNTS,
+		WEIGHT_MIN,WEIGHT_MAX,PRIORITY,SUPPORTED_COUNTRIES,SUPPORTED_SKUS,
+		ORDER_CATEGORY_ID,EBAY_SHIPPINGS,GOODS_STORE_ID,LAST_UPDATED_TIME,
+		IS_BATTERY,IS_REGULATED,IS_LIQUID,IS_MAGNETIC,IS_COPYRIGHT,SHIP_FEE_AVG)VALUES(
+		SEQ_ID.nextval,
+		#{param.shippingName,jdbcType=VARCHAR},
+		#{param.ebayValue,jdbcType=VARCHAR},
+		#{param.smtValue,jdbcType=VARCHAR},
+		#{param.wishValue,jdbcType=VARCHAR},
+		#{param.country,jdbcType=VARCHAR},
+		#{param.province,jdbcType=VARCHAR},
+		#{param.city,jdbcType=VARCHAR},
+		#{param.name,jdbcType=VARCHAR},
+		#{param.tel,jdbcType=VARCHAR},
+		#{param.street,jdbcType=VARCHAR},
+		#{param.address,jdbcType=VARCHAR},
+		#{param.amountMax, jdbcType=DECIMAL},
+		#{param.amountMin, jdbcType=DECIMAL},
+		#{param.carrierSn,jdbcType=VARCHAR},
+		#{param.signature,jdbcType=VARCHAR},
+		#{param.note,jdbcType=VARCHAR},
+		#{param.supportedAccounts},
+		#{param.weightMin, jdbcType=DECIMAL}, 
+		#{param.weightMax, jdbcType=DECIMAL},
+		#{param.priority,jdbcType=INTEGER},
+		#{param.supportedCountries,jdbcType=VARCHAR},
+		#{param.supportedSkus,jdbcType=VARCHAR},
+		#{param.orderCategoryId,jdbcType=INTEGER},
+		#{param.ebayShippings,jdbcType=VARCHAR},
+		#{param.goodsStoreId,jdbcType=INTEGER},
+		sysdate,
+		#{param.isBattery,jdbcType=INTEGER},
+		#{param.isRegulated,jdbcType=INTEGER},
+		#{param.isLiquid,jdbcType=INTEGER},
+		#{param.isMagnetic,jdbcType=INTEGER},
+		#{param.isCopyright,jdbcType=INTEGER},
+		#{param.shipFeeAvg, jdbcType=DECIMAL})
+	</insert>
+
+	<!-- 删除发货信息 -->
+	<delete id="delete">
+		DELETE FROM SHIPPINGS WHERE ID=#{id}
+	</delete>
+
+
+	<select id="getById" resultType="Shipping">
+		SELECT * FROM SHIPPINGS WHERE ID =#{id}
+	</select>
+
+	<!-- 根据id修改发货方式 -->
+	<update id="modifyById">
+		UPDATE SHIPPINGS SET
+		SHIPPING_NAME = #{param.shippingName,jdbcType=VARCHAR},
+		EBAY_VALUE = #{param.ebayValue,jdbcType=VARCHAR},
+		SMT_VALUE = #{param.smtValue,jdbcType=VARCHAR},
+		WISH_VALUE = #{param.wishValue,jdbcType=VARCHAR},
+		COUNTRY = #{param.country,jdbcType=VARCHAR},
+		PROVINCE = #{param.province,jdbcType=VARCHAR},
+		CITY = #{param.city,jdbcType=VARCHAR},
+		NAME = #{param.name,jdbcType=VARCHAR},
+		TEL = #{param.tel,jdbcType=VARCHAR},
+		STREET = #{param.street,jdbcType=VARCHAR},
+		ADDRESS=#{param.address,jdbcType=VARCHAR},
+		AMOUNT_MAX = #{param.amountMax, jdbcType=DECIMAL},
+		AMOUNT_MIN = #{param.amountMin, jdbcType=DECIMAL},
+		CARRIER_SN = #{param.carrierSn,jdbcType=VARCHAR},
+		SIGNATURE = #{param.signature,jdbcType=VARCHAR},
+		NOTE = #{param.note,jdbcType=VARCHAR},
+		SUPPORTED_ACCOUNTS = #{param.supportedAccounts,jdbcType=VARCHAR},
+		WEIGHT_MIN=#{param.weightMin, jdbcType=DECIMAL},
+		WEIGHT_MAX=#{param.weightMax, jdbcType=DECIMAL},
+		PRIORITY=#{param.priority,jdbcType=INTEGER}, 
+		SUPPORTED_COUNTRIES=#{param.supportedCountries,jdbcType=VARCHAR},
+		SUPPORTED_SKUS=#{param.supportedSkus,jdbcType=VARCHAR},
+		ORDER_CATEGORY_ID=#{param.orderCategoryId,jdbcType=INTEGER},
+		EBAY_SHIPPINGS=#{param.ebayShippings},
+		GOODS_STORE_ID=#{param.goodsStoreId,jdbcType=INTEGER},
+		LAST_UPDATED_TIME=sysdate,
+		IS_BATTERY=#{param.isBattery,jdbcType=INTEGER},
+		IS_REGULATED=#{param.isRegulated,jdbcType=INTEGER},
+		IS_LIQUID=#{param.isLiquid,jdbcType=INTEGER},
+		IS_MAGNETIC=#{param.isMagnetic,jdbcType=INTEGER},
+		IS_COPYRIGHT = #{param.isCopyright,jdbcType=INTEGER},
+		SHIP_FEE_AVG = #{param.shipFeeAvg, jdbcType=DECIMAL},
+		SHIPP_FEE_TYPE = #{param.shippFeeType,jdbcType=INTEGER}
+		
+		where ID=#{param.id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="getByShipName" resultType="Shipping">
+		SELECT * FROM SHIPPINGS WHERE SHIPPING_NAME = #{name}
+	</select>
+	
+	<!-- 据商品的参数匹配物流 -->
+	<select id="findByParam" resultType="Shipping">
+	SELECT * FROM SHIPPINGS  where 1=1
+	AND (
+		<![CDATA[ AMOUNT_MAX > #{param.amountOrder}]]>
+		<![CDATA[ AND AMOUNT_MIN < #{param.amountOrder}]]>
+		<![CDATA[ AND WEIGHT_MIN < #{param.weightOrder}]]>
+		<![CDATA[ AND WEIGHT_MAX > #{param.weightOrder}]]>
+		)
+	AND ((SUPPORTED_ACCOUNTS like '%'||#{param.account,jdbcType=VARCHAR}||'%')OR(SUPPORTED_ACCOUNTS like '%any%' ))
+	
+	AND ((SUPPORTED_COUNTRIES like '%'||#{param.country,jdbcType=VARCHAR}||'%')OR(SUPPORTED_COUNTRIES like '%any%'))
+	
+	AND ((<foreach collection="skus" index="index" item="item" open="" close="" separator="and">
+			Supported_Skus like '%'||#{item}||'%'
+		</foreach>)OR(Supported_Skus like '%any%'))
+	</select>
+
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsCombinationDao">
+
+	<sql id="_column_list">
+		ID, COMB_SKU, NAME, NOTE, CREATED_TIME, LAST_UPDATED_TIME
+	</sql>
+	
+	<select id="load" resultType="GoodsCombination" parameterType="java.lang.Integer">
+		select
+		<include refid="_column_list" />
+		from GOODS_COMBINATION
+		where ID = #{id,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="loadBySku" resultType="GoodsCombination">
+		select
+		<include refid="_column_list" />
+		from GOODS_COMBINATION
+		where COMB_SKU = #{combSku,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from GOODS_COMBINATION
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="insert" parameterType="GoodsCombination">
+		
+		<selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">
+			select SEQ_GOODS_COMBINATION.nextval from DUAL
+		</selectKey>
+		
+		insert into GOODS_COMBINATION (ID, COMB_SKU, NAME,
+		NOTE, CREATED_TIME, LAST_UPDATED_TIME
+		)
+		values (#{id,jdbcType=DECIMAL}, #{combSku,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+		#{note,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{lastUpdatedTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+	<update id="update" parameterType="GoodsCombination">
+		update GOODS_COMBINATION
+		set COMB_SKU = #{combSku,jdbcType=VARCHAR},
+		NAME = #{name,jdbcType=VARCHAR},
+		NOTE = #{note,jdbcType=VARCHAR},
+		CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+		LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP}
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+	<select id="findAllSkus" resultType="java.lang.String">
+		select upper(g.comb_sku) from goods_combination g
+	</select>
+	
+	<select id="findPage" resultType="GoodsCombination">
+		select
+		<include refid="_column_list" />
+		from GOODS_COMBINATION gc
+		
+		<if test="keywords != null and keywords != ''">
+			where comb_sku like ('%' || #{keywords} || '%')
+			or exists (select 1 from goods_combination_item i 
+				where i.comb_id = gc.id 
+				  and (i.old_sku like ('%' || #{keywords} || '%') or 
+				       i.new_sku like ('%' || #{keywords} || '%')))
+		</if>
+		
+		order by id desc
+	</select>
+</mapper>

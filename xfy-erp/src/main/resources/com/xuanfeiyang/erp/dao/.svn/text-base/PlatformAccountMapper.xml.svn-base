@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.PlatformAccountDao">
+	
+	<select id="loadByPlatformAndAccountId" resultType="PlatformAccount">
+		select pa.*
+		  from V_PLATFORM_ACCOUNT pa
+		 where pa.PLATFORM = #{platform, jdbcType=VARCHAR}
+		   and pa.ACCOUNT_NAME = #{accountId, jdbcType=VARCHAR}
+		   and rownum = 1
+	</select>
+	
+	<select id="loadById" resultType="PlatformAccount">
+		select pa.*
+		  from V_PLATFORM_ACCOUNT pa
+		 where pa.ID = #{id, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="loadBySellerId" resultType="PlatformAccount">
+		select pa.*
+		  from V_PLATFORM_ACCOUNT pa
+		 where pa.SELLER_ID = #{sellerId, jdbcType=INTEGER}
+	</select>
+
+	<sql id="_where">
+		<where>
+			<if test="platform != null and platform != ''">
+				and pa.PLATFORM = #{platform, jdbcType=VARCHAR}
+			</if>
+			<if test="agentUserId != null and agentUserId != ''">
+				and  exists (
+  					 select 1 from xfy.sellers s where s.agent_user_id=#{agentUserId,jdbcType=INTEGER} and pa.SELLER_ID=s.id
+				)
+			</if>
+			<if test="sellerId != null">
+				and pa.SELLER_ID = #{sellerId, jdbcType=DECIMAL}
+			</if>
+			<if test="accountName != null">
+				and pa.ACCOUNT_NAME like  #{accountName, jdbcType=VARCHAR} || '%'
+			</if>
+			<if test="userId != null">
+				and pa.ID in( select ACCOUNT_ID from user_powers up where user_id =#{userId, jdbcType=DECIMAL})
+			</if>
+		</where>
+	</sql>
+	
+	<select id="find" resultType="PlatformAccount">
+		select pa.*
+		  from V_PLATFORM_ACCOUNT pa
+		<include refid="_where" />
+	</select>
+	
+	<select id="findNameIdPairs" resultType="PlatformAccount">
+		select pa.ID, pa.ACCOUNT_NAME
+		  from V_PLATFORM_ACCOUNT pa
+		<include refid="_where" />
+		order by lower(ACCOUNT_NAME)
+	</select>
+	
+	<update id="updateSmtAccessToken">
+		update profile.smt_config t
+		   set t.access_token = #{accessToken, jdbcType=VARCHAR}, t.modifytime = sysdate, t.state = '1'
+		 where t.plat_account_id = #{platAccountId, jdbcType=INTEGER}
+	</update>
+	
+	<select id="findPage" resultType="PlatFormAccountSimple">
+		select v.account_name, v.platform,s.contacts,s.apply_cert_time,s.self_flag,
+		s.vip_flag,a.merchantid,a.marketplaceid,w.merchantname,
+		(select count(1) from orders o where o.account_id=v.id and o.order_status>1) as order_count
+		 from v_platform_account v
+		left join sellers s on s.id=v.seller_id
+		left join profile.t_amazon_developer a on a.id = v.id
+		left join profile.t_wish_developer w on w.id = v.id
+		<where>
+			<if test="param.accountName!=null and param.accountName!=''">
+				and v.account_name like '${param.accountName}' || '%'
+			</if>
+			<if test="param.platform != null and param.platform != ''">
+				and v.platform = #{param.platform, jdbcType=VARCHAR}
+			</if>
+			<if test="param.sellerId != null">
+				and v.seller_id = #{param.sellerId, jdbcType=DECIMAL}
+			</if>
+			<if test="param.vipFlag != null">
+				and s.vip_flag = #{param.vipFlag, jdbcType=DECIMAL}
+			</if>
+			<if test="param.selfFlag != null">
+				and s.self_flag = #{param.selfFlag, jdbcType=DECIMAL}
+			</if>
+			<if test="param.auditDateStart != null and param.auditDateStart!='' ">
+				and s.status_time<![CDATA[>= ]]>TO_DATE(#{param.auditDateStart},'yyyy-mm-dd')
+			</if>
+			<if test="param.auditDateEnd != null and param.auditDateEnd!='' ">
+				and s.status_time<![CDATA[< ]]>TO_DATE(#{param.auditDateEnd},'yyyy-mm-dd')+1
+			</if>
+			<if test="param.applyDateStart != null and param.applyDateStart!='' ">
+				and s.apply_cert_time<![CDATA[>= ]]>TO_DATE(#{param.applyDateStart},'yyyy-mm-dd')
+			</if>
+			<if test="param.applyDateEnd != null and param.applyDateEnd!='' ">
+				and s.apply_cert_time<![CDATA[< ]]>TO_DATE(#{param.applyDateEnd},'yyyy-mm-dd')+1
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.xuanfeiyang.erp.dao.TrackNumberDao">
+
+<insert id="insert">
+insert into TRACK_NUMBER(ID,TYPE,TRACK_NAME,TRACK_NO)
+VALUES(SEQ_ID.Nextval,#{param.type},#{param.trackName},#{param.trackNo})
+</insert>
+
+<select id="getByType" resultType="TrackNumber">
+select * from TRACK_NUMBER where type = #{type} and rownum = 1 ORDER by ID asc 
+</select>
+
+<delete id="delete">
+DELETE FROM TRACK_NUMBER WHERE TYPE = #{type} AND TRACK_NO = #{trackNo}
+</delete>
+
+
+</mapper>

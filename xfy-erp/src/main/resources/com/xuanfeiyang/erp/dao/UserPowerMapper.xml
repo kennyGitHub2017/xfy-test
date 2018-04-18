@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanfeiyang.erp.dao.UserPowerDao">
+
+<insert id="saveUserPower">
+INSERT INTO USER_POWERS(ID,USER_ID,ACCOUNT_ID)
+VALUES(SEQ_POWERS.nextval,#{params.userId},#{params.accountId})
+</insert>
+
+<delete id="deleteUserPower">
+	DELETE FROM USER_POWERS WHERE USER_ID = #{userId}
+</delete>
+
+<select id="getUserPower" resultType="UserPower">
+	SELECT * FROM USER_POWERS WHERE USER_ID = #{userId}
+</select>
+
+
+</mapper>
+
+
+
+

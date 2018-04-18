@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/project/!svn/ver/985/xfy-erp/trunk/xfy-erp/src/db
+END
+data_user.sql
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/project/!svn/ver/985/xfy-erp/trunk/xfy-erp/src/db/data_user.sql
+END
+ddl_sequence.sql
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/project/!svn/ver/985/xfy-erp/trunk/xfy-erp/src/db/ddl_sequence.sql
+END
+ddl_view.sql
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/project/!svn/ver/985/xfy-erp/trunk/xfy-erp/src/db/ddl_view.sql
+END
+ddl_table.sql
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/project/!svn/ver/985/xfy-erp/trunk/xfy-erp/src/db/ddl_table.sql
+END
+data_dict.sql
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/project/!svn/ver/985/xfy-erp/trunk/xfy-erp/src/db/data_dict.sql
+END
+data_sys_power.sql
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/project/!svn/ver/985/xfy-erp/trunk/xfy-erp/src/db/data_sys_power.sql
+END

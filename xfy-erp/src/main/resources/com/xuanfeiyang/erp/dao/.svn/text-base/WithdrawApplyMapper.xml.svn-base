@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.WithdrawApplyDao" >
+  <sql id="Base_Column_List" >
+    w.ID, w.PAYEE_NAME, w.PAYEE_BANK, w.PAYEE_CARDNO, w.AMOUNT, w.NOTE, w.CREATED_TIME, w.LAST_UPDATE, 
+    w.APPLY_USER, w.STATUS, w.AUDIT_TIME, w.PAYED_TIME, w.PAYED_USER, w.VALID,w.PAYED_BANK,w.PAYED_CARDNO
+  </sql>
+  
+  <select id="findPage" resultType="WithdrawApply">
+  	select 
+    <include refid="Base_Column_List" />,u.name apply_user_name,u2.name payed_user_name ,u3.name  audit_user_name,a.bond,a.deposit,
+     (a.deposit-a.bond-t.applyMount) aviable_withdraw
+    from WITHDRAW_APPLY w
+    left join user_info u on w.APPLY_USER=u.USER_ID
+    left join user_info u2 on w.PAYED_USER=u2.USER_ID
+    left join user_info u3 on w.AUDIT_USER=u3.USER_ID
+    left join agent_configure a on w.APPLY_USER=a.USER_ID
+    left join (select apply_user,sum(amount) applyMount from WITHDRAW_APPLY where (STATUS=1 or STATUS=0) group by apply_user) t on w.apply_user=t.apply_user
+    <include refid="_where" />
+    order by w.CREATED_TIME desc;
+  </select>
+  
+  <select id="find" resultType="WithdrawApply">
+  		select 
+    <include refid="Base_Column_List" />,u.name apply_user_name,u2.name payed_user_name ,u3.name  audit_user_name,a.bond,a.deposit
+    from WITHDRAW_APPLY w
+    left join user_info u on w.APPLY_USER=u.USER_ID
+    left join user_info u2 on w.PAYED_USER=u2.USER_ID
+    left join user_info u3 on w.AUDIT_USER=u3.USER_ID
+    left join agent_configure a on w.APPLY_USER=a.USER_ID
+    <if test="ids!=null">
+    	where w.id in 
+    	<foreach collection="ids" open="("   close=")" separator="," item="id">
+    		#{id}
+    	</foreach>
+    </if>
+    <if test="ids==null">
+    	<include refid="_where" />
+    </if>
+  </select>
+  
+  <select id="recordCount" resultType="INTEGER">
+  	select count(1) from WITHDRAW_APPLY w
+  	left join user_info u on w.APPLY_USER=u.USER_ID
+  	 <include refid="_where" />
+  </select>
+  
+  <sql id="_where">
+    where 1=1
+    <if test="param.status !=null">
+  		and w.status= #{param.status}
+  	</if>
+  	<if test="param.userId !=null">
+  		and w.APPLY_USER= #{param.userId}
+  	</if>
+  	<if test="param.agentName !=null and param.agentName!= ''">
+  		and u.NAME like #{param.agentName} || '%'
+  	</if>
+  	<if test="param.payeeName !=null and param.payeeName!= ''">
+  		and w.PAYEE_NAME like #{param.payeeName} || '%'
+  	</if>
+  	<if test="param.payeeBank !=null and param.payeeBank!= ''">
+  		and w.PAYEE_BANK like #{param.payeeBank} || '%'
+  	</if>
+  	<if test="param.payeeCardNo !=null and param.payeeCardNo!= ''">
+  		and w.PAYEE_CARDNO =#{param.payeeCardNo}
+  	</if>
+  	<if test="param.amountFrom !=null">
+  		and w.AMOUNT>=#{param.amountFrom}
+  	</if>
+  	<if test="param.amountTo !=null">
+  		and w.AMOUNT<![CDATA[<=]]>#{param.amountTo}
+  	</if>
+  	<if test="param.payedCardNo !=null and param.payedCardNo != ''">
+  		and w.PAYED_CARDNO=#{param.payedCardNo}
+  	</if>
+  	<if test="param.payedBank !=null and param.payedBank != ''">
+  		and w.PAYED_BANK=#{param.payedBank}
+  	</if>
+  	<if test="param.applyTimeBegin !=null and param.applyTimeBegin!= ''">
+  		and w.CREATED_TIME>=TO_DATE(#{param.applyTimeBegin},'yyyy-mm-dd hh24:mi:ss')
+  	</if>
+  	<if test="param.applyTimeEnd !=null and param.applyTimeEnd!= ''">
+  		and w.CREATED_TIME<![CDATA[<=]]>TO_DATE(#{param.applyTimeEnd},'yyyy-mm-dd hh24:mi:ss')
+  	</if>
+  	<if test="param.payedTimeBegin !=null and param.payedTimeBegin!= ''">
+  		and w.PAYED_TIME>=TO_DATE(#{param.payedTimeBegin},'yyyy-mm-dd hh24:mi:ss')
+  	</if>
+  	<if test="param.payedTimeEnd !=null and param.payedTimeEnd != ''">
+  		and w.PAYED_TIME<![CDATA[<=]]>TO_DATE(#{param.payedTimeEnd},'yyyy-mm-dd hh24:mi:ss')
+  	</if>
+  	<if test="param.auditTimeBegin !=null and param.auditTimeBegin!= ''">
+  		and w.AUDIT_TIME>=TO_DATE(#{param.payedTimeBegin},'yyyy-mm-dd hh24:mi:ss')
+  	</if>
+  	<if test="param.auditTimeEnd !=null and param.auditTimeEnd != ''">
+  		and w.AUDIT_TIME<![CDATA[<=]]>TO_DATE(#{param.payedTimeEnd},'yyyy-mm-dd hh24:mi:ss')
+  	</if>
+  </sql>
+  
+  <select id="get" resultType="WithdrawApply" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from WITHDRAW_APPLY w
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  
+  <select id="applyWithdrawAmount" resultType="DECIMAL">
+  	select sum(amount) from WITHDRAW_APPLY where (STATUS=1 or STATUS=0)
+  	and APPLY_USER=#{userId} 
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from XFY.WITHDRAW_APPLY
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <insert id="insert" parameterType="WithdrawApply">
+  	<selectKey resultType="int" order="BEFORE" keyProperty="id">
+		select SEQ_WITHDRAW_APPLY.Nextval as ID from DUAL
+	</selectKey>
+    insert into XFY.WITHDRAW_APPLY (ID, PAYEE_NAME, PAYEE_BANK, 
+      PAYEE_CARDNO, AMOUNT, NOTE, 
+      CREATED_TIME, LAST_UPDATE, APPLY_USER, 
+      STATUS, AUDIT_TIME,AUDIT_USER, PAYED_TIME, 
+      PAYED_USER, VALID)
+    values (#{id,jdbcType=DECIMAL}, #{payeeName,jdbcType=VARCHAR}, #{payeeBank,jdbcType=VARCHAR}, 
+      #{payeeCardno,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{note,jdbcType=VARCHAR}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{lastUpdate,jdbcType=TIMESTAMP}, #{applyUser,jdbcType=DECIMAL}, 
+      #{status,jdbcType=DECIMAL}, #{auditTime,jdbcType=TIMESTAMP},#{auditUser,jdbcType=DECIMAL},
+       #{payedTime,jdbcType=TIMESTAMP},#{payedUser,jdbcType=DECIMAL}, #{valid,jdbcType=DECIMAL})
+  </insert>
+  <update id="update" parameterType="WithdrawApply">
+    update XFY.WITHDRAW_APPLY
+    <set >
+      <if test="payeeName != null" >
+        PAYEE_NAME = #{payeeName,jdbcType=VARCHAR},
+      </if>
+      <if test="payeeBank != null" >
+        PAYEE_BANK = #{payeeBank,jdbcType=VARCHAR},
+      </if>
+      <if test="payeeCardno != null" >
+        PAYEE_CARDNO = #{payeeCardno,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        AMOUNT = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="note != null" >
+        NOTE = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdate != null" >
+        LAST_UPDATE = #{lastUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="applyUser != null" >
+        APPLY_USER = #{applyUser,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=DECIMAL},
+      </if>
+      <if test="auditTime == null" >
+        AUDIT_TIME = null,
+      </if>
+      <if test="auditTime != null" >
+        AUDIT_TIME = #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditUser == null" >
+        AUDIT_USER = null,
+      </if>
+      <if test="auditUser != null" >
+        AUDIT_USER = #{auditUser,jdbcType=DECIMAL},
+      </if>
+      <if test="payedTime != null" >
+        PAYED_TIME = #{payedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payedUser != null" >
+        PAYED_USER = #{payedUser,jdbcType=DECIMAL},
+      </if>
+      <if test="valid != null" >
+        VALID = #{valid,jdbcType=DECIMAL},
+      </if>
+      <if test="payedBank != null" >
+        PAYED_BANK = #{payedBank,jdbcType=DECIMAL},
+      </if>
+      <if test="payedCardno != null" >
+        PAYED_CARDNO = #{payedCardno,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>

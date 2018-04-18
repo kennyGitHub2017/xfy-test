@@ -1,0 +1,443 @@
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/project/!svn/ver/3413/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao
+END
+CountryMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/174/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/CountryMapper.xml
+END
+NoticeMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/3105/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/NoticeMapper.xml
+END
+UserInfoMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/3255/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/UserInfoMapper.xml
+END
+GoodsCombinationMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/2775/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsCombinationMapper.xml
+END
+SysInformationMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/project/!svn/ver/2117/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SysInformationMapper.xml
+END
+SellerConfigMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/project/!svn/ver/189/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SellerConfigMapper.xml
+END
+StoreMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/532/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/StoreMapper.xml
+END
+SellerDepositLogMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/3406/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SellerDepositLogMapper.xml
+END
+GoodsSupplierPriceMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/project/!svn/ver/3027/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsSupplierPriceMapper.xml
+END
+PurchaseWarnMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/2938/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/PurchaseWarnMapper.xml
+END
+BankCardMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/3278/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/BankCardMapper.xml
+END
+TableKeyMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/2218/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/TableKeyMapper.xml
+END
+RoleMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/310/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/RoleMapper.xml
+END
+PurchaseOrderLogMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/1753/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/PurchaseOrderLogMapper.xml
+END
+PaypalAccountMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/185/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/PaypalAccountMapper.xml
+END
+PlatformAccountMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/3405/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/PlatformAccountMapper.xml
+END
+IoOrderItemMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/project/!svn/ver/3040/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/IoOrderItemMapper.xml
+END
+OrderItemMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/3267/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/OrderItemMapper.xml
+END
+GoodsSupplierMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/2276/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsSupplierMapper.xml
+END
+UserLoginLogMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/1922/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/UserLoginLogMapper.xml
+END
+PayOrderMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/3249/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/PayOrderMapper.xml
+END
+GoodsDescMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/601/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsDescMapper.xml
+END
+GoodsPlatformCategoryMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/project/!svn/ver/592/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsPlatformCategoryMapper.xml
+END
+IoOrderMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/2581/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/IoOrderMapper.xml
+END
+ShippingAddressConfigMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/project/!svn/ver/1182/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/ShippingAddressConfigMapper.xml
+END
+StoreShelfMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/1495/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/StoreShelfMapper.xml
+END
+OrderPackageItemMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/1979/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/OrderPackageItemMapper.xml
+END
+SellerFeeWithHoldMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/project/!svn/ver/2991/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SellerFeeWithHoldMapper.xml
+END
+OrderMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3404/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/OrderMapper.xml
+END
+EmailSenderConfigMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/project/!svn/ver/2623/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/EmailSenderConfigMapper.xml
+END
+GoodsMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3364/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsMapper.xml
+END
+OrderLogMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/1935/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/OrderLogMapper.xml
+END
+SellerGoodsMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/613/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SellerGoodsMapper.xml
+END
+OrderPackageMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/3410/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/OrderPackageMapper.xml
+END
+SysModuleMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/2549/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SysModuleMapper.xml
+END
+UsersPowerMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/2048/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/UsersPowerMapper.xml
+END
+UserLoginMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/636/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/UserLoginMapper.xml
+END
+SellerDepositMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/1110/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SellerDepositMapper.xml
+END
+PurchaseRequestOrderMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/project/!svn/ver/2939/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/PurchaseRequestOrderMapper.xml
+END
+OrderNoteMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/655/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/OrderNoteMapper.xml
+END
+UserRoleMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/2862/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/UserRoleMapper.xml
+END
+AgentConfigureMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/project/!svn/ver/3413/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/AgentConfigureMapper.xml
+END
+StatSkuSalesMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/2976/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/StatSkuSalesMapper.xml
+END
+GoodsInventoryMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/project/!svn/ver/3200/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsInventoryMapper.xml
+END
+AccountMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/1182/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/AccountMapper.xml
+END
+GoodsTransferOrderMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/project/!svn/ver/2431/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsTransferOrderMapper.xml
+END
+ShippingMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/3356/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/ShippingMapper.xml
+END
+RolePowerMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/311/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/RolePowerMapper.xml
+END
+GoodsInventoryLockMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/project/!svn/ver/929/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsInventoryLockMapper.xml
+END
+SkuMappingMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/3067/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SkuMappingMapper.xml
+END
+GoodsCategoryMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/621/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsCategoryMapper.xml
+END
+TrackNumberMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/project/!svn/ver/1295/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/TrackNumberMapper.xml
+END
+DictMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2764/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/DictMapper.xml
+END
+ShippingFeeMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/project/!svn/ver/2855/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/ShippingFeeMapper.xml
+END
+ListingSkuMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/3174/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/ListingSkuMapper.xml
+END
+GoodsPackingMaterialMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/project/!svn/ver/520/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsPackingMaterialMapper.xml
+END
+UserPowerMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/1804/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/UserPowerMapper.xml
+END
+ShippingFee2Mapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/3387/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/ShippingFee2Mapper.xml
+END
+SysPageMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/2548/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SysPageMapper.xml
+END
+SellerMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/3308/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SellerMapper.xml
+END
+EmailTaskMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/2644/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/EmailTaskMapper.xml
+END
+GoodsCostLogMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/2994/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsCostLogMapper.xml
+END
+CurrencyRatesMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/1554/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/CurrencyRatesMapper.xml
+END
+WithdrawApplyMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/3371/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/WithdrawApplyMapper.xml
+END
+SysFunctionMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/310/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/SysFunctionMapper.xml
+END
+AgentRebateMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/project/!svn/ver/3403/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/AgentRebateMapper.xml
+END
+OrderShippingFeeMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/1254/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/OrderShippingFeeMapper.xml
+END
+AgentApplicationMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/3328/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/AgentApplicationMapper.xml
+END
+GoodsCombinationItemMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/project/!svn/ver/1539/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsCombinationItemMapper.xml
+END
+PurchaseOrderMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/3333/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/PurchaseOrderMapper.xml
+END
+DepartmentMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/498/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/DepartmentMapper.xml
+END
+GoodsInventoryCostMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/project/!svn/ver/485/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/GoodsInventoryCostMapper.xml
+END
+StatMapper.xml
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/3200/xfy-erp/trunk/xfy-erp/src/main/resources/com/xuanfeiyang/erp/dao/StatMapper.xml
+END

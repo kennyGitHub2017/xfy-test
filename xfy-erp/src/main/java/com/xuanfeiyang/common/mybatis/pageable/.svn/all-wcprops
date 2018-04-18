@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/390/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/common/mybatis/pageable
+END
+PageRequest.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/34/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/common/mybatis/pageable/PageRequest.java
+END
+Page.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/187/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/common/mybatis/pageable/Page.java
+END
+MybatisPageableInterceptor.java
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/svn/project/!svn/ver/390/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/common/mybatis/pageable/MybatisPageableInterceptor.java
+END
+OracleDialect.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/project/!svn/ver/192/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/common/mybatis/pageable/OracleDialect.java
+END
+Dialect.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/project/!svn/ver/34/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/common/mybatis/pageable/Dialect.java
+END
+MySQLDialect.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/34/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/common/mybatis/pageable/MySQLDialect.java
+END

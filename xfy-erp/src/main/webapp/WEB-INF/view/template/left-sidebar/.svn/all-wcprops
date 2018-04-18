@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/3313/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/template/left-sidebar
+END
+layout.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/3313/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/template/left-sidebar/layout.jsp
+END
+layout-empty.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/757/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/template/left-sidebar/layout-empty.jsp
+END
+sidebar.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/1711/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/template/left-sidebar/sidebar.jsp
+END

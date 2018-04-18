@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.CurrencyRatesDao">
+
+
+<!--获取汇率列表 -->
+<select id="find" resultType="CurrencyRates">
+Select * from  CURRENCY_RATES 
+</select>
+
+<!-- 删除汇率信息 -->
+<delete id="delete">
+DELETE FROM CURRENCY_RATES WHERE ID=#{id}
+</delete>
+
+<!-- 添加汇率信息 -->
+<insert id="save">
+INSERT INTO CURRENCY_RATES(ID,CURRENCY,EXCHANGE_RATE,LAST_UPDATED_TIME)
+VALUES(SEQ_ID.nextval,#{param.currency},#{param.exchangeRate, jdbcType=DECIMAL},sysdate)
+</insert>
+
+<!-- 修改汇率信息 -->
+<update id="update">
+UPDATE CURRENCY_RATES SET CURRENCY=#{param.currency},EXCHANGE_RATE=#{param.exchangeRate},LAST_UPDATED_TIME=sysdate
+WHERE ID=#{param.id}
+</update>
+
+<!-- 根据id查询汇率信息 -->
+<select id="findById" resultType="CurrencyRates">
+SELECT * FROM CURRENCY_RATES WHERE ID=#{id}
+</select>
+
+
+<select id="findByCurrency" resultType="CurrencyRates">
+SELECT * FROM CURRENCY_RATES WHERE currency = #{currency}
+</select>
+
+</mapper>

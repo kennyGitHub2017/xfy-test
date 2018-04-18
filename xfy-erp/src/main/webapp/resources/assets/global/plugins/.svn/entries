@@ -1,0 +1,631 @@
+10
+
+dir
+3418
+http://it-server-win:8088/svn/project/xfy-erp/trunk/xfy-erp/src/main/webapp/resources/assets/global/plugins
+http://it-server-win:8088/svn/project
+
+
+
+2015-12-05T08:47:36.240734Z
+3083
+adam
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+cbe73a5a-9b05-614f-b4fb-0c819b173725
+
+amcharts
+dir
+
+angularjs
+dir
+
+backstretch
+dir
+
+bootbox
+dir
+
+bootstrap
+dir
+
+bootstrap-colorpicker
+dir
+
+bootstrap-confirmation
+dir
+
+bootstrap-datepaginator
+dir
+
+bootstrap-datepicker
+dir
+
+bootstrap-daterangepicker
+dir
+
+bootstrap-datetimepicker
+dir
+
+bootstrap-editable
+dir
+
+bootstrap-fileinput
+dir
+
+bootstrap-hover-dropdown
+dir
+
+bootstrap-markdown
+dir
+
+bootstrap-maxlength
+dir
+
+bootstrap-modal
+dir
+
+bootstrap-pwstrength
+dir
+
+bootstrap-select
+dir
+
+bootstrap-sessiontimeout
+dir
+
+bootstrap-summernote
+dir
+
+bootstrap-switch
+dir
+
+bootstrap-timepicker
+dir
+
+bootstrap-toastr
+dir
+
+bootstrap-touchspin
+dir
+
+bootstrap-wizard
+dir
+
+bootstrap-wysihtml5
+dir
+
+ckeditor
+dir
+
+clockface
+dir
+
+countdown
+dir
+
+datatables
+dir
+
+dropzone
+dir
+
+excanvas.min.js
+file
+
+
+
+
+2015-01-08T09:39:38.113000Z
+ee9e3fee14270b7b27fcaa0e2cf2e042
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+19314
+
+fancybox
+dir
+
+flot
+dir
+
+font-awesome
+dir
+
+fuelux
+dir
+
+fullcalendar
+dir
+
+gmaps
+dir
+
+holder.js
+file
+
+
+
+
+2015-01-08T09:39:33.612000Z
+e8ac6dbafe15597580aae59e97656aae
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+20260
+
+icheck
+dir
+
+ion.rangeslider
+dir
+
+jcrop
+dir
+
+jquery-bootpag
+dir
+
+jquery-circliful
+dir
+
+jquery-file-upload
+dir
+
+jquery-idle-timeout
+dir
+
+jquery-inputmask
+dir
+
+jquery-knob
+dir
+
+jquery-migrate.min.js
+file
+
+
+
+
+2015-01-08T09:39:38.105000Z
+512b871a2830e44259bc3ce3343afcd0
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7200
+
+jquery-mixitup
+dir
+
+jquery-multi-select
+dir
+
+jquery-nestable
+dir
+
+jquery-notific8
+dir
+
+jquery-slimscroll
+dir
+
+jquery-tags-input
+dir
+
+jquery-ui
+dir
+
+jquery-validation
+dir
+
+jquery.blockui.min.js
+file
+
+
+
+
+2015-01-08T09:39:36.253000Z
+e93890fc8e1c9a7f83e7e2792537638d
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+9544
+
+jquery.cokie.min.js
+file
+
+
+
+
+2015-01-08T09:39:34.902000Z
+335dc8b45be6c669fdac8352b6d6a397
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1392
+
+jquery.input-ip-address-control-1.0.min.js
+file
+
+
+
+
+2015-01-08T09:39:31.873000Z
+cd38b720d098e431bb851c64cded2f72
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3357
+
+jquery.min.js
+file
+
+
+
+
+2015-01-08T09:39:36.671000Z
+4dc834d16a0d219d5c2b8a5b814569e4
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+95790
+
+jquery.mockjax.js
+file
+
+
+
+
+2015-01-08T09:39:37.605000Z
+1f870c8af1573c991fce31e61a1bd5f9
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+16728
+
+jquery.pulsate.min.js
+file
+
+
+
+
+2015-01-08T09:39:36.128000Z
+c8e2f32a69dd8c3ff46dd9a86ce39a57
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1677
+
+jquery.sparkline.min.js
+file
+
+
+
+
+2015-01-08T09:39:34.392000Z
+139aab08ef8aba5bf5d898481b50d3cd
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+43251
+
+jqvmap
+dir
+
+jstree
+dir
+
+moment.min.js
+file
+
+
+
+
+2015-01-08T09:39:33.941000Z
+be5be64524a54b0247552299e88bc870
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+32370
+
+morris
+dir
+
+nouislider
+dir
+
+pace
+dir
+
+plupload
+dir
+
+respond.min.js
+file
+
+
+
+
+2015-01-08T09:39:36.464000Z
+cf5c9b7980e53d7c5edd8cd220081537
+2015-01-08T09:08:12.423984Z
+8
+adam
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+4047
+
+select2
+dir
+
+simple-line-icons
+dir
+
+typeahead
+dir
+
+uniform
+dir
+

@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/project/!svn/ver/3353/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util
+END
+Constants.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/209/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/Constants.java
+END
+CommonUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/3353/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/CommonUtil.java
+END
+EncryptUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/2391/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/EncryptUtils.java
+END
+HttpRequest.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/2459/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/HttpRequest.java
+END
+HttpsRequest.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/2391/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/HttpsRequest.java
+END
+AppUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2497/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/AppUtil.java
+END
+SecurityUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/3336/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/SecurityUtil.java
+END
+BarCodeUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/2391/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/BarCodeUtil.java
+END
+ReflectUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/1701/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/ReflectUtil.java
+END
+ResouresBundle.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/37/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/ResouresBundle.java
+END
+XmlUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2391/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/XmlUtil.java
+END
+EbayAuthService.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/2391/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/EbayAuthService.java
+END
+ExcelParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/2391/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/ExcelParser.java
+END
+ExportUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/2908/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/ExportUtil.java
+END
+StringUtil.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/37/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/StringUtil.java
+END
+SmtAuthService.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2391/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/util/SmtAuthService.java
+END

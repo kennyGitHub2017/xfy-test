@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.StatSkuSalesDao">
+
+	<delete id="deleteAll">
+		truncate table stat_sku_sales
+	</delete>
+
+	<insert id="statSales">
+		insert into stat_sku_sales
+		  (goods_sku,
+		   sales180,
+		   sales60,
+		   sales30,
+		   sales15,
+		   sales7,
+		   last_updated_time)
+		  select t180.sku goods_sku,
+		         nvl(t180.sales180, 0) sales180,
+		         nvl(t60.sales60, 0) sales60,
+		         nvl(t30.sales30, 0) sales30,
+		         nvl(t15.sales15, 0) sales15,
+		         nvl(t7.sales7, 0) sales7,
+		         sysdate last_updated_time
+		    from (select i.sku, sum(i.item_quantity) sales180
+		            from order_items i, orders o
+		           where i.order_id = o.id
+		             and o.order_sale_time > trunc(sysdate - 180)
+		             and i.sku is not null
+		           group by i.sku) t180
+		    left join (select i.sku, sum(i.item_quantity) sales60
+		                 from order_items i, orders o
+		                where i.order_id = o.id
+		                  and o.order_sale_time > trunc(sysdate - 60)
+		                  and i.sku is not null
+		                group by i.sku) t60
+		      on t180.sku = t60.sku
+		    left join (select i.sku, sum(i.item_quantity) sales30
+		                 from order_items i, orders o
+		                where i.order_id = o.id
+		                  and o.order_sale_time > trunc(sysdate - 30)
+		                  and i.sku is not null
+		                group by i.sku) t30
+		      on t180.sku = t30.sku
+		    left join (select i.sku, sum(i.item_quantity) sales15
+		                 from order_items i, orders o
+		                where i.order_id = o.id
+		                  and o.order_sale_time > trunc(sysdate - 15)
+		                  and i.sku is not null                  
+		                group by i.sku) t15
+		      on t180.sku = t15.sku
+		    left join (select i.sku, sum(i.item_quantity) sales7
+		                 from order_items i, orders o
+		                where i.order_id = o.id
+		                  and o.order_sale_time > trunc(sysdate - 7)
+		                  and i.sku is not null
+		                group by i.sku) t7
+		      on t180.sku = t7.sku
+		
+	</insert>
+	
+	<delete id="deleteStatSkuSalesListing">
+		truncate table stat_sku_sales_listing
+	</delete>
+
+	<insert id="statSkuSalesListing">
+		insert into stat_sku_sales_listing (account_id,Item_ID,sales180,sales60,sales30,sales15,sales7,last_updated_time)
+	     select max(account_id) as account_id,Item_ID,sum(sales180) sales180 ,sum(sales60) sales60,sum(sales30) sales30,sum(sales15) sales15,sum(sales7) sales7,max(last_updated_time) from (
+	     select t180.account_id,t180.sku,t180.Item_ID,t180.Item_sku,
+	                 nvl(t180.sales180, 0) sales180,
+	                 nvl(t60.sales60, 0) sales60,
+	                 nvl(t30.sales30, 0) sales30,
+	                  nvl(t15.sales15, 0) sales15,
+	                  nvl(t7.sales7, 0) sales7,
+	                 sysdate last_updated_time
+	            from (select o.account_id,i.Item_ID,i.Item_sku,max(i.sku) sku, sum(i.item_quantity) sales180
+	                    from order_items i, orders o
+	                   where i.order_id = o.id
+	                    and o.order_sale_time > trunc(sysdate - 180)
+	                     and i.sku is not null
+	                   group by o.account_id,i.Item_ID,i.Item_sku) t180
+	            left join (select o.account_id,i.Item_ID,i.Item_sku, sum(i.item_quantity) sales60
+	                    from order_items i, orders o
+	                   where i.order_id = o.id
+	                    and o.order_sale_time > trunc(sysdate - 60)
+	                     and i.sku is not null
+	                   group by o.account_id,i.Item_ID,i.Item_sku) t60
+	              on t180.account_id = t60.account_id and  t180.Item_ID = t60.Item_ID  and  t180.Item_sku = t60.Item_sku   
+	              
+	               left join (select o.account_id,i.Item_ID,i.Item_sku, sum(i.item_quantity) sales30
+	                    from order_items i, orders o
+	                   where i.order_id = o.id
+	                    and o.order_sale_time > trunc(sysdate - 30)
+	                     and i.sku is not null
+	                   group by o.account_id,i.Item_ID,i.Item_sku) t30
+	              on t180.account_id = t30.account_id and  t180.Item_ID = t30.Item_ID  and  t180.Item_sku = t30.Item_sku 
+	              
+	               left join (select o.account_id,i.Item_ID,i.Item_sku, sum(i.item_quantity) sales15
+	                    from order_items i, orders o
+	                   where i.order_id = o.id
+	                    and o.order_sale_time > trunc(sysdate - 15)
+	                     and i.sku is not null
+	                   group by o.account_id,i.Item_ID,i.Item_sku) t15
+	              on t180.account_id = t15.account_id and  t180.Item_ID = t15.Item_ID  and  t180.Item_sku = t15.Item_sku 
+	              
+	               left join (select o.account_id,i.Item_ID,i.Item_sku, sum(i.item_quantity) sales7
+	                    from order_items i, orders o
+	                   where i.order_id = o.id
+	                    and o.order_sale_time > trunc(sysdate - 7)
+	                     and i.sku is not null
+	                   group by o.account_id,i.Item_ID,i.Item_sku) t7
+	              on t180.account_id = t7.account_id and  t180.Item_ID = t7.Item_ID  and  t180.Item_sku = t7.Item_sku
+	              
+	              ) a group by Item_ID
+	</insert>
+	
+	<delete id="deleteStatSkuSalesListingSku">
+		truncate table stat_sku_sales_listing_sku
+	</delete>
+	
+	<insert id="statSkuSalesListingSku">
+		insert into stat_sku_sales_listing_SKU (account_id,sku,Item_ID,Item_sku,sales180,sales60,sales30,sales15,sales7,last_updated_time)  
+     select t180.account_id,t180.sku,t180.Item_ID,t180.Item_sku,
+                 nvl(t180.sales180, 0) sales180,
+                 nvl(t60.sales60, 0) sales60,
+                 nvl(t30.sales30, 0) sales30,
+                  nvl(t15.sales15, 0) sales15,
+                  nvl(t7.sales7, 0) sales7,
+                 sysdate last_updated_time
+            from (select o.account_id,i.Item_ID,i.Item_sku,max(i.sku) sku, sum(i.item_quantity) sales180
+                    from order_items i, orders o
+                   where i.order_id = o.id
+                    and o.order_sale_time > trunc(sysdate - 180)
+                     and i.sku is not null
+                   group by o.account_id,i.Item_ID,i.Item_sku) t180
+            left join (select o.account_id,i.Item_ID,i.Item_sku, sum(i.item_quantity) sales60
+                    from order_items i, orders o
+                   where i.order_id = o.id
+                    and o.order_sale_time > trunc(sysdate - 60)
+                     and i.sku is not null
+                   group by o.account_id,i.Item_ID,i.Item_sku) t60
+              on t180.account_id = t60.account_id and  t180.Item_ID = t60.Item_ID  and  t180.Item_sku = t60.Item_sku   
+              
+               left join (select o.account_id,i.Item_ID,i.Item_sku, sum(i.item_quantity) sales30
+                    from order_items i, orders o
+                   where i.order_id = o.id
+                    and o.order_sale_time > trunc(sysdate - 30)
+                     and i.sku is not null
+                   group by o.account_id,i.Item_ID,i.Item_sku) t30
+              on t180.account_id = t30.account_id and  t180.Item_ID = t30.Item_ID  and  t180.Item_sku = t30.Item_sku 
+              
+               left join (select o.account_id,i.Item_ID,i.Item_sku, sum(i.item_quantity) sales15
+                    from order_items i, orders o
+                   where i.order_id = o.id
+                    and o.order_sale_time > trunc(sysdate - 15)
+                     and i.sku is not null
+                   group by o.account_id,i.Item_ID,i.Item_sku) t15
+              on t180.account_id = t15.account_id and  t180.Item_ID = t15.Item_ID  and  t180.Item_sku = t15.Item_sku 
+              
+               left join (select o.account_id,i.Item_ID,i.Item_sku, sum(i.item_quantity) sales7
+                    from order_items i, orders o
+                   where i.order_id = o.id
+                    and o.order_sale_time > trunc(sysdate - 7)
+                     and i.sku is not null
+                   group by o.account_id,i.Item_ID,i.Item_sku) t7
+              on t180.account_id = t7.account_id and  t180.Item_ID = t7.Item_ID  and  t180.Item_sku = t7.Item_sku
+	</insert>
+	
+	<delete id="deleteStatSkuLatestCost">
+		delete from stat_sku_latest_cost
+	</delete>
+	
+	<insert id="statSkuLatestCost">
+		insert into stat_sku_latest_cost
+		  (goods_sku, goods_cost)
+		  select goods_sku, goods_cost
+		    from (select i.goods_sku,
+		                 i.goods_cost,
+		                 row_number() over(partition by i.goods_sku order by i.id desc) rn
+		            from purchase_order_items i, purchase_orders o
+		           where i.order_no = o.order_no
+		             and (o.status = 3 or o.status = 4))
+		   where rn = 1
+	</insert>
+	
+	<delete id="deleteStatSkuSalesAccupy">
+		delete from stat_sku_sales_accupy
+	</delete>
+	
+	<insert id="statSkuSalesAccupy">
+		insert into stat_sku_sales_accupy
+		  (goods_sku, sales_occupy)
+		  select oit.sku goods_sku, sum(oit.item_quantity) sales_occupy
+		    from order_items oit, orders o
+		   where oit.order_id = o.id
+		     and o.order_status in (2, 3, 4, 5)
+		   group by oit.sku
+	</insert>
+
+</mapper>

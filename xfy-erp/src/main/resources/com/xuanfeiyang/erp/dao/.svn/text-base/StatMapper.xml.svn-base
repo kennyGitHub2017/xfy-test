@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.StatDao">
+	
+	<sql id="find_sql">
+		select g.goods_sku,
+		       g.name            goods_name,
+		       g.unit            goods_unit,
+		       gc.name           goods_category_name,
+		   <!-- <if test="param.baseCategoryId != null">
+		       gc1.name          goods_mid_category_name,
+		       gc2.name          goods_base_category_name,
+		   </if> -->
+		       v.all_count,
+		       v.lock_count,
+		       v.available_count,
+		       v.purchase_count,
+		       s.sales7,
+		       s.sales15,
+		       s.sales30,
+		       s.sales60,
+		       s.sales180,
+		       dt.name goodsStatus,
+		       gic.price     HIS_AVG_PRICE
+		  from goods g
+		  left join v_goods_inventory_stat v
+		    on v.goods_sku = g.goods_sku
+		  left join stat_sku_sales s
+		    on s.goods_sku = g.goods_sku
+		  left join goods_category gc
+		    on gc.id = g.category_id
+		  left join dict dt on (dt.code = g.status
+			and dt.type = 102)
+		  left join goods_inventory_cost gic
+		    on gic.goods_sku = g.goods_sku
+		    
+		<if test="param.baseCategoryId != null">
+		  left join GOODS_CATEGORY gc1
+		    on gc1.ID = gc.parent_id
+		  left join GOODS_CATEGORY gc2
+		    on gc2.ID = gc1.parent_id
+		</if>
+		<where>
+			<if test="param.goodsSku != null and param.goodsSku != ''">
+				and g.GOODS_SKU like '%${param.goodsSku}%'
+			</if>
+			<if test="param.storeId != null">
+				and g.STORE_ID = #{param.storeId}
+			</if>
+			<if test="param.storeShelfId != null">
+				and g.STORE_SHELF_ID = #{param.storeShelfId}
+			</if>
+			<if test="param.baseCategoryId != null">
+				and gc2.ID = #{param.baseCategoryId}
+			</if>
+			<if test="param.midCategoryId != null">
+				and gc1.ID = #{param.midCategoryId}
+			</if>
+			<if test="param.categoryId != null">
+				and gc.ID = #{param.categoryId}
+			</if>
+			<if test="param.goodsName != null and param.goodsName != '' ">
+				and g.name like '%${param.goodsName}%'
+			</if>
+			<if test="param.goodsStatus != null ">
+				and g.status = #{param.goodsStatus}
+			</if>
+			<if test="param.count == 1">
+				<![CDATA[ AND v.all_count > 0]]>
+			</if>
+			<if test="param.count == 0">
+				<![CDATA[ AND v.all_count = 0]]>
+			</if>
+		</where>
+		order by g.GOODS_SKU
+	</sql>
+	
+	<select id="findGoodsInventoryStatPage" resultType="GoodsInventoryStat">
+		<include refid="find_sql" />
+	</select>
+
+	<select id="find" resultType="GoodsInventoryStat">
+		<include refid="find_sql" />
+	</select>
+
+	<select id="allSkuInfo" resultType="map">
+		select g.created_time,
+		       g.develop_time,
+		       G.Goods_Sku,
+		       G.OLD_SKU,
+		       g.name,
+		       g.color,
+		       g.goods_size,
+		       g.rules,
+		       g.model,
+		       g.cost,
+		       t.goods_cost,
+		       gs.PAY_METHOD,
+		       gs.company_name,
+		       gc.name             base_category_name,
+		       gc1.name            mid_category_name,
+		       gc2.name            category_name,
+		       g.weight,
+		       ss.code store_shelf_code,
+		       u.name buy_user_name
+		  from xfy.GOODS G
+		  left join xfy.goods_supplier gs
+		    on g.supplier_id = gs.id
+		  left join xfy.goods_category gc
+		    on gc.id = g.base_category_id
+		  left join xfy.goods_category gc1
+		    on gc1.id = g.mid_category_id
+		  left join xfy.goods_category gc2
+		    on gc2.id = g.category_id
+		  left join store_shelf ss
+		    on ss.id = g.store_shelf_id
+		  left join user_info u on u.user_id = g.buy_user 
+		  left join (select goods_sku, goods_cost
+		               from (select i.goods_sku,
+		                            i.goods_cost,
+		                            row_number() over(partition by i.goods_sku order by id desc) rn
+		                       from purchase_order_items i)
+		              where rn = 1) t
+		    on t.goods_sku = g.goods_sku
+	</select>
+	
+	<select id="shippedGoods" resultType="map">
+		select o.created_time   ,
+		       o.id             ,
+		       i.sku            ,
+		       g.name           ,
+		       ss.code          ,
+		       i.package_amount ,
+		       c1.name          BASE_CATEGORY_NAME,
+		       c2.name          MID_CATEGORY_NAME,
+		       c3.name          CATEGORY_NAME,
+		       pa.ACCOUNT_NAME,
+		       p.shipping_name,
+		       p.scanned_time,
+		       nvl(b.shipping_country_name, b.shipping_country) shipping_country
+		  from order_package_item i
+		  left join order_package p on p.id = i.package_id
+		  left join orders o on o.id = i.order_id
+		  left join goods g on i.sku = g.goods_sku
+		  left join goods_category c1 on g.base_category_id = c1.id
+		  left join goods_category c2 on g.mid_category_id = c2.id
+		  left join goods_category c3 on g.category_id = c3.id
+		  left join v_platform_account pa on o.account_id = pa.id
+		  left join order_buyerinfo b on o.order_sn = b.order_sn
+		  left join store_shelf ss on ss.id = g.store_shelf_id
+		 where p.status = 5
+		   and p.scanned_time >= #{startDate,jdbcType=TIMESTAMP}
+		   and p.scanned_time <![CDATA[<]]>  #{endDate,jdbcType=TIMESTAMP} + 1
+		order by p.scanned_time desc
+	</select>
+	
+	<select id="inStoreListing" resultType="map">
+		select c.name base_category_name,
+		       g.goods_sku,
+		       g.name goods_name,
+		       i.goods_cost,
+		       nvl(i.qualified_count, 0) + nvl(i.unqualified_count, 0) io_count,
+		       goods_cost *
+		       (nvl(i.qualified_count, 0) + nvl(i.unqualified_count, 0)) io_amount,
+		       o.audit_time io_time,
+		       d.name io_reason,
+		       o.note io_note,
+		       o.buy_order_no po_order_no,
+		       gs.company_name supplier_name,
+		       po.audit_time po_time
+		  from io_order_items i
+		  left join io_orders o
+		    on i.order_no = o.order_no
+		  left join goods g
+		    on g.goods_sku = i.goods_sku
+		  left join goods_category c
+		    on c.id = g.base_category_id
+		  left join dict d
+		    on d.type = 201
+		   and d.code = o.type_detail
+		  left join purchase_orders po
+		    on po.order_no = o.buy_order_no
+		  left join goods_supplier gs
+		    on gs.id = po.supplier_id
+		 where o.type = 0
+		   and o.audit_time >= #{startDate,jdbcType=TIMESTAMP}
+		   and o.audit_time <![CDATA[<]]>  #{endDate,jdbcType=TIMESTAMP} + 1
+		   <if test="queryType == 'po'">
+		   and o.type_detail = 56
+		   </if>
+		   <if test="queryType == 'npo'">
+		   and o.type_detail <![CDATA[<>]]> 56
+		   </if>
+		 order by o.audit_time
+	</select>
+</mapper>

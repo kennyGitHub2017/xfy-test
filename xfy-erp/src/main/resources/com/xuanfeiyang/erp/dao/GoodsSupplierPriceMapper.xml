@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsSupplierPriceDao">
+
+	<sql id="_column_list">
+		ID, SUPPLIER_ID, GOODS_SKU, GOODS_NAME, GOODS_UNIT,
+		COUNT_MIN, COUNT_MAX, PRICE, START_DATE, END_DATE, BUY_PERIOD,
+		PRIORITY, NOTE, OPER_USER_ID, CREATED_TIME, LAST_UPDATED_TIME
+	</sql>
+	
+	<sql id="_column_list_full">
+		sp.ID, sp.SUPPLIER_ID, sp.GOODS_SKU, sp.GOODS_NAME, sp.GOODS_UNIT,
+		sp.COUNT_MIN, sp.COUNT_MAX, sp.PRICE, sp.START_DATE, sp.END_DATE, sp.BUY_PERIOD,
+		sp.PRIORITY, sp.NOTE, sp.OPER_USER_ID, sp.CREATED_TIME, sp.LAST_UPDATED_TIME,
+		s.COMPANY_NAME SUPPLIER_NAME, u.NAME OPER_USER_NAME
+	</sql>
+	
+	<select id="load" resultType="GoodsSupplierPrice" parameterType="java.lang.Integer">
+		select
+		<include refid="_column_list_full" />
+		from GOODS_SUPPLIER_PRICE sp
+		left join GOODS_SUPPLIER s on s.ID = sp.SUPPLIER_ID
+		left join USER_INFO u on u.USER_ID = sp.OPER_USER_ID
+		where sp.ID = #{id,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="findBySupplySku" resultType="GoodsSupplierPrice">
+		select 
+		<include refid="_column_list"/>
+		from GOODS_SUPPLIER_PRICE where PRIORITY=1
+		<if test="supplyId!=null">
+			and SUPPLIER_ID=#{supplyId}
+		</if>
+		<if test="sku!=null and sku!=''">
+			and GOODS_SKU=#{sku}
+		</if>
+	</select>
+	
+	<select id="findByPriorityRuleSku" resultType="GoodsSupplierPrice">
+		select * from (
+				(select 
+				<include refid="_column_list_full"/>
+				from GOODS_SUPPLIER_PRICE  sp
+				left join GOODS_SUPPLIER s on s.ID = sp.SUPPLIER_ID
+				left join USER_INFO u on u.USER_ID = sp.OPER_USER_ID
+				<if test="sku!=null and sku!=''">
+					where sp.GOODS_SKU=#{sku}
+				</if>
+				<choose>
+					 <when test="priorityRule==0">order by  priority</when>
+					 <when test="priorityRule==1">order by  buy_period</when>
+					 <when test="priorityRule==2">order by  price</when>
+				</choose>
+			)
+		) where rownum=1
+	</select>
+
+	<select id="findPage" resultType="GoodsSupplierPrice">
+		select
+		<include refid="_column_list_full" />
+		from GOODS_SUPPLIER_PRICE sp
+		left join GOODS_SUPPLIER s on s.ID = sp.SUPPLIER_ID
+		left join USER_INFO u on u.USER_ID = sp.OPER_USER_ID
+		
+		<where>
+			<if test="param.goodsSku != null and param.goodsSku != ''">
+				and sp.GOODS_SKU like '%' || #{param.goodsSku,jdbcType=VARCHAR} ||'%'
+			</if>
+			<if test="param.goodsName != null and param.goodsName != ''">
+				and sp.GOODS_NAME like '%' || #{param.goodsName,jdbcType=VARCHAR} ||'%'
+			</if>
+			<if test="param.supplierId != null">
+				and sp.SUPPLIER_ID = #{param.supplierId,jdbcType=DECIMAL}
+			</if>
+		</where>
+		
+		order by sp.GOODS_SKU
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from
+		GOODS_SUPPLIER_PRICE
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="insert" parameterType="GoodsSupplierPrice">
+		insert into
+		GOODS_SUPPLIER_PRICE (ID, SUPPLIER_ID, GOODS_SKU,
+		GOODS_NAME,
+		GOODS_UNIT, COUNT_MIN,
+		COUNT_MAX, PRICE, START_DATE,
+		END_DATE,
+		BUY_PERIOD, PRIORITY,
+		NOTE, OPER_USER_ID, CREATED_TIME,
+		LAST_UPDATED_TIME)
+		values (SEQ_GOODS_SUPPLIER.nextval,
+		#{supplierId,jdbcType=DECIMAL},
+		#{goodsSku,jdbcType=VARCHAR},
+		#{goodsName,jdbcType=VARCHAR}, 
+		#{goodsUnit,jdbcType=VARCHAR},
+		#{countMin,jdbcType=DECIMAL},
+		#{countMax,jdbcType=DECIMAL},
+		#{price,jdbcType=DECIMAL},
+		#{startDate,jdbcType=TIMESTAMP},
+		#{endDate,jdbcType=TIMESTAMP}, 
+		#{buyPeriod,jdbcType=DECIMAL},
+		#{priority,jdbcType=DECIMAL},
+		#{note,jdbcType=VARCHAR},
+		#{operUserId,jdbcType=DECIMAL},
+		#{createdTime,jdbcType=TIMESTAMP},
+		#{lastUpdatedTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="update" parameterType="GoodsSupplierPrice">
+		update GOODS_SUPPLIER_PRICE
+		<set>
+			<if test="supplierId != null">
+				SUPPLIER_ID = #{supplierId,jdbcType=DECIMAL},
+			</if>
+			<if test="goodsSku != null">
+				GOODS_SKU = #{goodsSku,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsName != null">
+				GOODS_NAME = #{goodsName,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsUnit != null">
+				GOODS_UNIT = #{goodsUnit,jdbcType=VARCHAR},
+			</if>
+			<if test="countMin != null">
+				COUNT_MIN = #{countMin,jdbcType=DECIMAL},
+			</if>
+			<if test="countMax != null">
+				COUNT_MAX = #{countMax,jdbcType=DECIMAL},
+			</if>
+			<if test="price != null">
+				PRICE = #{price,jdbcType=DECIMAL},
+			</if>
+			<if test="startDate != null">
+				START_DATE = #{startDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endDate != null">
+				END_DATE = #{endDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="buyPeriod != null">
+				BUY_PERIOD = #{buyPeriod,jdbcType=DECIMAL},
+			</if>
+			<if test="priority != null">
+				PRIORITY = #{priority,jdbcType=DECIMAL},
+			</if>
+			<if test="note != null">
+				NOTE = #{note,jdbcType=VARCHAR},
+			</if>
+			<if test="operUserId != null">
+				OPER_USER_ID = #{operUserId,jdbcType=DECIMAL},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME =
+				#{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+	<insert id="batchAddSupplierPrice">
+		insert into goods_supplier_price (id, supplier_id, goods_sku, goods_name, price, priority, buy_period)
+		select SEQ_GOODS_SUPPLIER.nextval, g.supplier_id, g.goods_sku, g.name, g.cost, 1, 
+		(select s.buy_period from goods_supplier s where s.id = g.supplier_id) from goods g 
+		where g.supplier_id is not null and  not exists (select 1 from goods_supplier_price p where p.goods_sku = g.goods_sku)
+		and exists (select 1 from goods_supplier s where s.id = g.supplier_id AND s.Buy_Period IS NOT NULL)
+	</insert>
+	
+	<update id="modifyBySupplier">
+	UPDATE goods_supplier_price set BUY_PERIOD = #{buyPeriod} where supplier_id = #{supplierId}
+	</update>
+	
+</mapper>
+
+
+
+

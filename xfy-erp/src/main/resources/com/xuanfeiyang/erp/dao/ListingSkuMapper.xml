@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.ListingSkuDao" >
+	<select id="get" resultType="ListingSku">
+		select id,sku,goods_sku from profile.t_Ebay_Listing where status=1
+	</select>
+	<select id="getListByplatFormType" resultType="ListingSku">
+		<choose>
+			<when test="platformType=='ebay'">
+				select id,'ebay' platForm ,sku,goods_sku from profile.t_Ebay_Listing where status=1 and  goods_sku is null and rownum<![CDATA[ < ]]>51
+			</when>
+			<when test="platformType=='amazon'">
+				select id,'amazon' platForm,sku,goods_sku from profile.v_amazon_listing where status=1 and goods_sku is null and rownum<![CDATA[ < ]]>51
+			</when>
+			<when test="platformType=='smt'">
+				select id,'smt',sku_code as sku,old_sku_code as goods_sku from profile.v_smt_listing where rownum<![CDATA[ < ]]>51
+			</when>
+		</choose>
+		<if test="sku!=null and sku!=''">
+			and sku=#{sku,jdbcType=VARCHAR}
+		</if>
+	</select>
+	<update id="update">
+		<choose>
+			<when test="param.platForm=='ebay'">
+				update profile.t_Ebay_Listing set goods_sku=#{param.goodsSku,jdbcType=VARCHAR} 
+			</when>
+			<when test="param.platForm=='amazon'">
+				update profile.v_amazon_listing set goods_sku=#{param.goodsSku,jdbcType=VARCHAR} 
+			</when>
+			<when test="param.platForm=='smt'">
+				update profile.v_smt_listing set old_sku_code=#{param.goodsSku,jdbcType=VARCHAR} 
+			</when>
+		</choose>
+		where id=#{param.id,jdbcType=INTEGER}
+	</update>
+</mapper>

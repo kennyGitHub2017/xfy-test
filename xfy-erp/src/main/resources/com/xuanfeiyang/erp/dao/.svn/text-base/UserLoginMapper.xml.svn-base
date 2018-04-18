@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanfeiyang.erp.dao.UserLoginDao">
+
+	<sql id="_column_list">
+		USER_ID, USERNAME, PASSWORD, CREATED_TIME, LAST_UPDATED_TIME,
+		LAST_LOG_TIME,
+		LAST_LOG_IP
+	</sql>
+	
+	<sql id="_find_sql">
+		select
+		<include refid="_column_list" />
+		from USER_LOGIN
+	</sql>
+	
+	<select id="load" resultType="UserLogin">
+		<include refid="_find_sql" />
+		where USER_ID = #{userId,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="loadByUsername" resultType="UserLogin">
+		<include refid="_find_sql" />
+		where USERNAME = #{username,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByUsernameOrMobileOrEmail" resultType="UserLogin">
+		select ul.*
+		  from user_login ul
+		  left join user_info ui
+		    on ui.user_id = ul.user_id
+		 where ul.username = #{username,jdbcType=VARCHAR}
+		    or ui.mobile = #{username,jdbcType=VARCHAR}
+		    or ui.email = #{username,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from USER_LOGIN
+		where USER_ID = #{userId,jdbcType=DECIMAL}
+	</delete>
+	
+	<delete id="deleteBySellerId" parameterType="java.lang.Integer">
+		delete from USER_LOGIN
+		where USER_ID in (select USER_ID from USER_INFO where SELLER_ID = #{sellerId,jdbcType=DECIMAL}) 
+	</delete>
+	
+	<insert id="save">
+		
+		<selectKey keyProperty="userId" resultType="java.lang.Integer" order="BEFORE">
+			select SEQ_USERS.nextval from DUAL
+		</selectKey>
+	
+		insert into USER_LOGIN (USER_ID, USERNAME, PASSWORD,
+		CREATED_TIME, LAST_UPDATED_TIME,
+		LAST_LOG_TIME, LAST_LOG_IP)
+		values (#{userId,jdbcType=DECIMAL}, #{username,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{createdTime,jdbcType=TIMESTAMP},
+		#{lastUpdatedTime,jdbcType=TIMESTAMP},
+		#{lastLogTime,jdbcType=TIMESTAMP}, #{lastLogIp,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="update" parameterType="UserLogin">
+		update USER_LOGIN
+		<set>
+			<if test="username != null">
+				USERNAME = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				PASSWORD = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastLogTime != null">
+				LAST_LOG_TIME = #{lastLogTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastLogIp != null">
+				LAST_LOG_IP = #{lastLogIp,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where USER_ID = #{userId,jdbcType=DECIMAL}
+	</update>
+	
+</mapper>

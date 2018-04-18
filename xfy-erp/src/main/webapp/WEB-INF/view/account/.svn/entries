@@ -1,0 +1,40 @@
+10
+
+dir
+3418
+http://it-server-win:8088/svn/project/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/account
+http://it-server-win:8088/svn/project
+
+
+
+2015-04-10T03:18:43.369367Z
+1083
+bernard
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+cbe73a5a-9b05-614f-b4fb-0c819b173725
+
+am
+dir
+
+ebay
+dir
+
+paypal
+dir
+
+smt
+dir
+

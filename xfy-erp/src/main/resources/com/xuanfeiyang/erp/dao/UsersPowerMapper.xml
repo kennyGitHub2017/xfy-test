@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.UsersPowerDao">
+	<sql id="Base_Column_List">
+		ID, USER_ID, POWER_CODE, POWER_TYPE, CREATED_TIME
+	</sql>
+	
+	<select id="load" resultType="UsersPower" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from USERS_POWERS
+		where ID = #{id,jdbcType=DECIMAL}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from USERS_POWERS
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="insert" parameterType="UsersPower">
+		insert into USERS_POWERS (ID, USER_ID, POWER_CODE,
+		POWER_TYPE, CREATED_TIME)
+		values (SEQ_POWERS.nextval, #{userId,jdbcType=DECIMAL}, #{powerCode,jdbcType=VARCHAR},
+		#{powerType,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<delete id="deleteByUserId" parameterType="java.lang.Integer">
+		delete from USERS_POWERS
+		where USER_ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	
+	<select id="findByUserId" resultType="UsersPower" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from USERS_POWERS
+		where USER_ID = #{id,jdbcType=DECIMAL}
+	</select>
+</mapper>

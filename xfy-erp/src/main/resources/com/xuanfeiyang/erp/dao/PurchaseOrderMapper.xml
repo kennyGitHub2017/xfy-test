@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.PurchaseOrderDao">
+
+	<sql id="base_sql">
+	  select a.*,
+      c.company_name as supplier_name,u.name as buy_user_name,i.name as audit_user_name,
+      o.name as purchase_request_creater,o2.name as created_user_name
+      from PURCHASE_ORDERS a
+      left join PURCHASE_REQUEST_ORDERS r on a.purchase_request_id=r.id
+      left join GOODS_SUPPLIER c on a.supplier_id=c.id
+      left join USER_INFO u on a.buy_user_id=u.user_id
+      left join USER_INFO i on a.audit_user_id=i.user_id
+      left join USER_INFO o on r.created_user_id=o.user_id
+      left join USER_INFO o2 on a.created_user_id=o2.user_id
+	</sql>
+	
+	<sql id="_detail_sql">
+		select a.*,
+		b.goods_sku,
+		g.old_sku,
+		b.goods_name,
+		b.goods_unit,
+		b.goods_count,
+		b.goods_cost,
+		e.name as goods_category,
+		c.company_name as supplier_name,
+		u.name as buy_user_name,
+		i.name as audit_user_name,
+		x.name as created_user_name,
+		b.received_count,
+		b.qualified_count,
+		b.unqualified_count,
+		g.color,
+		g.model,
+		g.goods_size,
+		g.rules,
+		g.img_count,
+		g.img_url,
+		st.name store_name ,
+		ss.code store_shelf
+	from PURCHASE_ORDERS a
+	inner join PURCHASE_ORDER_ITEMS b on a.order_no = b.order_no
+	left join GOODS_SUPPLIER c on a.supplier_id = c.id
+	left join USER_INFO u on a.buy_user_id = u.user_id
+	left join USER_INFO i on a.audit_user_id = i.user_id
+	left join USER_INFO x on a.created_user_id = x.user_id
+	left join GOODS_CATEGORY e on b.goods_category = e.id
+	left join goods g on g.goods_sku = b.goods_sku
+	left join store st on st.id = g.store_id
+	left join store_shelf ss on ss.id = g.store_shelf_id
+	</sql>
+	
+	<sql id="_report_sql">
+		select a.*,
+		b.goods_sku,
+		g.old_sku,
+		b.goods_name,
+		b.goods_unit,
+		b.goods_count,
+		b.goods_cost,
+		e.name as goods_category,
+		c.company_name as supplier_name,
+		u.name as buy_user_name,
+		i.name as audit_user_name,
+		x.name as created_user_name,
+		b.received_count,
+		b.qualified_count,
+		b.unqualified_count,
+		g.color,
+		g.model,
+		g.goods_size,
+		g.rules,
+		g.img_count,
+		g.img_url,
+		st.name store_name ,
+		ss.code store_shelf,
+		(select max(io.audit_time) from io_orders io where io.buy_order_no=a.order_no)       io_date
+	from PURCHASE_ORDERS a
+	inner join PURCHASE_ORDER_ITEMS b on a.order_no = b.order_no
+	left join GOODS_SUPPLIER c on a.supplier_id = c.id
+	left join USER_INFO u on a.buy_user_id = u.user_id
+	left join USER_INFO i on a.audit_user_id = i.user_id
+	left join USER_INFO x on a.created_user_id = x.user_id
+	left join GOODS_CATEGORY e on b.goods_category = e.id
+	left join goods g on g.goods_sku = b.goods_sku
+	left join store st on st.id = g.store_id
+	left join store_shelf ss on ss.id = g.store_shelf_id
+	</sql>
+	
+	<sql id="condition">
+		<!--  
+		<if test="param.arrived==1">
+		 	and (a.IS_SAMPLE=1 or   exists (select 1 from purchase_order_waybillno pow where pow.order_no=a.order_no)
+            )
+		 </if>
+		--> 
+		 <if test="param.isSample != null">
+          	and a.IS_SAMPLE=#{param.isSample}
+          </if>
+		 <if test="param.orderNo!= null and param.orderNo!=''">
+            and a.order_no like '%' || #{param.orderNo}  || '%' 
+          </if>
+          <if test="param.waybillNo!= null and param.waybillNo!=''">
+            and
+            (  exists (
+            	select 1 from purchase_order_waybillno pow where pow.order_no=a.order_no
+            	and pow.WAYBILL_NO=#{param.waybillNo} 
+            	)
+            or
+            	a. waybill_no=#{param.waybillNo}
+            )
+          </if>
+          <if test="param.purchaseDateFrom != null and param.purchaseDateFrom!=''">
+           	and a.PURCHASE_DATE&gt;=TO_DATE(#{param.purchaseDateFrom},'yyyy-mm-dd')
+          </if>
+          <if test="param.purchaseDateTo != null and param.purchaseDateTo!=''">
+            and a.PURCHASE_DATE&lt;TO_DATE(#{param.purchaseDateTo},'yyyy-mm-dd')+1	
+          </if>
+           <if test="param.deliveryDateFrom != null and param.deliveryDateFrom!=''">
+           	and a.DELIVERY_DATE&gt;=TO_DATE(#{param.deliveryDateFrom},'yyyy-mm-dd')
+          </if>
+          <if test="param.deliveryDateTo != null and param.deliveryDateTo!=''">
+            and a.DELIVERY_DATE&lt;TO_DATE(#{param.deliveryDateTo},'yyyy-mm-dd')+1	
+          </if>
+           
+           <if test="param.paidDateFrom != null and param.paidDateFrom!=''">
+           	and a.PAID_TIME&gt;=TO_DATE(#{param.paidDateFrom},'yyyy-mm-dd')
+           </if>
+           <if test="param.paidDateTo != null and param.paidDateTo!=''">
+            and a.PAID_TIME&lt;TO_DATE(#{param.paidDateTo},'yyyy-mm-dd')+1	
+           </if>
+           
+           <if test="param.payStatus != null and param.payStatus!=''">
+           		<choose>
+           			<when test="param.payStatus==0">
+           				and a.PAY_STATUS is null
+           			</when>
+           			<otherwise>
+           				and a.PAY_STATUS=#{param.payStatus}
+           			</otherwise>
+           		</choose>
+           </if>
+        
+          <if test="param.status!=null and param.status!=''">
+          	and a.status in (${param.status})
+          </if>
+          <if test="param.supplierId != null and param.supplierId!=''">
+            and a.SUPPLIER_ID=#{param.supplierId}
+          </if>
+          <if test="param.buyUserName != null and param.buyUserName!=''">
+            and u.NAME like #{param.buyUserName} ||'%'
+          </if>
+          <if test="param.payMethod != null and param.payMethod!=''">
+            and a.PAY_METHOD=#{param.payMethod}
+          </if>
+          <if test="param.goodsSku!=null and param.goodsSku!=''">
+          		and exists(
+          			select 1 from PURCHASE_ORDER_ITEMS i
+          			where i.order_no = a.order_no and i.GOODS_SKU=#{param.goodsSku}
+          		)
+          </if>
+          <if test="param.goodsName!=null and param.goodsName!=''">
+          		and exists(
+          			select 1 from PURCHASE_ORDER_ITEMS i
+          			where i.order_no = a.order_no and i.GOODS_NAME like '%' || #{ param.goodsName} || '%'
+          		)
+          </if>
+          <choose>
+          	<when test="param.thirdCategory != null and param.thirdCategory !=''">
+          		 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.category_id = #{param.thirdCategory}
+	    		)
+          	</when>
+          	<when test="param.secondCategory != null and param.secondCategory !=''">
+          			 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.MID_CATEGORY_ID = #{param.secondCategory}
+	    		)
+          	</when>
+          	<when test="param.firstCategory != null and param.firstCategory !=''">
+	          	 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.BASE_CATEGORY_ID = #{param.firstCategory}
+	    		)
+          	</when>
+          </choose>
+	</sql>
+    <select id="findPage"  resultType="PurchaseOrder">
+    	<include refid="base_sql"/>
+		 where 1=1
+		 <include refid="condition"/>
+          order by  ${param.orderStr}
+	</select>
+	
+	<select id="findExportList" resultType="PurchaseOrderExport">
+		select i.goods_sku,i.goods_name,i.goods_count,i.goods_cost,i.goods_count*i.goods_cost amount,a.order_no,a.serial_number,
+		case IS_SAMPLE when 1 then '样品采购' when 0 then '采购订单'  end order_type,a.waybill_no,a.logistics_company,a.purchase_date,
+		case   when a.pay_status=1 then '部分付款' when  a.pay_status=2 then '全部付款' when a.pay_status=0 then '未付款'  end pay_status,
+		a.paid_time, s.company_name, u.name buyer,a.freight,a.pay_method,u2.name auditer,a.audit_time,
+		case a.STATUS when 1 then '待审核' when 2 then '已审核未接收' when 3 then '正常关闭' when 4 then '手工结案' when 5 then '审核已接收' when -1 then '异常入库' end status
+		from xfy.purchase_order_items i
+		inner join xfy.purchase_orders a on a.order_no=i.order_no
+		left join xfy.goods_supplier s on s.id= a.supplier_id
+		left join xfy.user_info u on u.user_id=a.buy_user_id
+		left join xfy.user_info u2 on u2.user_id=a.audit_user_id
+		where 1=1 
+		<if test="param!=null">
+			<include refid="condition"/>	
+		</if>
+		<if test="ids!=null">
+			and a.id in 
+			<foreach collection="ids" open="(" close=")" separator="," item="item">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="findCount"  resultType="INTEGER">
+		select count(i.id)
+		from xfy.purchase_order_items i
+		inner join xfy.purchase_orders a on a.order_no=i.order_no
+		left join xfy.goods_supplier s on s.id= a.supplier_id
+		left join xfy.user_info u on u.user_id=a.buy_user_id
+		left join xfy.user_info u2 on u2.user_id=a.audit_user_id
+		where 1=1 
+		<if test="param!=null">
+			<include refid="condition"/>	
+		</if>
+		<if test="ids!=null">
+			and a.id in 
+			<foreach collection="ids" open="(" close=")" separator="," item="item">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	
+    <select id="get" parameterType="int" resultType="PurchaseOrder">
+         <include refid="base_sql"/>
+         where a.id=#{id}
+    </select>
+    <select id="findByOrderNo" parameterType="string" resultType="PurchaseOrder">
+         <include refid="base_sql"/>
+         where a.ORDER_NO=#{orderNo}
+    </select>
+    <select id="detail"  resultType="PurchaseOrder">
+           <include refid="_detail_sql"/>
+           where a.id=#{id}
+          order by a.CREATED_TIME desc,a.id
+    </select>
+    
+    <select id="report" resultType="PurchaseOrder">
+    	 <include refid="_report_sql"/>
+    	 where 1 =1 
+    	 <if test="param.purchaseOrderId!=null and param.purchaseOrderId!=''">
+    	 	and a.order_no like '%' || #{param.purchaseOrderId}  || '%' 
+    	 </if>
+    	 <if test="param.purchaseOrderStatus!=null and param.purchaseOrderStatus!=''">
+    	 	and a.status=#{param.purchaseOrderStatus}
+    	 </if>
+    	 <if test="param.closed!=null and param.closed!=''">
+    	 	<choose>
+    	 		<when test="param.closed==1">
+    	 			and (a.status=3 or a.status=4)	
+    	 		</when>
+    	 		<when test="param.closed==0">
+    	 			and (a.status=1 or a.status=2 or a.status=-1)
+    	 		</when>
+    	 	</choose>
+    	 </if>
+    	<if test="param.payMethod!=null and param.payMethod!=''">
+    	 	and a.pay_method=#{param.payMethod} 
+    	 </if>
+    	 <if test="param.supplierId!=null and param.supplierId!=''">
+    	 	and a.supplier_id=#{param.supplierId}
+    	 </if>
+    	 <if test="param.goodsSku!=null and param.goodsSku!=''">
+    	 	and b.goods_sku=#{param.goodsSku}
+    	 </if>
+    	 <if test="param.goodsName!=null and param.goodsName!=''">
+    	 	and b.goods_name=#{param.goodsName}
+    	 </if>
+    	 <if test="param.creater!=null and param.creater!=''">
+    	 	 and x.name like #{param.creater}||'%'
+    	 </if>
+    	 <if test="param.buyer!=null and param.buyer!=''">
+    	 	 and u.NAME like #{param.buyer} ||'%'
+    	 </if>
+    	 <if test="param.purchaseDateFrom!=null and param.purchaseDateFrom!=''">
+    	 	and PURCHASE_DATE &gt;= TO_DATE(#{param.purchaseDateFrom},'yyyy-mm-dd')
+    	 </if>
+    	 <if test="param.purchaseDateTo!=null and param.purchaseDateTo!=''">
+    	    and	PURCHASE_DATE &lt; TO_DATE(#{param.purchaseDateTo},'yyyy-mm-dd')+1
+    	 </if>
+    	 <if test="param.inStorageDateFrom!=null and param.inStorageDateFrom!=''">
+    	 	<!--  
+    	 	and exists (
+    	 		select 1 from io_orders io where io.buy_order_no=a.order_no
+    	 		and io.audit_time &gt;= TO_DATE(#{param.inStorageDateFrom},'yyyy-mm-dd')
+    	 	)
+    	 	-->
+    	 	and a.audit_time &gt;= TO_DATE(#{param.inStorageDateFrom},'yyyy-mm-dd')
+    	 </if>
+    	 <if test="param.inStorageDateTo!=null and param.inStorageDateTo!=''">
+    	 	<!--  
+    	 	and exists (
+    	 		select 1 from io_orders io where io.buy_order_no=a.order_no
+    	 		and io.audit_time &lt; TO_DATE(#{param.inStorageDateTo},'yyyy-mm-dd')+1
+    	 	)
+    	 	-->
+    	 	and a.audit_time &lt; TO_DATE(#{param.inStorageDateTo},'yyyy-mm-dd')+1
+    	 </if>
+    	 <choose>
+          	<when test="param.thirdCategory != null and param.thirdCategory !=''">
+          		 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.category_id = #{param.thirdCategory}
+	    		)
+          	</when>
+          	<when test="param.secondCategory != null and  param.secondCategory != ''">
+          			 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.MID_CATEGORY_ID = #{param.secondCategory}
+	    		)
+          	</when>
+          	<when test="param.firstCategory != null and param.firstCategory !=''">
+	          	 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.BASE_CATEGORY_ID = #{param.firstCategory}
+	    		)
+          	</when>
+          </choose>
+    	 order by a.CREATED_TIME desc
+    </select>
+    
+    
+    <select id="findReport" resultType="PurchaseOrder">
+    	 <include refid="_detail_sql"/>
+    	 where 1 =1 
+    	 <if test="param.purchaseOrderId!=null and param.purchaseOrderId!=''">
+    	 	and a.order_no like '%' || #{param.purchaseOrderId}  || '%' 
+    	 </if>
+    	 <if test="param.purchaseOrderStatus!=null and param.purchaseOrderStatus!=''">
+    	 	and a.status=#{param.purchaseOrderStatus}
+    	 </if>
+    	 <if test="param.closed!=null and param.closed!=''">
+    	 	and (a.status=3 or a.status=4)  
+    	 </if>
+    	<if test="param.payMethod!=null and param.payMethod!=''">
+    	 	and a.pay_method=#{param.payMethod} 
+    	 </if>
+    	 <if test="param.supplierId!=null and param.supplierId!=''">
+    	 	and a.supplier_id=#{param.supplierId}
+    	 </if>
+    	 <if test="param.goodsSku!=null and param.goodsSku!=''">
+    	 	and b.goods_sku=#{param.goodsSku}
+    	 </if>
+    	 <if test="param.goodsName!=null and param.goodsName!=''">
+    	 	and b.goods_name=#{param.goodsName}
+    	 </if>
+    	 <if test="param.creater!=null and param.creater!=''">
+    	 	 and x.name like #{param.creater}||'%'
+    	 </if>
+    	 <if test="param.buyer!=null and param.buyer!=''">
+    	 	 and u.NAME like #{param.buyer} ||'%'
+    	 </if>
+    	 <if test="param.purchaseDateFrom!=null and param.purchaseDateFrom!=''">
+    	 	and PURCHASE_DATE &gt;= TO_DATE(#{param.purchaseDateFrom},'yyyy-mm-dd')
+    	 </if>
+    	 <if test="param.purchaseDateTo!=null and param.purchaseDateTo!=''">
+    	    and	PURCHASE_DATE &lt; TO_DATE(#{param.purchaseDateTo},'yyyy-mm-dd')+1
+    	 </if>
+    	 <if test="param.inStorageDateFrom!=null and param.inStorageDateFrom!=''">
+    	 	and exists (
+    	 		select 1 from io_orders io where io.buy_order_no=a.order_no
+    	 		and io.io_date &gt;= TO_DATE(#{param.inStorageDateFrom},'yyyy-mm-dd')
+    	 	)
+    	 </if>
+    	 <if test="param.inStorageDateTo!=null and param.inStorageDateTo!=''">
+    	 	and exists (
+    	 		select 1 from io_orders io where io.buy_order_no=a.order_no
+    	 		and io.io_date &lt; TO_DATE(#{param.inStorageDateTo},'yyyy-mm-dd')+1
+    	 	)
+    	 </if>
+    	 <choose>
+          	<when test="param.thirdCategory != null and param.thirdCategory !=''">
+          		 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.category_id = #{param.thirdCategory}
+	    		)
+          	</when>
+          	<when test="param.secondCategory != null and  param.secondCategory != ''">
+          			 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.MID_CATEGORY_ID = #{param.secondCategory}
+	    		)
+          	</when>
+          	<when test="param.firstCategory != null and param.firstCategory !=''">
+	          	 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.BASE_CATEGORY_ID = #{param.firstCategory}
+	    		)
+          	</when>
+          </choose>
+    	 order by a.CREATED_TIME desc,a.id
+    </select>
+    <!-- INSERT  Operate -->
+    <insert id="insert" parameterType="PurchaseOrder"
+        useGeneratedKeys="true" keyProperty="id">
+        <selectKey resultType="int" order="BEFORE" keyProperty="id">
+       		select SEQ_PURCHASE_ORDERS.Nextval as ID from DUAL
+   		</selectKey>
+   				insert into PURCHASE_ORDERS
+	(ID,ORDER_NO,CREATED_USER_ID,CREATED_TIME,LAST_UPDATED_TIME,AUDIT_USER_ID,
+	AUDIT_TIME,NOTE,PAY_METHOD,SUPPLIER_ID,BUY_USER_ID,SELL_ORDER_ID,IO_ORDER_NO,WAYBILL_NO,LOGISTICS_COMPANY,STATUS,PURCHASE_DATE,DELIVERY_DATE,FREIGHT,PURCHASE_REQUEST_ID,TYPE,IS_SAMPLE)
+	values (
+		#{id},#{orderNo},#{createdUserId,jdbcType=INTEGER},sysdate,sysdate,#{auditUserId,jdbcType=INTEGER},
+		#{auditTime,jdbcType=TIMESTAMP},#{note,jdbcType=VARCHAR},#{payMethod,jdbcType=VARCHAR},#{supplierId,jdbcType=INTEGER},#{buyUserId,jdbcType=INTEGER},	
+		#{sellOrderId,jdbcType=INTEGER},#{ioOrderNo,jdbcType=VARCHAR},#{waybillNo,jdbcType=VARCHAR},#{logisticsCompany,jdbcType=VARCHAR},
+		#{status,jdbcType=SMALLINT},#{purchaseDate,jdbcType=TIMESTAMP},#{deliveryDate,jdbcType=TIMESTAMP},#{freight,jdbcType=FLOAT},#{purchaseRequestId,jdbcType=INTEGER},#{type,jdbcType=SMALLINT},#{isSample,jdbcType=SMALLINT}
+	)
+    </insert>
+    
+    <delete id="delete" parameterType="int">
+    	delete from PURCHASE_ORDERS where id=#{id}
+    </delete>
+    
+    <delete id="deleteItem" parameterType="int">
+    	delete from PURCHASE_ORDER_ITEMS where id=#{itemId}
+    </delete>
+    
+    <insert id="insertItem" parameterType="PurchaseOrderItem"
+        useGeneratedKeys="true" keyProperty="id">
+        <selectKey resultType="int" order="BEFORE" keyProperty="id">
+       		select SEQ_PURCHASE_ORDER_ITEMS.Nextval as ID from DUAL
+   		</selectKey>
+    	insert into PURCHASE_ORDER_ITEMS(ID,ORDER_NO,GOODS_SKU,GOODS_NAME,GOODS_COST,GOODS_COUNT,GOODS_UNIT,GOODS_CATEGORY,GOODS_WEIGHT,DELIVERY_DATE,RECEIVED_COUNT,QUALIFIED_COUNT,UNQUALIFIED_COUNT,CREATED_TIME)
+    	values (#{id},#{orderNo,jdbcType=VARCHAR},#{goodsSku,jdbcType=VARCHAR},#{goodsName,jdbcType=VARCHAR},#{goodsCost,jdbcType=DECIMAL},#{goodsCount,jdbcType=INTEGER},#{goodsUnit,jdbcType=VARCHAR},#{goodsCategory,jdbcType=INTEGER},#{goodsWeight,jdbcType=DECIMAL},#{deliveryDate,jdbcType=DATE},
+    	#{receivedCount,jdbcType=INTEGER},#{qualifiedCount,jdbcType=INTEGER},#{unQualifiedCount,jdbcType=INTEGER},sysdate)
+    </insert>
+    
+    <update id="updateItem" parameterType="PurchaseOrderItem">
+    	update PURCHASE_ORDER_ITEMS
+    	<set>
+    		<if test="receivedCount!=null">
+    			RECEIVED_COUNT=#{receivedCount},
+    		</if>
+    		<if test="qualifiedCount!=null">
+    			QUALIFIED_COUNT=#{qualifiedCount},
+    		</if>
+    		<if test="unQualifiedCount!=null">
+    			UNQUALIFIED_COUNT=#{unQualifiedCount}
+    		</if>
+    	</set>
+    	where id=#{id}
+    </update>
+    
+    <select id="getItem" parameterType="int" resultType="PurchaseOrderItem">
+    	select * from PURCHASE_ORDER_ITEMS where id=#{itemId}
+    </select>
+    
+    <select id="findItem" parameterType="int" resultType="PurchaseOrderItem">
+	SELECT t.*,g.old_sku,g.color,g.rules,g.model,g.goods_size,g.img_count,s.code store_shelf,t1.goods_cost new_cost,p.pay_method
+	FROM (select a.goods_sku sku,a.* from PURCHASE_ORDER_ITEMS a
+	where exists (select *
+	from PURCHASE_ORDERS b
+	where b.id = #{id}
+	and a.ORDER_NO = b.ORDER_NO))t
+	left join goods g on g.goods_sku = t.sku 
+	left join store_shelf s on s.id=g.store_shelf_id
+	left join (select goods_sku, goods_cost
+               from (select i.goods_sku,
+                            i.goods_cost,
+                            row_number() over(partition by i.goods_sku order by i.id desc) rn
+                       from purchase_order_items i
+                       inner join purchase_orders o 
+                       on i.order_no=o.order_no and (o.status=3 or o.status=4)
+                       )
+              where rn = 1) t1   on t1.goods_sku = t.sku
+ 	left join  PURCHASE_ORDERS p on p.ORDER_NO = t.ORDER_NO and p.id= #{id}
+    </select>
+    
+    <select id="findItemBySku" resultType="PurchaseOrderItem">
+    	select * from PURCHASE_ORDER_ITEMS where GOODS_SKU=#{sku} order by CREATED_TIME desc 
+    </select>
+    
+    <delete id="deleteItemByOrderId">
+    	delete from PURCHASE_ORDER_ITEMS where ORDER_NO =
+    	(select ORDER_NO  from PURCHASE_ORDERS where id=#{id})
+    </delete>
+    
+    <update id="update" parameterType="PurchaseOrder">
+    	update PURCHASE_ORDERS
+    	<set>
+    		<if test="purchaseDate!=null and purchaseDate!=''">
+    			PURCHASE_DATE=#{purchaseDate},
+    		</if>
+    		<if test="deliveryDate!=null and deliveryDate!=''">
+    			DELIVERY_DATE=#{deliveryDate},
+    		</if>
+    		<if test="waybillNo!=null">
+    			WAYBILL_NO=#{waybillNo},
+    		</if>
+    		<if test="freight!=null">
+    			FREIGHT=#{freight},
+    		</if>
+    		<if test="logisticsCompany!=null">
+    			LOGISTICS_COMPANY=#{logisticsCompany},
+    		</if>
+    		<if test="supplierId!=null">
+    			supplier_id=#{supplierId},
+    		</if>
+    		<if test="payMethod!=null and payMethod!=''">
+    			PAY_METHOD=#{payMethod},
+    		</if>
+    		<if test="note!=null and note!=''">
+    			note=#{note},
+    		</if>
+    		<if test="status!=null">
+    			STATUS=#{status},
+    		</if>
+    		<if test="ioOrderNo!=null and ioOrderNo!=''">
+    			IO_ORDER_NO=#{ioOrderNo},
+    		</if>
+    		<if test="auditTime!=null">
+    			AUDIT_TIME=#{auditTime},
+    		</if>
+    		<if test="auditUserId!=null">
+    			AUDIT_USER_ID=#{auditUserId},
+    		</if>
+    		<if test="lastUpdatedTime!=null">
+    			LAST_UPDATED_TIME=sysdate,
+    		</if>
+    		<if test="serialNumber!=null">
+    			SERIAL_NUMBER=#{serialNumber},
+    		</if>
+    		<if test="payStatus!=null">
+    			PAY_STATUS=#{payStatus},
+    		</if>
+    		<if test="paidTime!=null">
+    			PAID_TIME=#{paidTime}
+    		</if>
+    	</set>
+    	where order_no=#{orderNo}
+    </update>
+    
+
+    <!-- 更新收货时间 -->
+    <update id="updateReceive">
+    update PURCHASE_ORDERS SET STATUS=#{param1},RECEIVE_DATE = sysdate where ORDER_NO=#{param2}
+    </update>
+    
+	<select id="findLatestPurchaseItemBySku" resultType="PurchaseOrderItem">
+		select *
+		  from (select i.*
+		          from purchase_order_items i, purchase_orders o
+		         where i.order_no = o.order_no
+		           and (o.status = 3 or o.status = 4)
+		           and i.goods_sku = #{goodsSku, jdbcType=VARCHAR}
+		         order by o.last_updated_time desc)
+		 where rownum = 1
+	</select>
+	
+	<insert id="fillOrderYdh">
+		insert into PURCHASE_ORDER_WAYBILLNO (ORDER_NO,WAYBILL_NO,LOGISTICS_COMPANY)  values (#{orderNo, jdbcType=VARCHAR},#{willbiNo, jdbcType=VARCHAR},#{logisticsCompany, jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="findWayBillNos" resultType="PurchaseOrderWayBillNo">
+		select * from PURCHASE_ORDER_WAYBILLNO where ORDER_NO=#{orderNo,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findWayBillNo" resultType="PurchaseOrderWayBillNo">
+		select * from PURCHASE_ORDER_WAYBILLNO where 1=1
+		<if test="orderNo!=null and orderNo!=''">
+			and ORDER_NO=#{orderNo,jdbcType=VARCHAR}	
+		</if>
+		<if test="willbiNo!=null and willbiNo!=''">
+			and	WAYBILL_NO=#{willbiNo,jdbcType=VARCHAR}	
+		</if>
+		<if test="logisticsCompany!=null and logisticsCompany!=''">
+			and	LOGISTICS_COMPANY=#{logisticsCompany,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<update id="editWayBillNo">
+		update PURCHASE_ORDER_WAYBILLNO set WAYBILL_NO=#{param.waybillNoNew,jdbcType=VARCHAR},LOGISTICS_COMPANY=#{param.logisticsCompanyNew,jdbcType=VARCHAR}
+		where ORDER_NO = #{param.orderNo,jdbcType=VARCHAR} and WAYBILL_NO=#{param.waybillNo,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="purchaseOrderTotal" resultType="PurchaseOrderStatistic">
+	select sum(b.goods_count) buy_count,
+       sum(b.received_count) test_total,
+       sum(b.unqualified_count) unQualified_total,
+       sum(b.qualified_count) qualified_total,
+       sum(b.goods_cost * b.goods_count) cost_total,
+       count(distinct(a.order_no)) order_count,
+        sum(a.freight/(select count(1)
+         from PURCHASE_ORDER_ITEMS ii
+         where ii.order_no = a.order_no)) freight_total
+	from PURCHASE_ORDERS a
+	inner join PURCHASE_ORDER_ITEMS b on a.order_no = b.order_no
+ 	left join GOODS_SUPPLIER c on a.supplier_id = c.id
+	left join USER_INFO u on a.buy_user_id = u.user_id
+	left join USER_INFO i on a.audit_user_id = i.user_id
+	left join USER_INFO x on a.created_user_id = x.user_id
+	left join GOODS_CATEGORY e on b.goods_category = e.id
+	left join goods g on g.goods_sku = b.goods_sku
+	left join store st on st.id = g.store_id
+	left join store_shelf ss on ss.id = g.store_shelf_id 
+	where 1=1 
+		 <if test="param.purchaseOrderId!=null and param.purchaseOrderId!=''">
+    	 	and a.order_no like '%' || #{param.purchaseOrderId}  || '%' 
+    	 </if>
+    	 <if test="param.purchaseOrderStatus!=null and param.purchaseOrderStatus!=''">
+    	 	and a.status=#{param.purchaseOrderStatus}
+    	 </if>
+    	 <if test="param.closed!=null and param.closed!=''">
+    	 	and (a.status=3 or a.status=4)  
+    	 </if>
+    	<if test="param.payMethod!=null and param.payMethod!=''">
+    	 	and a.pay_method=#{param.payMethod} 
+    	 </if>
+    	 <if test="param.supplierId!=null and param.supplierId!=''">
+    	 	and a.supplier_id=#{param.supplierId}
+    	 </if>
+    	 <if test="param.goodsSku!=null and param.goodsSku!=''">
+    	 	and b.goods_sku=#{param.goodsSku}
+    	 </if>
+    	 <if test="param.goodsName!=null and param.goodsName!=''">
+    	 	and b.goods_name=#{param.goodsName}
+    	 </if>
+    	 <if test="param.creater!=null and param.creater!=''">
+    	 	 and x.name like #{param.creater}||'%'
+    	 </if>
+    	 <if test="param.buyer!=null and param.buyer!=''">
+    	 	 and u.NAME like #{param.buyer} ||'%'
+    	 </if>
+    	 <if test="param.purchaseDateFrom!=null and param.purchaseDateFrom!=''">
+    	 	and PURCHASE_DATE &gt;= TO_DATE(#{param.purchaseDateFrom},'yyyy-mm-dd')
+    	 </if>
+    	 <if test="param.purchaseDateTo!=null and param.purchaseDateTo!=''">
+    	    and	PURCHASE_DATE &lt; TO_DATE(#{param.purchaseDateTo},'yyyy-mm-dd')+1
+    	 </if>
+    	 <if test="param.inStorageDateFrom!=null and param.inStorageDateFrom!=''">
+    	 	and exists (
+    	 		select 1 from io_orders io where io.buy_order_no=a.order_no
+    	 		and io.audit_time &gt;= TO_DATE(#{param.inStorageDateFrom},'yyyy-mm-dd')
+    	 	)
+    	 </if>
+    	 <if test="param.inStorageDateTo!=null and param.inStorageDateTo!=''">
+    	 	and exists (
+    	 		select 1 from io_orders io where io.buy_order_no=a.order_no
+    	 		and io.audit_time &lt; TO_DATE(#{param.inStorageDateTo},'yyyy-mm-dd')+1
+    	 	)
+    	 </if>
+    	 <choose>
+          	<when test="param.thirdCategory != null and param.thirdCategory !=''">
+          		 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.category_id = #{param.thirdCategory}
+	    		)
+          	</when>
+          	<when test="param.secondCategory != null and  param.secondCategory != ''">
+          			 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.MID_CATEGORY_ID = #{param.secondCategory}
+	    		)
+          	</when>
+          	<when test="param.firstCategory != null and param.firstCategory !=''">
+	          	 and exists(
+	      				select 1 from PURCHASE_ORDER_ITEMS i left join goods  g on  g.goods_sku = i.goods_sku
+	       				where i.order_no = a.order_no and g.BASE_CATEGORY_ID = #{param.firstCategory}
+	    		)
+          	</when>
+          </choose>
+	</select>
+</mapper>

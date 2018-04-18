@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanfeiyang.erp.dao.OrderPackageItemDao">
+
+<delete id="deleteByOrderId">
+	delete from order_package_item where order_id=#{orderId}
+</delete>
+
+<select id="findByPackage" resultType="OrderPackageItem">
+<include refid="BASESQL"/>
+WHERE PACKAGE_ID = #{id}
+</select>
+
+<sql id="BASESQL">
+SELECT g.name goodsName,s.name storeName, pi.* FROM ORDER_PACKAGE_ITEM pi
+LEFT JOIN GOODS g on pi.sku = g.goods_sku
+left join store s on s.id = g.store_id
+</sql>
+
+<select id="findByOrderId" resultType="OrderPackageItem">
+SELECT * FROM ORDER_PACKAGE_ITEM WHERE ORDER_ID = #{orderId}
+</select>
+
+
+<insert id="insert">
+	insert into ORDER_PACKAGE_ITEM (
+	ID, PACKAGE_ID, ORDER_ID, SKU, ORDER_AMOUNT, PACKAGE_AMOUNT, 
+	SHIPMENT_AMOUNT, CREATED_TIME, PRICE, TOTAL_PRICE, 
+	SPECIFICATIONS)
+	values (SEQ_ORDER_PACKAGE_ITEM.nextval, #{packageId,jdbcType=DECIMAL}, #{orderId,jdbcType=DECIMAL}, 
+	#{sku,jdbcType=VARCHAR}, #{orderAmount,jdbcType=DECIMAL}, #{packageAmount,jdbcType=DECIMAL}, 
+	#{shipmentAmount,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP}, #{price,jdbcType=DECIMAL}, 
+	#{totalPrice,jdbcType=DECIMAL}, 
+	#{specifications,jdbcType=VARCHAR})
+  </insert>
+<update id="update" parameterType="OrderPackageItem" >
+    update ORDER_PACKAGE_ITEM
+    <set >
+      <if test="packageId != null" >
+        PACKAGE_ID = #{packageId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=DECIMAL},
+      </if>
+      <if test="sku != null" >
+        SKU = #{sku,jdbcType=VARCHAR},
+      </if>
+      <if test="orderAmount != null" >
+        ORDER_AMOUNT = #{orderAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="packageAmount != null" >
+        PACKAGE_AMOUNT = #{packageAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="shipmentAmount != null" >
+        SHIPMENT_AMOUNT = #{shipmentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="price != null" >
+        PRICE = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="totalPrice != null" >
+        TOTAL_PRICE = #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="specifications != null" >
+        SPECIFICATIONS = #{specifications,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+
+	<select id="getPackageItemByParam" resultType="OrderPackageItem">
+		SELECT * FROM ORDER_PACKAGE_ITEM
+		WHERE 1=1
+		<if test="packageId != null and packageId != '' ">
+		AND PACKAGE_ID = #{packageId}
+		</if>
+		<if test="orderId != null ">
+		AND ORDER_ID = #{orderId}
+		</if>
+		<if test="sku != null and sku != '' ">
+		AND SKU = #{sku}
+		</if>
+	</select>
+	
+	<select id="getByTrackNo" resultType="OrderPackageItem">
+		select opi.* from order_package_item opi
+		left join order_package op on opi.package_id = op.id
+		where op.track_number = #{trackNumber}
+	</select>
+	
+</mapper>

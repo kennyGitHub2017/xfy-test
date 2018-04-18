@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsInventoryDao">
+
+	<sql id="_columns_list">
+		ID, GOODS_SKU, STORE_ID, STORE_SHELF_ID, COUNT, LAST_UPDATED_TIME
+	</sql>
+	
+	<sql id="find_sql">
+		select gi.*,
+		       g.name        GOODS_NAME,
+		       g.category_id GOODS_CATEGORY_ID,
+		       gc.NAME       GOODS_CATEGORY_NAME,
+		       gc1.NAME      GOODS_MID_CATEGORY_NAME,
+		       gc2.NAME      GOODS_BASE_CATEGORY_NAME,
+		       g.unit        GOODS_UNIT,
+		       s.NAME        STORE_NAME,
+		       ss.CODE       STORE_SHELF_CODE,
+		       gic.price     HIS_AVG_PRICE
+		  from GOODS_INVENTORY gi
+		  left join GOODS g
+		    on g.GOODS_SKU = gi.GOODS_SKU
+		  left join STORE s
+		    on s.ID = gi.STORE_ID
+		  left join STORE_SHELF ss
+		    on ss.ID = gi.store_shelf_id
+		  left join GOODS_CATEGORY gc
+		    on gc.ID = g.category_id
+		  left join GOODS_CATEGORY gc1
+		    on gc1.ID = gc.parent_id
+		  left join GOODS_CATEGORY gc2
+		    on gc2.ID = gc1.parent_id
+		  left join goods_inventory_cost gic
+		    on gic.goods_sku = gi.goods_sku
+		
+		<where>
+			<if test="param.goodsSku != null and param.goodsSku != ''">
+				and gi.GOODS_SKU like  '%${param.goodsSku}%'
+			</if>
+			<if test="param.storeId != null">
+				and gi.STORE_ID = #{param.storeId}
+			</if>
+			<if test="param.storeShelfId != null">
+				and gi.STORE_SHELF_ID = #{param.storeShelfId}
+			</if>
+			<if test="param.baseCategoryId != null">
+				and gc2.ID = #{param.baseCategoryId}
+			</if>
+			<if test="param.midCategoryId != null">
+				and gc1.ID = #{param.midCategoryId}
+			</if>
+			<if test="param.categoryId != null">
+				and gc.ID = #{param.categoryId}
+			</if>
+			<if test="param.goodsName != null and param.goodsName != '' ">
+				and g.name  like  '%${param.goodsName}%'
+			</if>
+		</where>
+		
+		order by gi.GOODS_SKU
+	</sql>
+	
+	<select id="getCount" resultType="int">
+		select
+		COUNT
+		from GOODS_INVENTORY
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+		  and STORE_ID =  #{storeId,jdbcType=DECIMAL}
+		  and STORE_SHELF_ID = #{storeShelfId,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="load" resultType="GoodsInventory">
+		select
+		<include refid="_columns_list" />
+		from GOODS_INVENTORY
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+		  and STORE_ID =  #{storeId,jdbcType=DECIMAL}
+		  and STORE_SHELF_ID = #{storeShelfId,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="findPage" resultType="GoodsInventory">
+		<include refid="find_sql"></include>
+	</select>
+	
+	<select id="find" resultType="GoodsInventory">
+		<include refid="find_sql"></include>
+	</select>
+	
+	<insert id="insert">
+		insert into GOODS_INVENTORY (ID, GOODS_SKU, STORE_ID,
+		STORE_SHELF_ID, COUNT, LAST_UPDATED_TIME)
+		values (SEQ_GOODS_INVENTORY.nextval, #{goodsSku,jdbcType=VARCHAR},
+		#{storeId,jdbcType=DECIMAL},
+		#{storeShelfId,jdbcType=DECIMAL}, #{count,jdbcType=DECIMAL}, #{lastUpdatedTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+	<update id="updateById">
+		update GOODS_INVENTORY
+		<set>
+			<if test="goodsSku != null">
+				GOODS_SKU = #{goodsSku,jdbcType=VARCHAR},
+			</if>
+			<if test="storeId != null">
+				STORE_ID = #{storeId,jdbcType=DECIMAL},
+			</if>
+			<if test="storeShelfId != null">
+				STORE_SHELF_ID = #{storeShelfId,jdbcType=DECIMAL},
+			</if>
+			<if test="count != null">
+				COUNT = #{count,jdbcType=DECIMAL},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+	<select id="getBySku" resultType="GoodsInventory">
+	SELECT * FROM GOODS_INVENTORY WHERE GOODS_SKU = #{goodsSku}
+	</select>
+
+	<select id="getCountBySku" resultType="Integer">
+	  SELECT sum(COUNT) count FROM Goods_Inventory a where goods_sku = #{goodsSku} and store_id!=142473
+	</select>
+	
+	<select id="getAvailableCountBySku" resultType="Integer">
+		SELECT a.available_count-a.purchase_count  from  v_goods_inventory_stat  a
+		 where a.goods_sku = #{goodsSku, jdbcType=VARCHAR}
+	</select>
+	
+	<update id="updateInventoryWitchInFewShelf">
+		update goods_inventory i set i.count = 
+		(select sum(count) from goods_inventory ii where ii.goods_sku = i.goods_sku and ii.store_id = 142448)
+		 where i.store_id = 142448 and i.goods_sku in (
+		select gi.goods_sku from goods_inventory gi where gi.store_id = 142448 group by gi.goods_sku, gi.store_id having count(*) > 1
+		)
+		and i.store_shelf_id = (select g.store_shelf_id from goods g where g.goods_sku = i.goods_sku)
+	</update>
+	
+	<delete id="deleteCombined">
+		delete from goods_inventory i where  i.store_id = 142448 and i.goods_sku in (
+		select gi.goods_sku from goods_inventory gi where gi.store_id = 142448 group by gi.goods_sku, gi.store_id having count(*) > 1
+		)
+		and i.store_shelf_id <![CDATA[<>]]> (select g.store_shelf_id from goods g where g.goods_sku = i.goods_sku)
+	</delete>
+</mapper>

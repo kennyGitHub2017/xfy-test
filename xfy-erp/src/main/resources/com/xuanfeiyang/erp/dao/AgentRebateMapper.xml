@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.AgentRebateDao" >
+  <sql id="Base_Column_List" >
+    	r.ID,r.USER_ID,r.ORDER_ID,r.AMOUNT,r.TYPE,r.CURRENT_DEPOSIT,r.CREATED_TIME
+  </sql>
+  
+  <select id="rebateTotal" resultType="DECIMAL">
+  	select sum(r.amount) from xfy.agent_rebate r 
+  	<include refid="_where" />
+  </select>
+  
+  <select id="findPage" resultType="AgentRebate">
+  	select
+  	
+    <include refid="Base_Column_List" />,v.ACCOUNT_NAME,s.contacts,u.name userName,o.order_platform platForm
+    from agent_rebate r
+    left join orders o  on o.id= r.order_id
+	left join xfy.user_info u  on  r.user_id=u.user_id
+	left join xfy.sellers s  on s.agent_user_id=u.user_id
+	left join xfy.V_PLATFORM_ACCOUNT  v on v.SELLER_ID=s.id
+    <include refid="_where" />
+  </select>
+  
+  <sql id="_where">
+    where 1=1
+    <if test="param.userId !=null and param.userId !='' ">
+  		and r.USER_ID= #{param.userId}
+  	</if>
+  	<if test="param.sellerId !=null and param.sellerId !='' ">
+  		and s.ID=#{param.sellerId}
+  	</if>
+  	<if test="param.accountId !=null and param.accountId !='' ">
+  		and v.id=#{param.accountId}
+  	</if>
+  	<if test="param.platForm !=null and param.platForm !='' ">
+  		and  o.ORDER_PLATFORM=#{param.platForm}
+  	</if>
+  	 <if test="param.type !=null and param.type !='' ">
+  		and r.TYPE= #{param.type}
+  	</if>
+    <if test="param.orderId !=null and param.orderId !='' ">
+  		and r.ORDER_ID= #{param.orderId}
+  	</if>
+  	<if test="param.createTimeBegin !=null and param.createTimeBegin!= ''">
+  		and r.CREATED_TIME>=TO_DATE(#{param.createTimeBegin},'yyyy-mm-dd hh24:mi:ss')
+  	</if>
+  	<if test="param.createTimeEnd !=null and param.createTimeEnd != ''">
+  		and r.CREATED_TIME<![CDATA[<=]]>TO_DATE(#{param.createTimeEnd},'yyyy-mm-dd hh24:mi:ss')
+  	</if>
+  	<if test="param.accountName !=null and param.accountName !=''">
+  		and v.ACCOUNT_NAME = #{param.accountName}
+  	</if>
+  </sql>
+  
+  <select id="get" resultType="AgentRebate" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from agent_rebate r
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+
+  <insert id="insert" parameterType="AgentRebate">
+  	<selectKey resultType="int" order="BEFORE" keyProperty="id">
+		select seq_agent_rebate.Nextval as ID from DUAL
+	</selectKey>
+    insert into XFY.AGENT_REBATE (ID,USER_ID, ORDER_ID, AMOUNT, CURRENT_DEPOSIT,TYPE,CREATED_TIME)
+    values (#{id},#{userId,jdbcType=DECIMAL}, #{orderId,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL}, 
+     #{currentDeposit,jdbcType=DECIMAL},#{type,jdbcType=DECIMAL},#{createdTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <select id="countByUserId" resultType="Integer">
+	select count(1) from agent_rebate where order_id is not null 
+	and user_id =#{userId,jdbcType=INTEGER} 
+  </select>
+  
+  <select id="sumAmountByUserId" resultType="Integer">
+  	select SUM(amount) from agent_rebate a
+	WHERE  a.created_time > SYSDATE-30
+	AND  a.user_id =#{userId,jdbcType=INTEGER}
+  </select>
+  
+  	
+	<select id="countOrderByAgentId" resultType="AgentRebate">
+	select s.contacts, v.ACCOUNT_NAME, o.account_id, count(1) count from orders o
+	left join v_platform_account v on o.account_id = v.ID
+	left join sellers s on s.id = v.SELLER_ID
+	where s.agent_user_id = #{userId, jdbcType=INTEGER}
+	group by v.ACCOUNT_NAME, s.contacts,o.account_id
+	</select>
+  	
+  	<select id="findByAgentId" resultType="AgentRebate">
+  		select * from agent_rebate a
+  		where a.user_id = #{userId}
+  	</select>
+  	
+  	<select id="findAgentFundLog" resultType="AgentRebate">
+	select * from (
+		select l.* from agent_rebate l 
+		where l.type = 0
+		and l.user_id = #{param1,jdbcType=INTEGER}
+		order by l.created_time desc
+		) t
+		where rownum &lt;= #{param2,jdbcType=INTEGER}
+	</select>
+  	
+</mapper>

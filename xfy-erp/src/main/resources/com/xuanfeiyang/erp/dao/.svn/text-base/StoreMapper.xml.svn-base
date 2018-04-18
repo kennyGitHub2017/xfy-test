@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.StoreDao">
+
+
+	<!-- 查询仓库信息 -->
+	<select id="find" resultType="Store">
+		SELECT * FROM STORE s order by s.TYPE, s.NAME
+	</select>
+
+	<select id="findByType" parameterType="int" resultType="Store">
+		SELECT * FROM STORE where type=${type}
+	</select>
+
+	<!-- 添加 -->
+	<insert id="save">
+		insert into
+		STORE(ID,NAME,CODE,LOCATION,NOTE,TYPE,LAST_UPDATED_TIME,PARENT_ID)
+		VALUES(SEQ_ID.nextval,#{param.name,jdbcType=VARCHAR},#{param.code,jdbcType=VARCHAR},
+		#{param.location,jdbcType=VARCHAR},#{param.note,jdbcType=VARCHAR},#{param.type,jdbcType=INTEGER},sysdate,111)
+	</insert>
+
+	<!-- 删除 -->
+	<delete id="delete">
+		DELETE FROM STORE WHERE ID=#{id}
+	</delete>
+
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE STORE SET NAME=#{param.name,jdbcType=VARCHAR}
+		,CODE=#{param.code,jdbcType=VARCHAR},
+		LOCATION=#{param.location,jdbcType=VARCHAR},NOTE=#{param.note,jdbcType=VARCHAR},TYPE=#{param.type,jdbcType=INTEGER},LAST_UPDATED_TIME=sysdate
+		WHERE ID=#{param.id}
+	</update>
+
+	<!-- 根据id查询 -->
+	<select id="findById" resultType="Store">
+		SELECT * FROM STORE WHERE ID =#{id}
+	</select>
+	
+	<!-- 根据编码查询 -->
+	<select id="findByCode" resultType="Store">
+	SELECT * FROM STORE WHERE CODE =#{code}
+	<if test="id != null">
+	AND ID = #{id}
+	</if>
+	</select>
+	
+</mapper>
+

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.OrderNoteDao" >
+  <sql id="Base_Column_List" >
+    ID, CONTENT, ORDER_ID, OPER_USER_ID, CREATED_TIME, LAST_UPDATED_TIME
+  </sql>
+  
+  <select id="load" resultType="OrderNote" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ORDER_NOTES
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from ORDER_NOTES
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insert" parameterType="OrderNote" >
+  	<selectKey resultType="int" order="BEFORE" keyProperty="id">
+			select SEQ_ORDER_NOTES.Nextval as ID from DUAL
+	</selectKey>
+    insert into ORDER_NOTES (ID, CONTENT, ORDER_ID, 
+      OPER_USER_ID, CREATED_TIME, LAST_UPDATED_TIME
+      )
+    values (#{id,jdbcType=DECIMAL}, #{content,jdbcType=VARCHAR}, #{orderId,jdbcType=DECIMAL}, 
+      #{operUserId,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{lastUpdatedTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <update id="update" parameterType="OrderNote" >
+    update ORDER_NOTES
+    <set >
+      <if test="content != null" >
+        CONTENT = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=DECIMAL},
+      </if>
+      <if test="operUserId != null" >
+        OPER_USER_ID = #{operUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null" >
+        CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdatedTime != null" >
+        LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+   <select id="queryByOrder" resultType="OrderNote" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ORDER_NOTES
+    where order_id = #{orderId,jdbcType=DECIMAL}
+  </select>
+</mapper>

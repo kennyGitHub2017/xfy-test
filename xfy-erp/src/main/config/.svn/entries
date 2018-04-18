@@ -1,0 +1,37 @@
+10
+
+dir
+3418
+http://it-server-win:8088/svn/project/xfy-erp/trunk/xfy-erp/src/main/config
+http://it-server-win:8088/svn/project
+
+
+
+2015-12-12T06:31:16.438562Z
+3149
+bryant
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+cbe73a5a-9b05-614f-b4fb-0c819b173725
+
+dev
+dir
+
+prd
+dir
+
+test
+dir
+

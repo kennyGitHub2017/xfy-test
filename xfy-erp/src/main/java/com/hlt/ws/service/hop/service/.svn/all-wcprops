@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service
+END
+PrintOrderRequest.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/PrintOrderRequest.java
+END
+Order.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/Order.java
+END
+ObjectFactory.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/ObjectFactory.java
+END
+OrderOnlineService_OrderOnlineServicePort_Client.java
+K 25
+svn:wc:ra_dav:version-url
+V 147
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/OrderOnlineService_OrderOnlineServicePort_Client.java
+END
+HopHopError.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/HopHopError.java
+END
+TransportWay.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/TransportWay.java
+END
+DeleteOrderResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/DeleteOrderResponse.java
+END
+PrintOrderResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/PrintOrderResponse.java
+END
+OrderOnlineServiceService.java
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/OrderOnlineServiceService.java
+END
+CreateOrderRequest.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/CreateOrderRequest.java
+END
+TransportFee.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/TransportFee.java
+END
+DeclareItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/DeclareItem.java
+END
+LookupOrderRequest.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/LookupOrderRequest.java
+END
+CalculateChargeResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/CalculateChargeResponse.java
+END
+GetTransportWayListResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/GetTransportWayListResponse.java
+END
+CalculateChargeRequest.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/CalculateChargeRequest.java
+END
+LookupOrderResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/LookupOrderResponse.java
+END
+package-info.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/package-info.java
+END
+OrderOnlineService.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/OrderOnlineService.java
+END
+AuditOrderResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/AuditOrderResponse.java
+END
+CreateOrderResponse.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/3003/xfy-erp/trunk/xfy-erp/src/main/java/com/hlt/ws/service/hop/service/CreateOrderResponse.java
+END

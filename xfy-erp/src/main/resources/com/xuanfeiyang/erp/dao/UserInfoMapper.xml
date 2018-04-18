@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanfeiyang.erp.dao.UserInfoDao">
+
+	<resultMap id="UserInfoResultMap" type="UserInfo">
+		<id column="USER_ID" property="userId" jdbcType="DECIMAL" />
+		<result column="CODE" property="code" jdbcType="VARCHAR" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="SEX" property="sex" jdbcType="VARCHAR" />
+		<result column="EN_NAME" property="enName" jdbcType="VARCHAR" />
+		<result column="EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="EDUCATION" property="education" jdbcType="DECIMAL" />
+		<result column="DEPARTMENT_ID" property="departmentId" jdbcType="DECIMAL" />
+		<result column="BIRTH_DATE" property="birthDate" jdbcType="TIMESTAMP" />
+		<result column="ENTRY_DATE" property="entryDate" jdbcType="TIMESTAMP" />
+		<result column="RESIGN_DATE" property="resignDate" jdbcType="TIMESTAMP" />
+		<result column="PHONE" property="phone" jdbcType="VARCHAR" />
+		<result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+		<result column="POSITION" property="position" jdbcType="VARCHAR" />
+		<result column="ID_CARD_NO" property="idCardNo" jdbcType="VARCHAR" />
+		<result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+		<result column="NOTE" property="note" jdbcType="VARCHAR" />
+		<result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+		<result column="LAST_UPDATED_TIME" property="lastUpdatedTime" jdbcType="TIMESTAMP" />
+		<result column="SELLER_ID" property="sellerId" jdbcType="DECIMAL" />
+		<result column="IS_MASTER" property="isMaster" jdbcType="DECIMAL" />
+		<result column="IS_ADMIN" property="isAdmin" jdbcType="DECIMAL" />
+		<result column="LOCKED" property="locked" jdbcType="DECIMAL" />
+		<result column="LOCKED_TIME" property="lockedTime" jdbcType="TIMESTAMP" />
+		
+		<result column="USERNAME" property="username" jdbcType="VARCHAR" />
+		<result column="DEPARTMENT_NAME" property="departmentName" jdbcType="VARCHAR" />
+		<result column="TYPE" property="type" jdbcType="DECIMAL" />
+		<result column="STATUS" property="status" jdbcType="DECIMAL" />
+		<result column="STATUS_TIME" property="statusTime" jdbcType="TIMESTAMP" />
+
+		<collection property="roles" column="user_id" ofType="Role"
+			select="com.xuanfeiyang.erp.dao.UserRoleDao.findRolesByUserId">
+		</collection>
+	</resultMap>
+	
+	<sql id="_find_sql">
+		select u.*
+		from USER_INFO u
+	</sql>
+	
+	<sql id="_find_sql_all_columns">
+		select u.*, ul.USERNAME, d.NAME DEPARTMENT_NAME
+		from USER_INFO u
+		left join USER_LOGIN ul on u.USER_ID = ul.USER_ID
+		left join DEPARTMENTS d on u.DEPARTMENT_ID = d.ID
+	</sql>
+	
+	<select id="load" resultMap="UserInfoResultMap">
+		<include refid="_find_sql_all_columns" />
+		where u.USER_ID = #{userId,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="loadByMobile" resultType="UserInfo">
+		<include refid="_find_sql" />
+		where MOBILE = #{mobile,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="loadByIdCardNo" resultType="UserInfo">
+		<include refid="_find_sql" />
+		where ID_CARD_NO = #{icCardNo,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="loadByCode" resultType="UserInfo">
+		<include refid="_find_sql" />
+		where CODE = #{code,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="loadByEmail" resultType="UserInfo">
+		<include refid="_find_sql" />
+		where EMAIL = #{email,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findPage" resultMap="UserInfoResultMap">
+		<include refid="_find_sql_all_columns" />
+		
+		where u.IS_ADMIN = 0
+		
+		<if test="params.sellerId != null">
+			and u.SELLER_ID = #{params.sellerId}
+		</if>
+		<if test="params.sellerFlag != null">
+			and u.SELLER_ID >= 1
+		</if>
+		<if test="params.keywords != null and params.keywords != ''">
+			and (u.CODE like '%' || #{params.keywords} || '%'
+			or u.NAME like '%' || #{params.keywords} || '%'
+			or u.EN_NAME like '%' || #{params.keywords} || '%')
+		</if>
+		
+		order by u.USER_ID
+	</select>
+	
+	<select id="findAll" resultType="UserInfo">
+		<include refid="_find_sql" />
+		where u.IS_ADMIN = 0
+		order by USER_ID
+	</select>
+	
+	<select id="countBySellerId" resultType="int">
+		select count(*) from user_info u where u.seller_id = #{sellerId}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from USER_INFO
+		where USER_ID = #{userId,jdbcType=DECIMAL}
+	</delete>
+	
+	<delete id="deleteBySellerId" parameterType="java.lang.Integer">
+		delete from USER_INFO
+		where SELLER_ID = #{sellerId,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="save">
+		insert into USER_INFO (USER_ID, CODE, NAME,
+		SEX, EN_NAME, EMAIL,
+		EDUCATION, DEPARTMENT_ID, BIRTH_DATE,
+		ENTRY_DATE, RESIGN_DATE, PHONE,
+		MOBILE, POSITION, ID_CARD_NO,
+		ADDRESS, NOTE, CREATED_TIME,
+		LAST_UPDATED_TIME, SELLER_ID, IS_MASTER, TYPE, STATUS, STATUS_TIME)
+		values (#{userId,jdbcType=DECIMAL}, #{code,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{sex,jdbcType=VARCHAR}, #{enName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+		#{education,jdbcType=DECIMAL}, #{departmentId,jdbcType=DECIMAL},
+		#{birthDate,jdbcType=TIMESTAMP},
+		#{entryDate,jdbcType=TIMESTAMP}, #{resignDate,jdbcType=TIMESTAMP}, #{phone,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR}, #{position,jdbcType=VARCHAR},
+		#{idCardNo,jdbcType=VARCHAR},
+		#{address,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP},
+		#{lastUpdatedTime,jdbcType=TIMESTAMP}, #{sellerId,jdbcType=DECIMAL}, 
+		#{isMaster,jdbcType=DECIMAL}, #{type,jdbcType=DECIMAL}, #{status,jdbcType=DECIMAL}, #{statusTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="update">
+		update USER_INFO
+		<set>
+			<if test="code != null">
+				CODE = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				SEX = #{sex,jdbcType=VARCHAR},
+			</if>
+			<if test="enName != null">
+				EN_NAME = #{enName,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				EMAIL = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="education != null">
+				EDUCATION = #{education,jdbcType=DECIMAL},
+			</if>
+			<if test="departmentId != null">
+				DEPARTMENT_ID = #{departmentId,jdbcType=DECIMAL},
+			</if>
+			<if test="birthDate != null">
+				BIRTH_DATE = #{birthDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="entryDate != null">
+				ENTRY_DATE = #{entryDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="resignDate != null">
+				RESIGN_DATE = #{resignDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="phone != null">
+				PHONE = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="mobile != null">
+				MOBILE = #{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="position != null">
+				POSITION = #{position,jdbcType=VARCHAR},
+			</if>
+			<if test="idCardNo != null">
+				ID_CARD_NO = #{idCardNo,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				ADDRESS = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="note != null">
+				NOTE = #{note,jdbcType=VARCHAR},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sellerId != null">
+				SELLER_ID = #{sellerId,jdbcType=DECIMAL},
+			</if>
+			<if test="isMaster != null">
+				IS_MASTER = #{IS_MASTER,jdbcType=DECIMAL},
+			</if>
+			<if test="locked != null">
+				LOCKED = #{locked,jdbcType=DECIMAL},
+			</if>
+			<if test="lockedTime != null">
+				LOCKED_TIME = #{lockedTime,jdbcType=DECIMAL},
+			</if>
+			<if test="type != null">
+				TYPE = #{type,jdbcType=DECIMAL},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=DECIMAL},
+			</if>
+			<if test="statusTime != null">
+				STATUS_TIME = #{statusTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where USER_ID = #{userId,jdbcType=DECIMAL}
+	</update>
+	
+	<select id="findByDepartment" resultType="UserInfo">
+		select ui.* from user_info ui
+		left join departments dp on ui.department_id = dp.id
+		where 1=1
+		<if test="departmentId != null ">
+		AND dp.ID = #{departmentId}
+		</if>
+	</select>
+	
+	<select id="findSaleUser" resultType="UserInfo">
+		select * from 	user_info where 1=1 and(
+		department_id = 142682 OR
+		department_id = 142680 OR
+		department_id = 142681)
+	</select>
+	
+	<select id="findBySellerId" resultType="UserInfo">
+		select ui.* from user_info ui
+		where ui.seller_id = #{sellerId,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="findAgentList" resultType="UserInfo">
+	SELECT USER_ID,NAME FROM USER_INFO WHERE TYPE = 3
+	</select>
+	
+</mapper>

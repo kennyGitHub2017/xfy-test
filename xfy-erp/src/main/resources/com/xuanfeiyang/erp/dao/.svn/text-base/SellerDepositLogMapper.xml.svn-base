@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.SellerDepositLogDao">
+	<sql id="_column_list">
+		l.ID, l.SELLER_ID, l.TYPE, l.BALANCE_BEFORE, l.BALANCE_AFTER, 
+		l.AMOUNT, l.CREATED_TIME, l.NOTE, l.ORDER_ID, l.ORDER_COST, 
+		l.ORDER_SHIPPING_FEE, l.ORDER_FEE, l.OPER_ID, u.name OPER_NAME,l.LOGISTICS_WEIGHT,l.LOGISTICS_SHIPFEE,
+		ss.contacts contacts,l.CREATED_TIME createdTimeStr,l.FUNDS_SERIAL_ID,
+		ss.SELF_FLAG self_seller,ss.VIP_FLAG vip_seller,
+		(select ACCOUNT_NAME from orders a left join v_platform_account v on v.id=a.account_id where a.id=l.order_id) ACCOUNT_NAME
+	</sql>
+	
+	<sql id="FIND_SELLER_DEPOSIT_LOG">
+		select
+		<include refid="_column_list" />
+		from SELLER_DEPOSIT_LOG l
+		left join USER_INFO u on u.USER_ID = l.OPER_ID
+		left join sellers ss on ss.id = l.seller_id
+		<where>
+			<include refid="BASE_SEARCH"></include>
+		</where>
+		order by l.created_time desc
+	</sql>
+	
+	<select id="findDepositLog" resultType="SellerDepositLog">
+		<include refid="FIND_SELLER_DEPOSIT_LOG"></include>
+	</select>
+	
+	<select id="findPage" resultType="SellerDepositLog" parameterType="java.lang.Integer">
+		<include refid="FIND_SELLER_DEPOSIT_LOG"></include>
+	</select>
+	
+	<select id="getTotalInfo" resultType="map">
+		select sum(l.AMOUNT) amountTotal, sum(l.ORDER_COST) costTotal, 
+    	sum(l.ORDER_SHIPPING_FEE) shippingfeeTotal, sum(l.ORDER_FEE) orderFeeTotal
+    	from SELLER_DEPOSIT_LOG l
+    	left join USER_INFO u on u.USER_ID = l.OPER_ID
+    	left join sellers ss on ss.id = l.seller_id
+    	<where>
+			<include refid="BASE_SEARCH"></include>
+		</where>
+	</select>
+
+	<insert id="insert" parameterType="SellerDepositLog">
+		insert into SELLER_DEPOSIT_LOG (ID, SELLER_ID, TYPE,
+		BALANCE_BEFORE, BALANCE_AFTER, AMOUNT,
+		CREATED_TIME,
+		NOTE, ORDER_ID, ORDER_COST,
+		ORDER_SHIPPING_FEE, ORDER_FEE, OPER_ID,FUNDS_SERIAL_ID)
+		values (SEQ_SELLER_DEPOSIT_LOG.nextval,
+		#{sellerId,jdbcType=DECIMAL}, #{type,jdbcType=DECIMAL},
+		#{balanceBefore,jdbcType=DECIMAL}, 
+		#{balanceAfter,jdbcType=DECIMAL}, #{amount,jdbcType=DECIMAL},
+		#{createdTime,jdbcType=TIMESTAMP},
+		#{note,jdbcType=VARCHAR}, #{orderId,jdbcType=DECIMAL},
+		#{orderCost,jdbcType=DECIMAL},
+		#{orderShippingFee,jdbcType=DECIMAL}, #{orderFee,jdbcType=DECIMAL}, 
+		#{operId,jdbcType=DECIMAL},#{fundsSerialId,jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getSumAmountLog" resultType="Integer">
+		select sum(sdl.amount) from seller_deposit_log sdl
+		where 1=1 and sdl.type = 1
+		<if test="params.sellerId != null ">
+		and sdl.seller_id = #{params.sellerId}
+		</if>
+		<if test="params.createdTimeFrom != null">
+		and sdl.created_time > #{params.createdTimeFrom}
+		</if>
+		<if test="params.createdTimeTo != null ">
+		and sdl.created_time <![CDATA[ < ]]> #{params.createdTimeTo}
+		</if>
+	</select>
+	
+	<select id="findDepositLogCount" resultType="Integer">
+		SELECT count(*) FROM  SELLER_DEPOSIT_LOG l
+		left join USER_INFO u on u.USER_ID = l.OPER_ID
+		left join sellers ss on ss.id = l.seller_id
+		<where>
+			<include refid="BASE_SEARCH"></include>
+		</where>
+		order by l.created_time desc
+	</select>
+	
+	<sql id="BASE_SEARCH">
+		<if test="params.sellerId != null">
+			and l.SELLER_ID = #{params.sellerId,jdbcType=DECIMAL}
+		</if>
+		<if test="params.isCompanySeller != null ">
+			and ss.type = #{params.isCompanySeller}
+		</if>
+		<if test="params.accountName != null and params.accountName  != '' ">
+			and exists (select v.ACCOUNT_NAME from orders a left join v_platform_account v on v.id=a.account_id where a.id=l.order_id and v.ACCOUNT_NAME like #{params.accountName,jdbcType=VARCHAR} || '%')
+		</if>
+		<if test="params.type != null">
+			and l.TYPE = #{params.type,jdbcType=DECIMAL}
+		</if>
+		<if test="params.sellerType!=null">
+			<choose>
+				<when test="params.sellerType==1">
+					and ss.SELF_FLAG=1
+				</when>
+				<when test="params.sellerType==0">
+					and ss.SELF_FLAG=0
+				</when>
+				<when test="params.sellerType==-1">
+					and ss.VIP_FLAG=1
+				</when>
+			</choose>
+		</if>
+		<if test="params.amountFrom!=null">
+			and l.AMOUNT >= #{params.amountFrom}
+		</if>
+		<if test="params.amountTo!=null">
+			and l.AMOUNT<![CDATA[ < ]]> #{params.amountTo}
+		</if>
+		<if test="params.orderId != null ">
+			and l.ORDER_ID = #{params.orderId}
+		</if>
+		<if test="params.startDateStr != null and params.startDateStr != '' ">
+			and l.CREATED_TIME >= TO_DATE(#{params.startDateStr},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="params.endDateStr != null and params.endDateStr != '' ">
+			and l.CREATED_TIME <![CDATA[ < ]]> TO_DATE(#{params.endDateStr},'yyyy-mm-dd hh24:mi:ss')+1
+		</if>
+		<if test="params.agentUserId != null">
+			and ss.Agent_User_Id =  #{params.agentUserId}
+		</if>
+	</sql>
+	<select id="getMaxByOrderId" resultType="SellerDepositLog">
+	 select * from seller_deposit_log sdl where sdl.id = (select max(id) from seller_deposit_log  WHERE order_id = #{orderId})
+	</select>
+	
+	<update id="updateLogById">
+	UPDATE SELLER_DEPOSIT_LOG 
+	SET LOGISTICS_WEIGHT=#{params.logisticsWeight},
+	LOGISTICS_SHIPFEE=#{params.logisticsShipFee},
+	IMPORT_FLAG=#{params.importFlag} where ID = #{params.id}
+	</update> 
+	
+	<select id="latestDaysAverageAmount" resultType="java.math.BigDecimal">
+		select round(nvl(sum(d.amount), 0) / #{days}, 2)
+		  from seller_deposit_log d
+		 where d.seller_id = #{sellerId}
+		   and d.type = #{type}
+		   and d.created_time > trunc(sysdate - #{days})
+	</select>
+	
+	<select id="findShippedOrdersDepositLog" resultType="SellerDepositLog">
+		SELECT sdl.* FROM SELLER_DEPOSIT_LOG sdl
+		left join sellers s on sdl.seller_id  = s.id
+		where sdl.type = 0
+		and sdl.order_cost is not null
+		and sdl.order_fee is not null
+		and s.agent_user_id is not null 
+		
+		<if test="params.startDate != null ">
+		and sdl.created_time >= #{params.startDate}
+		</if>
+		<if test="params.endDate != null ">
+		and sdl.created_time <![CDATA[ < ]]> #{params.endDate} +1
+		</if>
+		 
+	</select>
+	
+</mapper>

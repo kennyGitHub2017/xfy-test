@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.CountryDao">
+
+<!--查询地区 -->
+<select id="find" resultType="Country">
+<include refid="sqlBasic"/>
+</select>
+
+<!-- 分页查询地区 -->
+<select id="getPageCountry" resultType="Country">
+<include refid="sqlBasic"/>
+</select>
+
+<!--删除地区 -->
+<delete id="deleteById">
+DELETE FROM COUNTRIES WHERE ID =#{id}
+</delete>
+
+<!--添加国家地区列表 -->
+<insert id="insert">
+INSERT INTO COUNTRIES(ID,EN_NAME,CN_NAME,SHORT_NAME,LAST_UPDATED_TIME)
+VALUES(SEQ_ID.nextval,#{param.enName},#{param.cnName},#{param.shortName},sysdate)
+</insert>
+
+<!--修改地区信息 -->
+<update id="update">
+UPDATE COUNTRIES SET EN_NAME=#{param.enName},CN_NAME=#{param.cnName},
+SHORT_NAME=#{param.shortName},LAST_UPDATED_TIME=sysdate WHERE ID = #{param.id}
+</update>
+
+<!-- 根据id查询地区 -->
+<select id="getCountryById" resultType="Country">
+SELECT * FROM COUNTRIES WHERE ID =#{id}
+</select>
+
+<sql id="sqlBasic">
+SELECT * FROM COUNTRIES
+</sql>
+
+</mapper>

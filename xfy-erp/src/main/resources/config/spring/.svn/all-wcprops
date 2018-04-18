@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/project/!svn/ver/3193/xfy-erp/trunk/xfy-erp/src/main/resources/config/spring
+END
+applicationContext-jdbc.xml
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/1584/xfy-erp/trunk/xfy-erp/src/main/resources/config/spring/applicationContext-jdbc.xml
+END
+applicationContext.xml
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/3193/xfy-erp/trunk/xfy-erp/src/main/resources/config/spring/applicationContext.xml
+END

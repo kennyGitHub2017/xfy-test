@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.StoreShelfDao">
+
+	<!-- 查询 -->
+	<select id="find" resultType="StoreShelf">
+		SELECT ss.*,s.name storeName FROM STORE_SHELF ss left join Store s on
+		ss.STORE_ID = s.Id  WHERE 1=1
+		<if test="storeId != null">
+		 and ss.store_id = #{storeId}
+		</if>
+		order by ss.STORE_ID, ss.CODE
+	</select>
+
+	<!-- 添加 -->
+	<insert id="save">
+		insert into STORE_SHELF(ID,CODE,STORE_ID,NOTE,LAST_UPDATED_TIME)
+		VALUES(SEQ_ID.nextval,#{param.code},#{param.storeId},#{param.note},sysdate)
+	</insert>
+
+	<!-- 删除 -->
+	<delete id="delete">
+		DELETE FROM STORE_SHELF WHERE ID=#{id}
+	</delete>
+
+	<!-- 修改 -->
+	<update id="update">
+		UPDATE STORE_SHELF SET CODE=#{param.code},STORE_ID=#{param.storeId},
+		NOTE=#{param.note},LAST_UPDATED_TIME=sysdate WHERE ID=#{param.id}
+	</update>
+
+	<!-- 根据id查询 -->
+	<select id="findById" resultType="StoreShelf">
+		SELECT * FROM STORE_SHELF WHERE ID=#{id}
+	</select>
+	<!-- 根据仓库查询 -->
+	<select id="findByStore" resultType="StoreShelf">
+		SELECT * FROM STORE_SHELF WHERE STORE_ID=#{storeId} order by STORE_ID, CODE
+	</select>
+	
+	<!-- 根据仓库ID删除 -->
+	<delete id="deleteByStore">
+	DELETE FROM STORE_SHELF WHERE STORE_ID = #{id}
+	</delete>
+	
+	<!-- 根据编号查询 -->
+	<select id="findByCode" resultType="StoreShelf">
+	SELECT * FROM STORE_SHELF WHERE CODE =#{code}
+	<if test="id != null ">
+	AND ID = #{id}
+	</if>
+	</select>
+	
+	<select id="findPage" resultType="StoreShelf">
+	SELECT ss.*,s.name storeName FROM STORE_SHELF ss left join Store s on
+	ss.STORE_ID = s.Id  WHERE 1=1 
+	<if test="param.keywords != null and param.keywords != '' ">
+	AND (ss.code like '%' || #{param.keywords} || '%'
+	OR s.name like '%' || #{param.keywords} || '%')
+	</if>
+	<if test="param.storeId != null">
+		 and ss.store_id = #{param.storeId}
+	</if>
+	order by ss.STORE_ID, ss.CODE
+	</select>
+
+</mapper>

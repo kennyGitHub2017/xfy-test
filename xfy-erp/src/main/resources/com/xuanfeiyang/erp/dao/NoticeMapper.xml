@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.NoticeDao">
+
+	<sql id="Base_Column_List">
+		ID, TYPE, TITLE, CONTENT, START_TIME, END_TIME, CREATED_TIME, LAST_UPDATED_TIME
+	</sql>
+	
+	<select id="load" resultType="Notice" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from NOTICE
+		where ID = #{id,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="findPage" resultType="Notice" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from NOTICE
+		order by CREATED_TIME desc
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from NOTICE
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="insert" parameterType="Notice">
+		insert into NOTICE (ID, TYPE, TITLE,
+		CONTENT, START_TIME, END_TIME,
+		CREATED_TIME, LAST_UPDATED_TIME)
+		values (SEQ_ID.nextval, #{type,jdbcType=DECIMAL}, #{title,jdbcType=VARCHAR},
+		#{content,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP},
+		#{createdTime,jdbcType=TIMESTAMP}, #{lastUpdatedTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="update" parameterType="Notice">
+		update NOTICE
+		<set>
+			<if test="type != null">
+				TYPE = #{type,jdbcType=DECIMAL},
+			</if>
+			<if test="title != null">
+				TITLE = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				CONTENT = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="startTime != null">
+				START_TIME = #{startTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endTime != null">
+				END_TIME = #{endTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+	<select id="getLatestOne" resultType="Notice">
+		select * from (
+		select
+		<include refid="Base_Column_List" />
+		  from NOTICE n
+		 where n.start_time <![CDATA[<=]]> sysdate
+		   and n.end_time > sysdate
+		   order by created_time desc
+		) where rownum = 1 
+	</select>
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsDescDao">
+
+	<sql id="_column_list">
+		ID, GOODS_SKU, LANGUAGE, DESCRIPTION, VERSION, LAST_UPDATED_TIME
+	</sql>
+
+	<select id="findBySku" resultType="GoodsDesc" parameterType="java.lang.String">
+		select
+		<include refid="_column_list" />
+		from GOODS_DESC
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+		order by ID
+	</select>
+	
+	<select id="loadBySkuAndLanguage" resultType="GoodsDesc">
+		select
+		<include refid="_column_list" />
+		from GOODS_DESC
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+		  and LANGUAGE =  #{language,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="deleteBySku" parameterType="java.lang.String">
+		delete from GOODS_DESC
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="insert" parameterType="GoodsDesc">
+		insert into GOODS_DESC (ID, GOODS_SKU, LANGUAGE, DESCRIPTION,
+		VERSION, LAST_UPDATED_TIME)
+		values
+		(SEQ_GOODS_DESC.nextval, #{goodsSku,jdbcType=VARCHAR}, #{language,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{version,jdbcType=DECIMAL},
+		#{lastUpdatedTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<update id="update" parameterType="GoodsDesc">
+		update GOODS_DESC
+		<set>
+			<if test="goodsSku != null">
+				GOODS_SKU = #{goodsSku,jdbcType=VARCHAR},
+			</if>
+			<if test="language != null">
+				LANGUAGE = #{language,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				DESCRIPTION = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="version != null">
+				VERSION = #{version,jdbcType=DECIMAL},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+</mapper>

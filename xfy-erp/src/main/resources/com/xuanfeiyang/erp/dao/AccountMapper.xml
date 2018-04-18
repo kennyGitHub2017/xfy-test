@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.AccountDao">
+	<select id="findPage" resultType="Account">
+		select * from ACCOUNTS where 1=1
+		<choose>
+			<when test="param.accountType != null  and param.accountType=='amazon'">
+				and ACCOUNT_TYPE=#{param.accountType}
+				<if test="param.keywords != null and param.keywords!=''">
+					and (ACCOUNT_NAME like '%'||#{param.keywords}||'%' or AM_MERCHANT_ID=#{param.keywords} or
+					AM_MARKETPLACE_ID=#{param.keywords})
+				</if>
+			</when>
+			<when test="param.accountType != null  and param.accountType=='smt'">
+				and ACCOUNT_TYPE=#{param.accountType}
+				<if test="param.keywords != null and param.keywords!=''">
+					and (ACCOUNT_NAME like '%'||#{param.keywords}||'%' or CREATED_TIME=TO_DATE(#{param.keywords},'yyyy-mm-dd
+					hh24:mi:ss') or
+					SMT_EXPIRETIME=TO_DATE(#{param.keywords},'yyyy-mm-dd hh24:mi:ss') )
+				</if>
+			</when>
+			<when test="param.accountType != null  and param.accountType=='ebay'">
+				and ACCOUNT_TYPE=#{param.accountType}
+				<if test="param.keywords != null and param.keywords!=''">
+					and (ACCOUNT_NAME like '%'||#{param.keywords}||'%' or CREATED_TIME=TO_DATE(#{param.keywords},'yyyy-mm-dd
+					hh24:mi:ss') or
+					EBAY_EXPIRETIME=TO_DATE(#{param.keywords},'yyyy-mm-dd hh24:mi:ss') )
+				</if>
+			</when>
+		</choose>
+		<if test="param.sellerId != null">
+			and SELLER_ID=#{param.sellerId}
+		</if>
+		order by ${param.orderColumns}
+	</select>
+
+
+	<select id="get" parameterType="int" resultType="Account">
+         <![CDATA[ select * from ACCOUNTS where ID = #{id} ]]>
+	</select>
+
+	<select id="getByAccountName" parameterType="int" resultType="Account">
+		select * from ACCOUNTS where ACCOUNT_NAME = #{accountName}
+	</select>
+
+	<select id="find" parameterType="com.xuanfeiyang.erp.param.AccountParam" resultType="Account">
+		select * from ACCOUNTS where 1=1
+		<if test="accountType!= null and accountType!=''">
+			and ACCOUNT_TYPE=#{accountType}
+		</if>
+		<if test="accountName != null and accountName!=''">
+			and ACCOUNT_NAME like '%'||#{accountName}||'%'
+		</if>
+		<if test="status != null">
+			and STATUS=#{status}
+		</if>
+		<if test="sellerId != null">
+			and SELLER_ID=#{sellerId}
+		</if>
+	</select>
+
+	<select id="findCount" parameterType="com.xuanfeiyang.erp.param.AccountParam" resultType="long">
+		select count(1) from ACCOUNTS where 1=1
+		<if test="accountType != null and accountType!=''">
+			and ACCOUNT_TYPE=#{accountType}
+		</if>
+		<if test="accountName != null and accountName!=''">
+			and ACCOUNT_NAME like '%'||#{accountName}||'%'
+		</if>
+		<if test="status != null">
+			and STATUS=#{status}
+		</if>
+		<if test="sellerId != null">
+			and SELLER_ID=#{sellerId}
+		</if>
+	</select>
+
+	<insert id="insert" parameterType="Account" useGeneratedKeys="true" keyProperty="id">
+		<selectKey resultType="long" order="BEFORE" keyProperty="id">
+			select seq_id.Nextval as ID from DUAL
+		</selectKey>
+		<choose>
+			<when test="accountType != null  and accountType=='amazon'">
+				insert into
+				ACCOUNTS(ID,ACCOUNT_NAME,ACCOUNT_TYPE,SELLER_ID,AM_ACCESS_KEY,AM_SECRET_ACCESS_KEY,AM_MERCHANT_ID,AM_MARKETPLACE_ID,AM_SERVICE_URL,STATUS,CREATED_TIME,LAST_UPDATED_TIME)
+				values(#{id},#{accountName},#{accountType},1,#{amAccessKey},#{amSecretAccessKey},#{amMerchantId},#{amMarketplaceId},#{amServiceUrl},#{status},sysdate,sysdate)
+			</when>
+			<when test="accountType != null  and accountType=='smt'">
+				insert into
+				ACCOUNTS(ID,ACCOUNT_NAME,ACCOUNT_TYPE,SELLER_ID,SMT_APPKEY,SMT_SECRET,SMT_ACCESS_TOKEN,SMT_EXPIRETIME,SMT_REFRESH_TOKEN,STATUS,CREATED_TIME,LAST_UPDATED_TIME)
+				values
+				(#{id},#{accountName},#{accountType},1,#{smtAppkey},#{smtSecret},#{smtAccessToken},#{smtExpireTime},#{smtRefreshToken},#{status},sysdate,sysdate)
+			</when>
+			<when test="accountType != null  and accountType=='ebay'">
+				insert into
+				ACCOUNTS(ID,ACCOUNT_NAME,ACCOUNT_TYPE,SELLER_ID,EBAY_TOKEN,EBAY_EXPIRETIME,STATUS,CREATED_TIME,LAST_UPDATED_TIME)
+				values (#{id},#{accountName},#{accountType},1,#{ebayToken},#{ebayExpireTime},#{status},sysdate,sysdate)
+			</when>
+		</choose>
+	</insert>
+
+	<update id="update" parameterType="Account">
+		<choose>
+			<when test="accountType != null  and accountType=='amazon'">
+        		<![CDATA[  update ACCOUNTS set STATUS=#{status},ACCOUNT_NAME=#{accountName},AM_ACCESS_KEY=#{amAccessKey},AM_SECRET_ACCESS_KEY=#{amSecretAccessKey},AM_MERCHANT_ID=#{amMerchantId},AM_MARKETPLACE_ID=#{amMarketplaceId},AM_SERVICE_URL=#{amServiceUrl},
+	       			LAST_UPDATED_TIME=sysdate where ID=#{id}
+	        	]]>
+			</when>
+			<when test="accountType != null  and accountType=='smt'">
+            	<![CDATA[  update ACCOUNTS set SMT_ACCESS_TOKEN=#{smtAccessToken,jdbcType=VARCHAR},SMT_EXPIRETIME=#{smtExpireTime,jdbcType=TIMESTAMP},MAIL=#{mail,jdbcType=VARCHAR},ABBREVIATION=#{abbreviation,jdbcType=VARCHAR},
+	       			LAST_UPDATED_TIME=sysdate where ID=#{id}
+	        	]]>
+			</when>
+			<when test="accountType != null  and accountType=='ebay'">
+           		<![CDATA[  update ACCOUNTS set EBAY_TOKEN=#{ebayToken,jdbcType=VARCHAR},EBAY_EXPIRETIME=#{ebayExpireTime,jdbcType=TIMESTAMP},MAIL=#{mail,jdbcType=VARCHAR},ABBREVIATION=#{abbreviation,jdbcType=VARCHAR},
+           		LAST_UPDATED_TIME=sysdate where ID=#{id}
+	        	]]>
+			</when>
+		</choose>
+	</update>
+
+	<delete id="delete" parameterType="int">
+		<!-- <![CDATA[ delete from ACCOUNTS where ID=#{id} ]]> --> 
+      	<![CDATA[update ACCOUNTS set STATUS=2 where ID=#{id} ]]>
+	</delete>
+	
+</mapper>

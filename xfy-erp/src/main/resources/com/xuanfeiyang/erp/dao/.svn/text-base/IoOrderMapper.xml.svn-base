@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.IoOrderDao">
+	<resultMap id="IoOrderResultMap" type="IoOrder">
+		<result column="ID" property="id" jdbcType="DECIMAL" />
+		<result column="ORDER_NO" property="orderNo" jdbcType="VARCHAR" />
+		<result column="CREATED_USER_ID" property="createdUserId"
+			jdbcType="DECIMAL" />
+		<result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+		<result column="LAST_UPDATED_TIME" property="lastUpdatedTime"
+			jdbcType="TIMESTAMP" />
+		<result column="AUDIT_STATUS" property="auditStatus" jdbcType="DECIMAL" />
+		<result column="AUDIT_USER_ID" property="auditUserId" jdbcType="DECIMAL" />
+		<result column="AUDIT_TIME" property="auditTime" jdbcType="TIMESTAMP" />
+		<result column="STORE_ID" property="storeId" jdbcType="DECIMAL" />
+		<result column="NOTE" property="note" jdbcType="VARCHAR" />
+		<result column="TYPE" property="type" jdbcType="DECIMAL" />
+		<result column="TYPE_DETAIL" property="typeDetail" jdbcType="DECIMAL" />
+		<result column="SELL_ORDER_ID" property="sellOrderId" jdbcType="DECIMAL" />
+		<result column="BUY_ORDER_NO" property="buyOrderNo" jdbcType="VARCHAR" />
+		<result column="IO_DATE" property="ioDate" jdbcType="DATE" />
+
+		<collection property="items" column="ORDER_NO" ofType="IoOrderItem"
+			select="com.xuanfeiyang.erp.dao.IoOrderItemDao.findByOrderNo">
+		</collection>
+	</resultMap>
+	
+	<sql id="BASE_SEARCH">
+		<if test="param.type != null">
+			AND a.TYPE = #{param.type}
+		</if>
+		<if test="param.auditStatus != null">
+			AND a.AUDIT_STATUS = #{param.auditStatus}
+		</if>
+		<if test="param.createdUserId != null">
+			AND a.CREATED_USER_ID = #{param.createdUserId}
+		</if>
+		<if test="param.typeDetail != null and param.typeDetail != '' ">
+			AND a.TYPE_DETAIL = #{param.typeDetail}
+		</if>
+
+		<if test="param.storeId != null">
+			and exists(
+				select 1 from  IO_ORDER_ITEMS f  where f.order_no =a.order_no and (f.STORE_ID=#{param.storeId} or f.UNQUALIFIED_STORE_ID=#{param.storeId})
+			)
+		</if>
+		
+		<if test="param.storeShelf != null and param.storeShelf!=''">
+			and exists(
+				select 1 from  IO_ORDER_ITEMS f  where f.order_no =a.order_no and (f.STORE_SHELF_ID=#{param.storeShelf} or f.UNQUALIFIED_SHELF_ID=#{param.storeShelf})
+			)
+		</if>
+
+		<if test="param.purchaseOrderId != null and param.purchaseOrderId!='' ">
+			AND a.BUY_ORDER_NO = #{param.purchaseOrderId}
+		</if>
+		<if test="param.auditUserId != null and param.auditUserId != '' ">
+			AND a.AUDIT_USER_ID = #{param.auditUserId}
+		</if>
+
+		<if test="param.orderNo != null and param.orderNo!='' ">
+			AND a.ORDER_NO = #{param.orderNo}
+		</if>
+		<if test="param.inOutDateFrom != null and param.inOutDateFrom!='' ">
+			AND a.CREATED_TIME <![CDATA[>= ]]> TO_DATE(#{param.inOutDateFrom},'yyyy-mm-dd hh24:mi:ss') 
+		</if>
+		<if test="param.inOutDateTo != null and param.inOutDateTo!='' ">
+			AND a.CREATED_TIME <![CDATA[<]]>TO_DATE(#{param.inOutDateTo},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.purchaseDateFrom != null and param.purchaseDateFrom!='' ">
+			AND po.CREATED_TIME <![CDATA[>= ]]> TO_DATE(#{param.purchaseDateFrom},'yyyy-mm-dd hh24:mi:ss') 
+		</if>
+		<if test="param.purchaseDateTo != null and param.purchaseDateTo!='' ">
+			AND po.CREATED_TIME <![CDATA[<]]>TO_DATE(#{param.purchaseDateTo},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		
+		<if test="param.createdUserName != null and param.createdUserName!=''">
+			AND u0.name=#{param.createdUserName}
+		</if>
+		
+		<if test="param.purchaserBuyer != null and param.purchaserBuyer!=''">
+			AND u2.name=#{param.purchaserBuyer}
+		</if>
+		
+		<if test="param.skuStatus != null">
+			AND  exists(
+				select 1 from IO_ORDER_ITEMS i
+				inner join goods g on
+				i.order_no = a.order_no and
+				g.goods_sku=i.goods_sku and 
+		g.status=#{param.skuStatus}	
+			)
+		</if>
+		
+		<if test="param.purchaseOrderStatus != null">
+			AND po.status=#{param.purchaseOrderStatus}
+		</if>
+		
+		<if test="param.waybillNo!=null and param.waybillNo!=''">
+			and  exists (
+            	select 1 from purchase_order_waybillno pow where pow.order_no=po.order_no
+            	and pow.WAYBILL_NO=#{param.waybillNo} 
+            )
+		</if>
+		
+		<if test="param.goodsSku!=null and param.goodsSku!=''">
+          		and exists(
+          			select 1 from IO_ORDER_ITEMS i
+          			where i.order_no = a.order_no and i.GOODS_SKU=#{param.goodsSku}
+          		)
+          </if>
+          <if test="param.goodsName!=null and param.goodsName!=''">
+          		and exists(
+          			select 1 from IO_ORDER_ITEMS i
+          			where i.order_no = a.order_no and i.GOODS_NAME like '%' || #{ param.goodsName} || '%'
+          		)
+          </if>
+          
+		<choose>
+			<when test="param.thirdCategory != null">
+				and exists(
+				select 1 from IO_ORDER_ITEMS i left join
+				goods g on g.goods_sku =
+				i.goods_sku
+				where i.order_no = a.order_no and
+				g.category_id = #{param.thirdCategory}
+				)
+			</when>
+			<when test="param.secondCategory != null">
+				and exists(
+				select 1 from IO_ORDER_ITEMS i left join
+				goods g on g.goods_sku =
+				i.goods_sku
+				where i.order_no = a.order_no and
+				g.MID_CATEGORY_ID =
+				#{param.secondCategory}
+				)
+			</when>
+			<when test="param.firstCategory != null">
+				and exists(
+				select 1 from IO_ORDER_ITEMS i left join
+				goods g on g.goods_sku =
+				i.goods_sku
+				where i.order_no = a.order_no and
+				g.BASE_CATEGORY_ID =
+				#{param.firstCategory}
+				)
+			</when>
+		</choose>
+	</sql>
+
+	<select id="load" resultMap="IoOrderResultMap">
+		SELECT s.name storeName, d.name typeName, 
+			u0.name as created_user_name, 
+			u1.name as audit_user_name,
+			a.*  from IO_ORDERS a 
+		left join user_info u0 on a.created_user_id = u0.user_id
+		left join user_info u1 on a.audit_user_id = u1.user_id
+		left join dict d on (d.code = a.type_detail and d.type=201)
+		left join store s on a.store_id = s.id
+		where a.ID = #{id}
+	</select>
+	
+	<delete id="delete">
+		delete from io_orders where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+
+	<select id="purchaseOrderStatistic"  resultType="PurchaseOrderStatistic">
+		SELECT  count(distinct(a.id)) order_count,sum(buy_count) buy_count,sum(i.test_count) test_total,sum(i.QUALIFIED_COUNT) qualified_total,sum(i.UNQUALIFIED_COUNT) un_qualified_total  from IO_ORDERS a 
+		left join user_info u0 on a.created_user_id = u0.user_id
+		left join user_info u1 on a.audit_user_id = u1.user_id
+		left join dict d on (d.code = a.type_detail and d.type=201)
+		left join store s on a.store_id = s.id
+		left join io_order_items i on a.order_no =i.order_no
+		left join purchase_orders po on  a.buy_order_no=po.order_no
+		left join user_info u2 on po.buy_user_id = u2.user_id
+		where 1=1
+		<include refid="BASE_SEARCH"></include>
+	</select>
+	
+	<!-- 查询出入库单 -->
+
+	<select id="findIoOrder" resultType="IoOrder">
+		SELECT s.name storeName, d.name typeName, 
+			u0.name as created_user_name, 
+			u1.name as audit_user_name,
+			po.type  purchase_order_type,
+			po.status   purchase_order_status,
+			po.created_time  purchase_date,
+			u2.name purchase_buyer,
+			po.id buy_order_id,
+			a.*  from IO_ORDERS a
+		left join user_info u0 on a.created_user_id = u0.user_id
+		left join user_info u1 on a.audit_user_id = u1.user_id
+		left join dict d on (d.code = a.type_detail and d.type=201)
+		left join store s on a.store_id = s.id
+		left join purchase_orders po on  a.buy_order_no=po.order_no
+		left join user_info u2 on po.buy_user_id = u2.user_id
+		where 1=1
+		<include refid="BASE_SEARCH"></include>
+		<choose>
+			<when test="param.orderStr != null">
+				order by ${param.orderStr}
+			</when>
+			<otherwise>
+				order by a.last_updated_time asc
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 添加 -->
+	<insert id="add">
+		<selectKey keyProperty="id" resultType="java.lang.Integer"
+			order="BEFORE">
+			select SEQ_IO_ORDERS.nextval from DUAL
+		</selectKey>
+		insert into IO_ORDERS (ID, ORDER_NO,
+		LAST_UPDATED_TIME, AUDIT_STATUS,
+		AUDIT_USER_ID, AUDIT_TIME, STORE_ID,
+		NOTE, TYPE, TYPE_DETAIL,
+		SELL_ORDER_ID, BUY_ORDER_NO,CREATED_USER_ID, IO_DATE,SERIAL_NUMBER,ACCOUNT_NAME)
+		values
+		(#{id,jdbcType=INTEGER}, #{orderNo,jdbcType=VARCHAR},
+		sysdate,
+		#{auditStatus,jdbcType=INTEGER},
+		#{auditUserId,jdbcType=INTEGER},
+		#{auditTime,jdbcType=TIMESTAMP}, #{storeId,jdbcType=INTEGER},
+		#{note,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+		#{typeDetail,jdbcType=INTEGER},
+		#{sellOrderId,jdbcType=INTEGER},
+		#{buyOrderNo,jdbcType=VARCHAR},
+		#{createdUserId,jdbcType=INTEGER},
+		#{ioDate,jdbcType=DATE},
+		#{serialNumber,jdbcType=VARCHAR},
+		#{accountName,jdbcType=VARCHAR}
+		)
+	</insert>
+
+
+	<!-- 根据单号查询 -->
+	<select id="loadByOrderNo" resultType="IoOrder">
+		SELECT b.*,t2.NAME typeName FROM IO_ORDERS b
+		left join dict t2 on (t2.code = b.type_detail and t2.type = 201)
+		where b.ORDER_NO=#{orderNo}
+	</select>
+
+	<update id="updateById">
+		UPDATE IO_ORDERS SET LAST_UPDATED_TIME =
+		sysdate,STORE_ID=#{param.storeId,jdbcType=INTEGER},
+		NOTE =
+		#{param.note,jdbcType=VARCHAR}, TYPE_DETAIL =
+		#{param.typeDetail,jdbcType=INTEGER} WHERE ID=#{id}
+	</update>
+
+<!-- 根据采购单号查询 -->
+<select id="getOrderByPurchaseOrderNo" resultType="IoOrder">
+SELECT * FROM IO_ORDERS where BUY_ORDER_NO=#{orderNo}
+</select>
+
+	<update id="update" parameterType="IoOrder">
+		update IO_ORDERS
+		<set>
+			<if test="orderNo != null">
+				ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="createdUserId != null">
+				CREATED_USER_ID = #{createdUserId,jdbcType=DECIMAL},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="auditStatus != null">
+				AUDIT_STATUS = #{auditStatus,jdbcType=DECIMAL},
+			</if>
+			<if test="auditUserId != null">
+				AUDIT_USER_ID = #{auditUserId,jdbcType=DECIMAL},
+			</if>
+			<if test="auditTime != null">
+				AUDIT_TIME = #{auditTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="storeId != null">
+				STORE_ID = #{storeId,jdbcType=DECIMAL},
+			</if>
+			<if test="note != null">
+				NOTE = #{note,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				TYPE = #{type,jdbcType=DECIMAL},
+			</if>
+			<if test="typeDetail != null">
+				TYPE_DETAIL = #{typeDetail,jdbcType=DECIMAL},
+			</if>
+			<if test="sellOrderId != null">
+				SELL_ORDER_ID = #{sellOrderId,jdbcType=DECIMAL},
+			</if>
+			<if test="buyOrderNo != null">
+				BUY_ORDER_NO = #{buyOrderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="ioDate != null">
+				IO_DATE = #{ioDate,jdbcType=DATE},
+			</if>
+			<if test="serialNumber!=null">
+    			SERIAL_NUMBER=#{serialNumber,jdbcType=VARCHAR}
+    		</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+</mapper>

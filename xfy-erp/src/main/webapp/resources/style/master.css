@@ -1,0 +1,48 @@
+@CHARSET "UTF-8";
+
+.center_div {
+	width: 738px;
+	height: 300px;
+}
+
+.popup {
+	height: 400px;
+	background: #FFF;
+	color: #666;
+	padding:50px 0 55px;
+	text-align: center;
+}
+
+
+.pop_con {
+	line-height: 40px;
+	text-align: center;
+	padding: 20px 0;
+	font-size: 14px;
+}
+
+.pop_con a,.pop_con a:link,.pop_con a:hover {
+	color: #2b9281;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.pop_con a:active {
+	color: #4db3a2;
+}
+
+.popup .btn {
+	height: 40px;
+	width: 120px;
+	background: #4db3a2;
+	border: 1px #53ccb8 solid;
+	color: #FFF;
+	font-size: 16px;
+	font-weight: 400;
+	cursor: pointer;
+	outline:none;
+}
+
+.popup .btn:hover {
+	background: #5bc0af;
+}

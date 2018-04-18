@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/project/!svn/ver/3148/xfy-erp/trunk/xfy-erp/src/main/config/prd/config
+END
+jdbc.properties
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/project/!svn/ver/2914/xfy-erp/trunk/xfy-erp/src/main/config/prd/config/jdbc.properties
+END
+config.properties
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/project/!svn/ver/3148/xfy-erp/trunk/xfy-erp/src/main/config/prd/config/config.properties
+END

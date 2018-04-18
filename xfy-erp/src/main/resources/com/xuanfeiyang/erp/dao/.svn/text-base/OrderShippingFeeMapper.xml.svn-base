@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.OrderShippingFeeDao">
+	
+	<insert id="insert">
+	INSERT INTO ORDER_SHIPPING_FEE(ID,ORDER_ID,SHIPPING_FEE,SHIPPING_NAME)VALUES(
+	SEQ_ORDER_SHIPPING_FEE.nextval,#{param.orderId},#{param.shippingFee},#{param.shippingName})
+	</insert>
+	
+	<select id="getByOrderId" resultType="OrderShippingFee">
+	SELECT * FROM ORDER_SHIPPING_FEE WHERE ORDER_ID = #{orderId}
+	</select>
+	
+	<select id="getById" resultType="OrderShippingFee">
+	SELECT * FROM ORDER_SHIPPING_FEE WHERE ID=#{id}
+	</select>
+	
+	<delete id="deleteByOrderId">
+		DELETE FROM ORDER_SHIPPING_FEE WHERE ORDER_ID=#{orderId}
+	</delete>
+</mapper>

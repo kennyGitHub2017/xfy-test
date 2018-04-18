@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanfeiyang.erp.dao.ShippingFee2Dao">
+
+<select id="getPage" resultType="ShippingFee2">
+<!-- SELECT * FROM SHIPPING_FEE2 where 1=1 -->
+SELECT SHIPPING_FEE2.*, shippings.shipping_name FROM SHIPPING_FEE2 
+left join shippings on SHIPPING_FEE2.SHIPPING_ID = shippings.id where 1=1
+
+<if test="param2.country != null and param2.country != '' ">
+AND SHIPPING_FEE2.COUNTRY LIKE '%'||#{param2.country}||'%'
+</if>
+
+<if test="param2.weightFrom != null">
+ and SHIPPING_FEE2.WEIGHT_FROM >= #{param2.weightFrom}
+</if>
+
+<if test="param2.weightTo != null">
+and SHIPPING_FEE2.WEIGHT_TO <![CDATA[ <=]]> #{param2.weightTo}
+</if>
+
+<if test="param2.shippFee != null ">
+AND SHIPPING_FEE2.SHIPP_FEE = #{param2.shippFee}
+</if>
+
+<if test="param2.shippingId != null ">
+and SHIPPING_FEE2.SHIPPING_ID = #{param2.shippingId}
+</if>
+
+<if test="param2.Id != null ">
+AND SHIPPING_FEE2.ID = #{param2.id}
+</if>
+order by  SHIPPING_FEE2.shipp_fee 
+</select>
+
+<insert id="add">
+insert into SHIPPING_FEE2(ID,SHIPPING_ID,COUNTRY,WEIGHT_FROM,WEIGHT_TO,SHIPP_FEE)
+VALUES(SEQ_ID.nextval,#{shippingId},#{country},#{weightFrom},#{weightTo},#{shippFee})
+</insert>
+
+
+<select id="getFeeByWeight" resultType="ShippingFee2">
+	select * from  shipping_fee2 f2  where  f2.shipping_id = #{shippId}
+	and  f2.WEIGHT_FROM <![CDATA[ <=]]> #{orderWeight}
+	and  #{orderWeight}  <![CDATA[ < ]]>  f2.WEIGHT_TO 
+	and  f2.country like '%'||#{country}||'%'
+	and rownum=1
+</select>
+
+<delete id="deleteById">
+	Delete FROM shipping_fee2 F2 WHERE F2.ID = #{param1}
+</delete>
+
+<select id="getById" resultType="ShippingFee2">
+SELECT * FROM SHIPPING_FEE2 WHERE ID = #{id}
+</select>
+
+<update id="updateById">
+UPDATE shipping_fee2 SET 
+
+<if test="param.shippFee != null">
+SHIPP_FEE = #{param.shippFee} 
+</if>
+
+where Id = #{param.id}
+</update>
+
+</mapper>

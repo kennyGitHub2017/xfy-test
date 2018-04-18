@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsInventoryLockDao">
+
+	<delete id="deleteById">
+		delete from GOODS_INVENTORY_LOCK where ID = #{id, jdbcType=DECIMAL}
+	</delete>
+
+	<delete id="deleteBySaleOrderId">
+		delete from GOODS_INVENTORY_LOCK
+		where SALE_ORDER_ID = #{saleOrderId,jdbcType=DECIMAL}
+	</delete>
+	
+	<delete id="deleteBySaleOrderIdAndSku">
+		delete from GOODS_INVENTORY_LOCK
+		where SALE_ORDER_ID = #{orderId,jdbcType=DECIMAL}
+		and GOODS_SKU = #{sku,jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="insert">
+		insert into GOODS_INVENTORY_LOCK (ID, GOODS_SKU, LOCK_COUNT,
+		SALE_ORDER_ID, LAST_UPDATED_TIME)
+		values (SEQ_GOODS_INVENTORY_LOCK.Nextval, #{goodsSku,jdbcType=VARCHAR},
+		#{lockCount,jdbcType=DECIMAL},
+		#{saleOrderId,jdbcType=DECIMAL}, #{lastUpdatedTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="update">
+		update GOODS_INVENTORY_LOCK
+		<set>
+			<if test="goodsSku!=null and goodsSku!=''">
+				GOODS_SKU = #{goodsSku,jdbcType=VARCHAR},
+			</if>
+			<if test="lockCount!=null">
+				LOCK_COUNT = #{lockCount,jdbcType=INTEGER},
+			</if>
+			<if test="saleOrderId!=null">
+				SALE_ORDER_ID = #{saleOrderId,jdbcType=INTEGER},
+			</if>
+			<if test="lastUpdatedTime!=null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP}
+			</if>
+		</set>
+		where id=#{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="findByOrderIdAndSku" resultType="GoodsInventoryLock">
+		select * from GOODS_INVENTORY_LOCK
+		where SALE_ORDER_ID=#{orderId,jdbcType=INTEGER} and GOODS_SKU=#{sku,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getLockCountBySku" resultType="Integer">
+	SELECT sum(Lock_Count)count  FROM Goods_Inventory_Lock  a where goods_sku = #{goodsSku}
+	</select>
+	
+	<update id="updateByOrderIdAndSku">
+	UPDATE Goods_Inventory_Lock SET LOCK_COUNT = #{lockCount} 
+	where SALE_ORDER_ID=#{saleOrderId,jdbcType=INTEGER} and GOODS_SKU=#{goodsSku,jdbcType=VARCHAR}
+	</update>
+	
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.AgentConfigureDao" >
+  <sql id="Base_Column_List" >
+    	r.ID,r.USER_ID,r.ORDER_ID,r.REBATE_AMOUNT,r.WITHDRAW_AMOUNT,r.TYPE,r.BEFORE_DEPOSIT,r.CREATED_TIME,r.VERSION
+  </sql>
+  
+  
+  <select id="getDeposit" resultType="AgentConfigure">
+  		select * from agent_configure
+  		where user_id=#{agentUserId,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="insert" parameterType="AgentConfigure">
+  	insert into agent_configure(user_id,bond,cost_rebate_rate,created_time,service_rebate_rate)
+  	values (#{param.userId,jdbcType=INTEGER},#{param.bond,jdbcType=INTEGER},
+  	#{param.costRebateRate,jdbcType=DECIMAL},sysdate,#{param.serviceRebateRate,jdbcType=DECIMAL})
+  </insert>
+  
+  <update id="updateDeposit">
+
+  		update agent_configure
+  		<set>
+  			<if test="param.deposit!=null">
+  				DEPOSIT=#{param.deposit},
+  			</if>
+  			<if test="param.costRebateRate!=null">
+  				COST_REBATE_RATE=#{param.costRebateRate},
+  			</if>
+  			<if test="param.ServiceRebateRate!=null">
+  				SERVICE_REBATE_RATE=#{param.serviceRebateRate},
+  			</if>
+  			<if test="param.bond!=null">
+  				BOND=#{param.bond},
+  			</if>
+  			<if test="param.version != null">
+				VERSION = #{param.version}+1,
+			</if>
+  			LAST_UPDATE =sysdate
+  		</set>
+  		where USER_ID=#{param.userId,jdbcType=INTEGER}
+  		<if test="param.version != null">
+				and VERSION = #{param.version}
+		</if>
+  </update>
+  
+	<select id="findPage" resultType="AgentConfigure">
+	select  ac.*,ui.name userName,ui.mobile mobile,ui.email email
+	from agent_configure ac
+	left join user_info ui on
+	ac.user_id = ui.user_id
+		<where>
+		<if test="param.userId != null ">
+		 and ui.user_id = #{param.userId}
+		</if>
+		<if test="param.mobile != null and param.mobile != '' ">
+		and ui.mobile = #{param.mobile}
+		</if>
+		<if test="param.updateTimeFrom != null and param.updateTimeFrom != '' ">
+		and ac.Last_Update > TO_DATE(#{param.updateTimeFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.updateTimeTo != null and param.updateTimeTo != '' ">
+		AND ac.Last_Update <![CDATA[<]]> TO_DATE(#{param.updateTimeTo},'yyyy-mm-dd hh24:mi:ss')+1
+		</if>
+		</where>
+	</select>
+  
+  <select id="getByUserId" resultType="AgentConfigure">
+  select * from agent_configure  where USER_ID=#{param.userId,jdbcType=INTEGER}
+  </select>
+  
+  <insert id="addConfigureLog">
+	INSERT INTO AGENT_CONFIGURE_LOG(USER_ID,OPER_ID,NOTE,CREATED_TIME) 
+	VALUES(#{param.userId,jdbcType=INTEGER},
+	#{param.operId,jdbcType=INTEGER},
+	#{param.note,jdbcType=VARCHAR},
+	#{param.createdTime})
+  </insert>
+  <select id="getLogByUserId" resultType="AgentConfigureLog">
+  select acl.*,ui.name from  AGENT_CONFIGURE_LOG acl left join 
+  user_info ui on acl.oper_id=ui.User_Id
+  where acl.user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+	
+  
+</mapper>

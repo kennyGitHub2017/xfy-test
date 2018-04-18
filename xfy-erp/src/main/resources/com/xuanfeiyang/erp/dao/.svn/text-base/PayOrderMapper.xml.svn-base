@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanfeiyang.erp.dao.PayOrderDao">
+
+	<insert id="add">
+		INSERT INTO pay_order
+		  (APPID,
+		   MCH_ID,
+		   NONCE_STR,
+		   BODY,
+		   OUT_TRADE_NO,
+		   TOTAL_FEE,
+		   SPBILL_CREATE_IP,
+		   TRADE_TYPE,
+		   CREATED_TIME,
+		   SELLER_ID,
+		   SIGN,
+		   STATUS,
+		   TYPE,
+		   PARTNER,
+		   SELLER_EMAIL)
+		VALUES
+		  (#{param.appId,jdbcType=VARCHAR},
+		   #{param.mchId,jdbcType=VARCHAR},
+		   #{param.nonceStr,jdbcType=VARCHAR},
+		   #{param.body,jdbcType=VARCHAR},
+		   #{param.outTradeNo,jdbcType=VARCHAR},
+		   #{param.totalFee,jdbcType=DECIMAL},
+		   #{param.spbillCreateIp,jdbcType=VARCHAR},
+		   #{param.tradeType,jdbcType=VARCHAR},
+		   #{param.createdTime,jdbcType=TIMESTAMP},
+		   #{param.sellerId,jdbcType=DECIMAL},
+		   #{param.sign,jdbcType=VARCHAR},
+		   #{param.status,jdbcType=DECIMAL},
+		   #{param.type,jdbcType=DECIMAL},
+		   #{param.partner,jdbcType=VARCHAR},
+		   #{param.sellerEmail,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateByOutTradeNo">
+		UPDATE pay_order SET STATUS = #{status},PAY_TIME_END=#{payTimeEnd} WHERE OUT_TRADE_NO = #{outTradeNo} 
+	</update>
+	
+	<select id="getByTradeNo" resultType="PayOrder">
+		SELECT * FROM pay_order WHERE OUT_TRADE_NO = #{outTradeNo}
+	</select>
+	
+	<select id="findPage" resultType="PayOrder">
+		select s.CONTACTS,s.MOBILE,p.TOTAL_FEE,p.TYPE,p.CREATED_TIME,p.BODY,p.STATUS,p.OUT_TRADE_NO
+		from PAY_ORDER p 
+		left join SELLERS s on p.SELLER_ID = s.ID
+		<where>
+			<if test="params.contacts != null and params.contacts != '' ">
+				and s.CONTACTS like '%' || #{params.contacts} || '%'
+			</if>
+			<if test="params.outTradeNo != null and params.outTradeNo != '' ">
+				and p.OUT_TRADE_NO like '%' || #{params.outTradeNo} || '%'
+			</if>
+			<if test="params.startDate != null and params.startDate != '' ">
+				and p.CREATED_TIME >= TO_DATE(#{params.startDate},'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="params.endDate != null and params.endDate != '' ">
+				and p.CREATED_TIME <![CDATA[ < ]]> TO_DATE(#{params.endDate},'yyyy-mm-dd hh24:mi:ss') + 1
+			</if>
+			<if test="params.type != null">
+				and p.TYPE = #{params.type}
+			</if>
+			<if test="params.amountFrom != null">
+				and p.TOTAL_FEE >= #{params.amountFrom}
+			</if>
+			<if test="params.amountTo != null">
+				and p.TOTAL_FEE <![CDATA[ <= ]]> #{params.amountTo}
+			</if>
+			<if test="params.status != null">
+				and p.STATUS = #{params.status}
+			</if>
+		</where>
+		order by p.CREATED_TIME desc
+	</select>
+	
+	
+	<select id="export" resultType="PayOrder">
+		select s.CONTACTS,s.MOBILE,p.TOTAL_FEE,p.TYPE,p.CREATED_TIME,p.BODY,p.STATUS,p.OUT_TRADE_NO
+		from PAY_ORDER p 
+		left join SELLERS s on p.SELLER_ID = s.ID
+		<where>
+			<if test="params.contacts != null and params.contacts != '' ">
+				and s.CONTACTS like '%' || #{params.contacts} || '%'
+			</if>
+			<if test="params.outTradeNo != null and params.outTradeNo != '' ">
+				and p.OUT_TRADE_NO like '%' || #{params.outTradeNo} || '%'
+			</if>
+			<if test="params.startDate != null and params.startDate != '' ">
+				and p.CREATED_TIME >= TO_DATE(#{params.startDate},'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="params.endDate != null and params.endDate != '' ">
+				and p.CREATED_TIME <![CDATA[ < ]]> TO_DATE(#{params.endDate},'yyyy-mm-dd hh24:mi:ss') + 1
+			</if>
+			<if test="params.type != null">
+				and p.TYPE = #{params.type}
+			</if>
+			<if test="params.amountFrom != null">
+				and p.TOTAL_FEE >= #{params.amountFrom}
+			</if>
+			<if test="params.amountTo != null">
+				and p.TOTAL_FEE <![CDATA[ <= ]]> #{params.amountTo}
+			</if>
+			<if test="params.status != null">
+				and p.STATUS = #{params.status}
+			</if>
+		</where>
+		order by p.CREATED_TIME desc
+	</select>
+</mapper>

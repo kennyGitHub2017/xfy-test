@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/project/!svn/ver/3410/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/enums
+END
+AccountStatusEnum.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/63/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/enums/AccountStatusEnum.java
+END
+AccountEnum.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/63/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/enums/AccountEnum.java
+END
+GoodsSupplierTypeEnum.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/1682/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/enums/GoodsSupplierTypeEnum.java
+END
+OrderPackageStatus.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/3410/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/enums/OrderPackageStatus.java
+END
+OrderStatusEnum.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/3283/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/enums/OrderStatusEnum.java
+END

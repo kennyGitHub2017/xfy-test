@@ -1,0 +1,545 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/project/!svn/ver/3386/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain
+END
+PlatFormAccountSimple.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/project/!svn/ver/3188/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PlatFormAccountSimple.java
+END
+StoreShelf.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/1497/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/StoreShelf.java
+END
+OrderMarkShipping.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/3353/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderMarkShipping.java
+END
+OrderPackagePrintExport.java
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/project/!svn/ver/3111/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderPackagePrintExport.java
+END
+PurchaseOrderStatistic.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/3101/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PurchaseOrderStatistic.java
+END
+OrderItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/3072/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderItem.java
+END
+PurchaseRequestOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/1520/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PurchaseRequestOrder.java
+END
+OrderNote.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/655/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderNote.java
+END
+Seller.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/3183/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Seller.java
+END
+OrderPackage.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2843/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderPackage.java
+END
+Country.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/21/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Country.java
+END
+Department.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/111/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Department.java
+END
+RolePower.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/310/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/RolePower.java
+END
+SellerFeeWithHold.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/2227/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SellerFeeWithHold.java
+END
+OrderShippingFee.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/801/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderShippingFee.java
+END
+IoOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/2392/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/IoOrder.java
+END
+ShippingAddressConfig.java
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/project/!svn/ver/1179/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/ShippingAddressConfig.java
+END
+OrderMarkShippingResult.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/757/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderMarkShippingResult.java
+END
+SellerDepositLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/3053/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SellerDepositLog.java
+END
+AgentConfigureLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/3289/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/AgentConfigureLog.java
+END
+CurrencyRates.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/19/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/CurrencyRates.java
+END
+SellerConfig.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/154/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SellerConfig.java
+END
+Store.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/239/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Store.java
+END
+PurchaseOrderExport.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/2658/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PurchaseOrderExport.java
+END
+SellerDeposit.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/2294/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SellerDeposit.java
+END
+GoodsPackingMaterial.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/221/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsPackingMaterial.java
+END
+ExportOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/3173/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/ExportOrder.java
+END
+UserPower.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/1798/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/UserPower.java
+END
+ShippingFee2.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3386/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/ShippingFee2.java
+END
+UserInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/3320/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/UserInfo.java
+END
+GoodsCombination.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/1561/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsCombination.java
+END
+SellerGoods.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/613/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SellerGoods.java
+END
+Dict.java
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/project/!svn/ver/26/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Dict.java
+END
+PurchaseRequestOrderItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/project/!svn/ver/1520/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PurchaseRequestOrderItem.java
+END
+OrderBuyerInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/2680/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderBuyerInfo.java
+END
+EmailSenderConfig.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/2623/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/EmailSenderConfig.java
+END
+Shipping.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/3339/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Shipping.java
+END
+Employee.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/248/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Employee.java
+END
+PurchaseOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/3101/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PurchaseOrder.java
+END
+BankCard.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/3271/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/BankCard.java
+END
+User.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/140/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/User.java
+END
+OrderPackageItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/1923/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderPackageItem.java
+END
+PurchaseOrderWayBillNo.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/2486/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PurchaseOrderWayBillNo.java
+END
+GoodsDesc.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/592/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsDesc.java
+END
+GoodsPlatformCategory.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/592/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsPlatformCategory.java
+END
+GoodsInventory.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/3200/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsInventory.java
+END
+OrderRefund.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2764/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderRefund.java
+END
+GoodsInventorySum.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/256/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsInventorySum.java
+END
+SysFunction.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/310/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SysFunction.java
+END
+OrderItemWithShippingInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/project/!svn/ver/1027/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderItemWithShippingInfo.java
+END
+OrderStatistic.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/2189/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderStatistic.java
+END
+EmailTask.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/2644/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/EmailTask.java
+END
+GoodsCostLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2997/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsCostLog.java
+END
+UserLogin.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/634/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/UserLogin.java
+END
+IoOrderItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/3040/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/IoOrderItem.java
+END
+GoodsInventoryStat.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/project/!svn/ver/3200/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsInventoryStat.java
+END
+ListingSku.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/3174/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/ListingSku.java
+END
+Notice.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/3083/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Notice.java
+END
+PurchaseOrderLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/1753/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PurchaseOrderLog.java
+END
+Goods.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/3068/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Goods.java
+END
+OrderLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/1935/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/OrderLog.java
+END
+GoodsInventoryLock.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/316/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsInventoryLock.java
+END
+SkuMapping.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/2591/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SkuMapping.java
+END
+Order.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/3337/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Order.java
+END
+Account.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/1117/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Account.java
+END
+GoodsTransferOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/project/!svn/ver/2431/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsTransferOrder.java
+END
+GoodsCombinationItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/project/!svn/ver/1388/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsCombinationItem.java
+END
+SimpleOrderWithAccount.java
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/project/!svn/ver/1305/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SimpleOrderWithAccount.java
+END
+AgentRebate.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/3302/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/AgentRebate.java
+END
+GoodsSupplierPrice.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/321/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsSupplierPrice.java
+END
+PurchaseWarn.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2165/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PurchaseWarn.java
+END
+UserLoginLog.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/1902/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/UserLoginLog.java
+END
+PayOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/3091/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PayOrder.java
+END
+StockOutSku.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2204/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/StockOutSku.java
+END
+WithdrawApply.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/3267/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/WithdrawApply.java
+END
+GoodsSupplier.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/1786/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsSupplier.java
+END
+UserRole.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/307/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/UserRole.java
+END
+AgentConfigure.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/3371/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/AgentConfigure.java
+END
+PurchaseOrderItem.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/2646/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PurchaseOrderItem.java
+END
+SysInformation.java
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/1930/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SysInformation.java
+END
+UsersPower.java
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/2048/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/UsersPower.java
+END
+SysPage.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/1231/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SysPage.java
+END
+PaypalAccount.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/22/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PaypalAccount.java
+END
+PlatformAccount.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/2766/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/PlatformAccount.java
+END
+SysModule.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/2554/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/SysModule.java
+END
+ShippingFee.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/1074/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/ShippingFee.java
+END
+Role.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/307/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/Role.java
+END
+GoodsCategory.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/561/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsCategory.java
+END
+TrackNumber.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/1274/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/TrackNumber.java
+END
+GoodsInventoryCost.java
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/403/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/domain/GoodsInventoryCost.java
+END

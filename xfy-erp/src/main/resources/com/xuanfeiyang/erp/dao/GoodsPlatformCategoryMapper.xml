@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsPlatformCategoryDao">
+
+	<sql id="_column_list">
+		GOODS_SKU, EBAY_CAT_ID, SMT_CAT_ID, AM_CAT_ID, LAST_UPDATED_TIME
+	</sql>
+	
+	<select id="load" resultType="GoodsPlatformCategory"
+		parameterType="java.lang.String">
+		select
+		<include refid="_column_list" />
+		from GOODS_PLATFORM_CATEGORY
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from GOODS_PLATFORM_CATEGORY
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="insert" parameterType="GoodsPlatformCategory">
+		insert into GOODS_PLATFORM_CATEGORY (GOODS_SKU, EBAY_CAT_ID,
+		SMT_CAT_ID,
+		AM_CAT_ID, LAST_UPDATED_TIME)
+		values (#{goodsSku,jdbcType=VARCHAR}, #{ebayCatId,jdbcType=VARCHAR},
+		#{smtCatId,jdbcType=VARCHAR},
+		#{amCatId,jdbcType=VARCHAR}, #{lastUpdatedTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="update" parameterType="GoodsPlatformCategory">
+		update GOODS_PLATFORM_CATEGORY
+		<set>
+			<if test="ebayCatId != null">
+				EBAY_CAT_ID = #{ebayCatId,jdbcType=VARCHAR},
+			</if>
+			<if test="smtCatId != null">
+				SMT_CAT_ID = #{smtCatId,jdbcType=VARCHAR},
+			</if>
+			<if test="amCatId != null">
+				AM_CAT_ID = #{amCatId,jdbcType=VARCHAR},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="GoodsPlatformCategory">
+		update GOODS_PLATFORM_CATEGORY
+		set EBAY_CAT_ID = #{ebayCatId,jdbcType=VARCHAR},
+		SMT_CAT_ID = #{smtCatId,jdbcType=VARCHAR},
+		AM_CAT_ID = #{amCatId,jdbcType=VARCHAR},
+		LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP}
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+	</update>
+</mapper>

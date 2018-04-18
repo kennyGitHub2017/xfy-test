@@ -1,0 +1,167 @@
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/project/!svn/ver/3415/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders
+END
+order-package.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/3415/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-package.jsp
+END
+order-package-print.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/3337/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-package-print.jsp
+END
+print-sfozxb.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/818/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/print-sfozxb.jsp
+END
+print-addresssku.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/818/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/print-addresssku.jsp
+END
+seller-order-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/3359/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/seller-order-list.jsp
+END
+import-tracknumber.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3020/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/import-tracknumber.jsp
+END
+print-pingyou.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/882/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/print-pingyou.jsp
+END
+mark-shipping.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/757/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/mark-shipping.jsp
+END
+order-return-note.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2065/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-return-note.jsp
+END
+print-blsxb.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/818/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/print-blsxb.jsp
+END
+print-10574.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/818/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/print-10574.jsp
+END
+order-export.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/2760/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-export.jsp
+END
+package-shipping.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/1183/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/package-shipping.jsp
+END
+order-email-view.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/2701/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-email-view.jsp
+END
+package-scanning.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/3036/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/package-scanning.jsp
+END
+print-sfels.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/818/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/print-sfels.jsp
+END
+orderInfo.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/2827/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/orderInfo.jsp
+END
+order-waitsend.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/3337/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-waitsend.jsp
+END
+order-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/3359/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-list.jsp
+END
+batchedit-package.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/883/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/batchedit-package.jsp
+END
+order-email.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2644/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-email.jsp
+END
+tracker-number.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/2843/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/tracker-number.jsp
+END
+order-email-logs.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/3106/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-email-logs.jsp
+END
+order-return-import.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/2279/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/order-return-import.jsp
+END
+orderInfoNew.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/3101/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/orderInfoNew.jsp
+END
+batchedit-order.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/1949/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/batchedit-order.jsp
+END
+print-eubA4.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/818/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/orders/print-eubA4.jsp
+END

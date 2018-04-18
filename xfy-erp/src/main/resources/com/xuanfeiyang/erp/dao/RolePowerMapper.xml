@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.RolePowerDao">
+
+	<sql id="_column_list">
+		ID, ROLE_ID, POWER_CODE, POWER_TYPE
+	</sql>
+	
+	<sql id="_find_sql">
+		select
+		<include refid="_column_list" />
+		from ROLE_POWERS
+	</sql>
+	
+	<select id="findByRoleId" resultType="RolePower" parameterType="java.lang.Integer">
+		<include refid="_find_sql" />
+		where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+	</select>
+	
+	<delete id="deleteByRoleId" parameterType="java.lang.Integer">
+		delete from ROLE_POWERS
+		where ROLE_ID = #{roleId,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="insert" parameterType="RolePower">
+		insert into ROLE_POWERS (ID, ROLE_ID, POWER_CODE,
+		POWER_TYPE, CREATED_TIME)
+		values (SEQ_POWERS.nextval, #{roleId,jdbcType=DECIMAL},
+		#{powerCode,jdbcType=VARCHAR},
+		#{powerType,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<select id="findByUserId" resultType="RolePower" parameterType="java.lang.Integer">
+		<include refid="_find_sql" />
+		where ROLE_ID in (select ROLE_ID from USER_ROLES where USER_ID = #{userId,jdbcType=DECIMAL})
+	</select>
+	
+</mapper>

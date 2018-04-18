@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.IoOrderItemDao">
+
+	<sql id="detail_sql">
+		select b.created_time as order_created,u.name as create_user_name,u.name as
+		buy_user_name,b.buy_order_no,c.name as store_name ,d.code
+		shelf_name,e.code as unqualified_shelf,
+		b.buy_order_no,t.name as reason, g.old_sku,
+		a.* from io_order_items a
+		inner join io_orders b on a.order_no = b.order_no
+		left join store c on c.id = a.store_id
+		left join store_shelf d on d.id = a.store_shelf_id
+		left join store_shelf e on e.id = a.unqualified_shelf_id
+		left join dict t on t.code = a.reason and t.type=220
+		left join user_info u on u.user_id = b.created_user_id
+		left join goods g on g.goods_sku = a.goods_sku
+	</sql>
+	<select id="detail" resultType="IoOrderItem">
+		<include refid="detail_sql" />
+		where b.order_no=#{orderNo}
+	</select>
+
+	<insert id="add" parameterType="IoOrderItem">
+		<selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">
+			select SEQ_IO_ORDER_ITEMS.nextval from DUAL
+		</selectKey>
+		
+		insert into IO_ORDER_ITEMS (ID, ORDER_NO, GOODS_SKU,
+		GOODS_NAME, GOODS_COST, BUY_COUNT, TEST_COUNT,
+		QUALIFIED_COUNT, STORE_ID, STORE_SHELF_ID,
+		UNQUALIFIED_COUNT, REASON, UNQUALIFIED_STORE_ID,UNQUALIFIED_SHELF_ID,
+		STAT_COUNT, STAT_PRICE, STAT_AMOUNT,
+		LAST_UPDATED_TIME,PACKING_MATERIAL_FEE,GOODS_WEIGHT)
+		values (#{id,jdbcType=DECIMAL}, #{orderNo,jdbcType=VARCHAR},
+		#{goodsSku,jdbcType=VARCHAR},
+		#{goodsName,jdbcType=VARCHAR}, #{goodsCost,jdbcType=DECIMAL}, 
+		#{buyCount,jdbcType=DECIMAL}, #{testCount,jdbcType=DECIMAL},
+		#{qualifiedCount,jdbcType=DECIMAL}, #{storeId,jdbcType=DECIMAL},
+		#{storeShelfId,jdbcType=DECIMAL},
+		#{unqualifiedCount,jdbcType=DECIMAL}, #{reason,jdbcType=VARCHAR},
+		#{unqualifiedStoreId,jdbcType=DECIMAL},#{unqualifiedShelfId,jdbcType=DECIMAL},
+		#{statCount,jdbcType=DECIMAL}, #{statPrice,jdbcType=DECIMAL},
+		#{statAmount,jdbcType=DECIMAL},
+		#{lastUpdatedTime,jdbcType=TIMESTAMP},
+		#{packingMaterialFee,jdbcType=DECIMAL},
+		#{goodsWeight,jdbcType=DECIMAL}
+		)
+	</insert>
+
+	<!-- 根据订单号查询 -->
+	<select id="findByOrderNo" resultType="IoOrderItem">
+		SELECT i.*, g.old_sku, ss.code store_shelf
+		  FROM IO_ORDER_ITEMS i
+		  left join goods g
+		    on i.goods_sku = g.goods_sku
+		  left join store_shelf ss
+		    on ss.id = i.store_shelf_id 
+		 WHERE i.ORDER_NO=#{orderNo}
+	</select>
+
+	<!-- 根据id删除 -->
+	<delete id="deleteById">
+		DELETE FROM IO_ORDER_ITEMS WHERE ID=#{id}
+	</delete>
+	
+	<delete id="deleteByOrderNo">
+		DELETE FROM IO_ORDER_ITEMS WHERE ORDER_NO = #{orderNo}
+	</delete>
+
+	<!-- 商品收发明细 -->
+	<select id="goodsIoItem" resultType="IoOrderItem">
+		SELECT st.name storeName, o.type_detail, d.name type_detail_name, 
+		o.type, d1.name type_name, ss.code store_shelf, i.* FROM IO_ORDER_ITEMS i
+		LEFT JOIN IO_ORDERS o ON i.order_no = o.order_no
+		LEFT JOIN DICT d on (o.type_detail = d.CODE AND d.type=201)
+		LEFT JOIN DICT d1 on (o.type = d1.CODE AND d1.type=200)
+		LEFT JOIN STORE st on st.id = i.store_id
+		LEFT JOIN STORE_SHELF ss on ss.id = i.store_shelf_id 
+		where audit_status = 1
+
+		<if test="param.goodsSku != null and param.goodsSku != ''">
+			AND i.GOODS_SKU = #{param.goodsSku}
+		</if>
+
+		<if test="param.startDate != null and param.startDate != ''">
+			AND i.LAST_UPDATED_TIME >= TO_DATE(#{param.startDate},'yyyy-mm-dd')
+		</if>
+
+		<if test="param.endDate != null and param.endDate != ''">
+			AND i.LAST_UPDATED_TIME <![CDATA[<]]> TO_DATE(#{param.endDate},'yyyy-mm-dd') + 1
+		</if>
+
+		<if test="param.storeId != null and param.storeId != ''">
+			AND i.STORE_ID = #{param.storeId}
+		</if>
+
+		<if test="param.storeShelf != null and param.storeShelf != ''">
+			AND i.STORE_SHELF_ID = #{param.storeShelf}
+		</if>
+		<if test="param.goodsName != null and param.goodsName != ''">
+			AND i.goods_name = #{param.goodsName}
+		</if>
+		
+		order by i.last_updated_time
+		
+	</select>
+	
+	<select id="statisticIoItem" resultType="PurchaseOrderStatistic">
+			SELECT  sum(decode(o.type, 0, i.qualified_count +  nvl(i.unqualified_count,0), 0)) total_in,
+       				sum(decode(o.type, 1, i.qualified_count, 0)) total_out
+        FROM IO_ORDER_ITEMS i
+		LEFT JOIN IO_ORDERS o ON i.order_no = o.order_no
+		LEFT JOIN DICT d on (o.type_detail = d.CODE AND d.type=201)
+		LEFT JOIN DICT d1 on (o.type = d1.CODE AND d1.type=200)
+		LEFT JOIN STORE st on st.id = i.store_id
+		LEFT JOIN STORE_SHELF ss on ss.id = i.store_shelf_id 
+		where audit_status = 1
+
+		<if test="param.goodsSku != null and param.goodsSku != '' ">
+			AND i.GOODS_SKU = #{param.goodsSku}
+		</if>
+
+		<if test="param.startDate != null and param.startDate != '' ">
+	<![CDATA[ AND i.LAST_UPDATED_TIME >= TO_DATE(#{param.startDate},'yyyy-mm-dd hh24:mi:ss')]]>
+		</if>
+
+		<if test="param.endDate != null and param.endDate != '' ">
+	<![CDATA[ AND i.LAST_UPDATED_TIME <= TO_DATE(#{param.endDate},'yyyy-mm-dd hh24:mi:ss')+1]]>
+		</if>
+
+		<if test="param.storeId != null and param.storeId != '' ">
+			AND i.STORE_ID = #{param.storeId}
+		</if>
+
+		<if test="param.storeShelf != null and param.storeShelf != '' ">
+			AND i.STORE_SHELF_ID = #{param.storeShelf}
+		</if>
+		<if test="param.goodsName != null and param.goodsName != '' ">
+			AND i.goods_name = #{param.goodsName}
+		</if>
+	</select>
+	
+	<update id="update">
+		update IO_ORDER_ITEMS
+		<set>
+			<if test="orderNo != null">
+				ORDER_NO = #{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsSku != null">
+				GOODS_SKU = #{goodsSku,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsName != null">
+				GOODS_NAME = #{goodsName,jdbcType=VARCHAR},
+			</if>
+			<if test="buyCount != null">
+				BUY_COUNT = #{buyCount,jdbcType=DECIMAL},
+			</if>
+			<if test="testCount != null">
+				TEST_COUNT = #{testCount,jdbcType=DECIMAL},
+			</if>
+			<if test="testType != null">
+				TEST_TYPE = #{testType,jdbcType=DECIMAL},
+			</if>
+			<if test="qualifiedCount != null">
+				QUALIFIED_COUNT = #{qualifiedCount,jdbcType=DECIMAL},
+			</if>
+			<if test="storeId != null">
+				STORE_ID = #{storeId,jdbcType=DECIMAL},
+			</if>
+			<if test="storeShelfId != null">
+				STORE_SHELF_ID = #{storeShelfId,jdbcType=DECIMAL},
+			</if>
+			<if test="unqualifiedCount != null">
+				UNQUALIFIED_COUNT = #{unqualifiedCount,jdbcType=DECIMAL},
+			</if>
+			<if test="reason != null">
+				REASON = #{reason,jdbcType=VARCHAR},
+			</if>
+			<if test="unqualifiedStoreId != null">
+				UNQUALIFIED_STORE_ID = #{unqualifiedStoreId,jdbcType=DECIMAL},
+			</if>
+			<if test="unqualifiedShelfId != null">
+				UNQUALIFIED_SHELF_ID = #{unqualifiedShelfId,jdbcType=DECIMAL},
+			</if>
+			<if test="statCount != null">
+				STAT_COUNT = #{statCount,jdbcType=DECIMAL},
+			</if>
+			<if test="statPrice != null">
+				STAT_PRICE = #{statPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="statAmount != null">
+				STAT_AMOUNT = #{statAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="goodsCost != null">
+				GOODS_COST = #{goodsCost,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+	<select id="supplierScore" resultType="IoOrderItem">
+		select i.*,c.company_name as supplier_name,a.created_time as order_created from  io_order_items i
+		left join io_orders a on i.order_no = a.order_no
+		left join purchase_orders  b  on a.buy_order_no = b.order_no
+		left join goods_supplier c on c.id = b.supplier_id
+		where a.type= 0 and a.type_detail=56
+		<if test="param.supplierId!=null">
+			AND  c.id=#{param.supplierId}
+		</if>
+		<if test="param.createdTimeFrom != null and param.createdTimeFrom!='' ">
+			<![CDATA[ AND a.CREATED_TIME >= TO_DATE(#{param.createdTimeFrom},'yyyy-mm-dd hh24:mi:ss')]]>
+		</if>
+		<if test="param.createdTimeTo != null and param.createdTimeTo!='' ">
+			<![CDATA[ AND a.CREATED_TIME >= TO_DATE(#{param.createdTimeTo},'yyyy-mm-dd hh24:mi:ss')]]>
+		</if>
+		order by  i.goods_sku
+	</select>
+	
+	<select id="getLatestGoodsCostBySku" resultType="DECIMAL">
+		select goods_cost from (
+			select  * from  xfy.io_order_items i
+			where i.goods_sku=#{goodsSku}
+			and i.order_no in(
+			    select o.order_no from xfy.io_orders o where o.type=0 and o.type_detail=56
+			)
+			order by i.last_updated_time desc)
+		where rownum=1
+	</select>
+	
+	<select id="getLatestGoodsWeightBySku" resultType="DECIMAL">
+		select goods_weight from (
+			select  * from  xfy.io_order_items i
+			where i.goods_sku=#{goodsSku}
+			and i.order_no in(
+			    select o.order_no from xfy.io_orders o where o.type=0 and o.type_detail=56
+			)
+			order by i.last_updated_time desc)
+		where rownum=1
+	</select>
+	
+	<select id="getLatestGoodsPackingMaterialFeeBySku" resultType="DECIMAL">
+		select packing_material_fee from (
+			select  * from  xfy.io_order_items i
+			where i.goods_sku=#{goodsSku}
+			and i.order_no in(
+			    select o.order_no from xfy.io_orders o where o.type=0 and o.type_detail=56
+			)
+			order by i.last_updated_time desc)
+		where rownum=1
+	</select>
+	
+	
+	<select id="findIoOrderItem" resultType="IoOrderItem">
+	<include refid="IoOrderItemColumn"></include>
+	<include refid="IoOrderItemSql"></include>
+	</select>
+	
+	<select id="IoOrderList" resultType="IoOrderItem">
+	<include refid="IoOrderItemColumn"></include>
+	<include refid="IoOrderItemSql"></include>
+	</select>
+	
+	<select id="findIoOrderItemCount" resultType="Integer">
+	select Count(*)
+	<include refid="IoOrderItemSql"></include>
+	</select>
+	
+	<sql id="IoOrderItemColumn">
+		select
+		iot.goods_sku goodsSku,
+		dc2.name goodsStatus,
+		gs.name goodsName,
+		gs.Develop_Time developTime,
+		ui.name developUser,
+		ui1.name buyUser,
+		io.created_time lastUpdatedTime,
+		io.created_time endDate,
+		io.order_no orderNo,
+		io.buy_order_no buyOrderNo,
+		io.Account_Name accountName,
+		dc.name typeName,
+		dc1.name typeDetailName,
+		iot.qualified_count qualifiedCount,
+		iot.goods_cost goodsCost,
+		sf.code shelfName,
+		ss.name  storeName
+	</sql>
+	
+	<sql id="IoOrderItemSql">
+		from io_order_items iot
+		left join io_orders io on iot.order_no = io.order_no
+		left join goods gs on gs.goods_sku = iot.goods_sku
+		left join STORE_SHELF sf on sf.id = iot.store_shelf_id
+		left join store ss on ss.id = iot.store_id
+		left join dict dc on (dc.code = io.type AND dc.type = 200)
+		left join dict dc1 on (dc1.code = io.type_detail and dc1.type = 201)
+		left join dict dc2 on (dc2.code = gs.status and dc2.type = 102)
+		left join user_info ui on ui.user_id = gs.Develop_User
+		left join user_info ui1 on ui1.user_id = gs.buy_user
+		WHERE 1=1 AND io.AUDIT_STATUS = 1
+		<if test="param.goodsStatus != null and param.goodsStatus != '' ">
+			AND dc2.name = #{param.goodsStatus}
+		</if>
+		<if test="param.developUser != null and param.developUser != '' ">
+			AND ui.name = #{param.developUser}
+		</if>
+		<if test="param.buyUser != null and param.buyUser != '' ">
+			AND ui1.name = #{param.buyUser}
+		</if>
+		<if test="param.goodsSku != null and param.goodsSku != '' ">
+			AND iot.goods_sku = #{param.goodsSku}
+		</if>
+		<if test="param.goodsName != null and param.goodsName != '' ">
+			AND gs.name = #{param.goodsName}
+		</if>
+		<if test="param.storeShelfId != null">
+			AND iot.STORE_SHELF_ID = #{param.storeShelfId}
+		</if>
+		<if test="param.storeId != null ">
+			AND iot.STORE_ID = #{param.storeId}
+		</if>
+		<if test="param.dateTimeFrom != null and param.dateTimeFrom != '' ">
+			AND io.created_time >= TO_DATE(#{param.dateTimeFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.dateTimeTo != null and param.dateTimeTo != '' ">
+			AND io.created_time <![CDATA[<]]> TO_DATE(#{param.dateTimeTo},'yyyy-mm-dd hh24:mi:ss')+1
+		</if>
+		<if test="param.typeDetail != null ">
+			AND io.TYPE_DETAIL = #{param.typeDetail}
+		</if>
+		<if test="param.typeDetail2 != null">
+			AND io.TYPE_DETAIL = #{param.typeDetail2}
+		</if>
+	</sql>
+	
+</mapper>

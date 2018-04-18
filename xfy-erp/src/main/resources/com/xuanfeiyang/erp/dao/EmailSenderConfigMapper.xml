@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.EmailSenderConfigDao">
+	<sql id="Base_Column_List">
+		EMAIL, NAME, SMTP_SERVER_IP, SMTP_SERVER_PORT, SMTP_USERNAME, SMTP_PASSWORD, CREATED_TIME
+	</sql>
+	
+	<select id="load" resultType="EmailSenderConfig" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from EMAIL_SENDER_CONFIG
+		where EMAIL = #{email,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.String">
+		delete from EMAIL_SENDER_CONFIG
+		where EMAIL = #{email,jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="insert" parameterType="EmailSenderConfig">
+		insert into EMAIL_SENDER_CONFIG (EMAIL, NAME, SMTP_SERVER_IP,
+		SMTP_SERVER_PORT, SMTP_USERNAME, SMTP_PASSWORD,
+		CREATED_TIME)
+		values (#{email,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{smtpServerIp,jdbcType=VARCHAR},
+		#{smtpServerPort,jdbcType=VARCHAR}, #{smtpUsername,jdbcType=VARCHAR}, #{smtpPassword,jdbcType=VARCHAR},
+		#{createdTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="update" parameterType="EmailSenderConfig">
+		update EMAIL_SENDER_CONFIG
+		<set>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="smtpServerIp != null">
+				SMTP_SERVER_IP = #{smtpServerIp,jdbcType=VARCHAR},
+			</if>
+			<if test="smtpServerPort != null">
+				SMTP_SERVER_PORT = #{smtpServerPort,jdbcType=VARCHAR},
+			</if>
+			<if test="smtpUsername != null">
+				SMTP_USERNAME = #{smtpUsername,jdbcType=VARCHAR},
+			</if>
+			<if test="smtpPassword != null">
+				SMTP_PASSWORD = #{smtpPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where EMAIL = #{email,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="findAll" resultType="EmailSenderConfig">
+		select
+		<include refid="Base_Column_List" />
+		from EMAIL_SENDER_CONFIG
+	</select>
+
+</mapper>

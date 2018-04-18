@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/project/!svn/ver/1083/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/account/ebay
+END
+edit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/557/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/account/ebay/edit.jsp
+END
+list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/557/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/account/ebay/list.jsp
+END
+add.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/1083/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/account/ebay/add.jsp
+END
+eub.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/project/!svn/ver/557/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/account/ebay/eub.jsp
+END
+offeub.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/557/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/account/ebay/offeub.jsp
+END
+authInfo.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/143/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/account/ebay/authInfo.jsp
+END

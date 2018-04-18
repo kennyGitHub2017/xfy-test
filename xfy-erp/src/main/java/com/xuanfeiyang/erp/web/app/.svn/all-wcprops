@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/project/!svn/ver/2874/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/web/app
+END
+RegisterSellerController.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/project/!svn/ver/2874/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/web/app/RegisterSellerController.java
+END
+AppOrderController.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/2460/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/web/app/AppOrderController.java
+END
+PayOrderController.java
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/2789/xfy-erp/trunk/xfy-erp/src/main/java/com/xuanfeiyang/erp/web/app/PayOrderController.java
+END

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/project/!svn/ver/3132/xfy-erp/trunk/xfy-erp/src/main/webapp/resources/template
+END
+logisticsInfo-import.xls
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/3132/xfy-erp/trunk/xfy-erp/src/main/webapp/resources/template/logisticsInfo-import.xls
+END
+orderReturn-import.xls
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2361/xfy-erp/trunk/xfy-erp/src/main/webapp/resources/template/orderReturn-import.xls
+END
+supplier-import.xls
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/2166/xfy-erp/trunk/xfy-erp/src/main/webapp/resources/template/supplier-import.xls
+END
+ioOrder-import.xls
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/2023/xfy-erp/trunk/xfy-erp/src/main/webapp/resources/template/ioOrder-import.xls
+END
+goods-import.xls
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2787/xfy-erp/trunk/xfy-erp/src/main/webapp/resources/template/goods-import.xls
+END
+export-oderById.xls
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/2675/xfy-erp/trunk/xfy-erp/src/main/webapp/resources/template/export-oderById.xls
+END

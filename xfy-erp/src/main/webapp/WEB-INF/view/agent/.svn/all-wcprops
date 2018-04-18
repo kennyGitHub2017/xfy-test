@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/project/!svn/ver/3418/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent
+END
+agent-deposit-all.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/3346/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/agent-deposit-all.jsp
+END
+agent-rebate.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/3362/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/agent-rebate.jsp
+END
+agent-sellers.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/3334/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/agent-sellers.jsp
+END
+agent-bond-edit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/3312/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/agent-bond-edit.jsp
+END
+agent-deposit-log.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/3418/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/agent-deposit-log.jsp
+END
+agent-rebate-all.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/3379/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/agent-rebate-all.jsp
+END
+withdraw-apply-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3417/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/withdraw-apply-list.jsp
+END
+count-orders.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/3306/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/count-orders.jsp
+END
+rebate-edit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/3311/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/rebate-edit.jsp
+END
+agent-order-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/3204/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/agent-order-list.jsp
+END
+agent-configure-log.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3279/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/agent-configure-log.jsp
+END
+agent-deposit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/3206/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/agent/agent-deposit.jsp
+END

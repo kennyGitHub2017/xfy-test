@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.SellerGoodsDao">
+	
+	<sql id="_column_list">
+		ID, SELLER_ID, GOODS_ID, CREATED_TIME
+	</sql>
+	
+	<select id="findPageBySellerId" resultType="SellerGoods" parameterType="java.lang.Integer">
+		select
+		<include refid="_column_list" />
+		from SELLER_GOODS
+		where SELLER_ID = #{sellerId,jdbcType=DECIMAL}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from SELLER_GOODS
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	
+	<delete id="deleteBySellerId" parameterType="java.lang.Integer">
+		delete from SELLER_GOODS
+		where SELLER_ID = #{sellerId,jdbcType=DECIMAL}
+	</delete>
+	
+	<delete id="deleteBySellerIdAndGoodsId" parameterType="java.lang.Integer">
+		delete from SELLER_GOODS
+		where SELLER_ID = #{sellerId,jdbcType=DECIMAL}
+		  and GOODS_ID  = #{goodsId,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="insert" parameterType="SellerGoods">
+		insert into SELLER_GOODS (ID, SELLER_ID, GOODS_ID,
+		CREATED_TIME)
+		values (SEQ_SELLER_GOODS.nextval, #{sellerId,jdbcType=DECIMAL}, #{goodsId,jdbcType=DECIMAL},
+		#{createdTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="update" parameterType="SellerGoods">
+		update SELLER_GOODS
+		<set>
+			<if test="sellerId != null">
+				SELLER_ID = #{sellerId,jdbcType=DECIMAL},
+			</if>
+			<if test="goodsId != null">
+				GOODS_ID = #{goodsId,jdbcType=DECIMAL},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+</mapper>

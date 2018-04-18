@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.SkuMappingDao">
+	
+	<!-- 查询SKU映射关系信息 -->
+	<select id="find" resultType="SkuMapping">
+		SELECT * FROM SKU_MAPPING s order by s.PLATFORM_SKU
+	</select>
+	
+	<!-- 根据platformSku查询 -->
+	<select id="load" resultType="SkuMapping" parameterType="java.lang.String">
+		SELECT * FROM SKU_MAPPING sm WHERE sm.PLATFORM_SKU = #{platformSku,jdbcType=VARCHAR}
+	</select>
+		
+	<!-- 查询分页 -->
+	<select id="findPage" resultType="SkuMapping">
+		select PLATFORM_SKU,OLD_SKU,NEW_SKU,CREATE_DATE
+		from SKU_MAPPING sm
+		<where>
+			<if test="param.platformSku != null and param.platformSku != ''">
+				and sm.PLATFORM_SKU like '%' || #{param.platformSku,jdbcType=VARCHAR} ||'%'
+			</if>
+			<if test="param.oldSku != null and param.oldSku != ''">
+				and sm.OLD_SKU like '%' || #{param.oldSku,jdbcType=VARCHAR} ||'%'
+			</if>
+			<if test="param.newSku != null and param.newSku != ''">
+				and sm.NEW_SKU like '%' || #{param.newSku,jdbcType=VARCHAR} ||'%'
+			</if>
+		</where>
+		order by sm.CREATE_DATE desc nulls last
+	</select>
+	
+	<!-- 插入 -->
+	<insert id="insert" parameterType="SkuMapping">
+		INSERT INTO SKU_MAPPING(PLATFORM_SKU,OLD_SKU,NEW_SKU,CREATE_DATE)
+			VALUES(#{platformSku,jdbcType=VARCHAR},#{oldSku,jdbcType=VARCHAR},
+			#{newSku,jdbcType=VARCHAR},sysdate)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="update" parameterType="SkuMapping">
+		UPDATE SKU_MAPPING 
+		<set>
+			<if test="oldSku != null">
+				OLD_SKU = #{oldSku,jdbcType=VARCHAR},
+			</if>
+			<if test="newSku != null">
+				NEW_SKU = #{newSku,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				CREATE_DATE = #{createDate,jdbcType=TIMESTAMP}
+			</if>
+		</set>	
+		where PLATFORM_SKU = #{platformSku,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="delete" parameterType="java.lang.String">
+		DELETE FROM SKU_MAPPING WHERE PLATFORM_SKU = #{platformSku,jdbcType=VARCHAR}
+	</delete>
+	
+</mapper>

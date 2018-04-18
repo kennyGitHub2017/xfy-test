@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.DepartmentDao">
+
+	<sql id="_find_sql">
+		select d.*, u.NAME LEADER_NAME from departments d
+		left join user_info u on d.LEADER_ID = u.USER_ID 
+	</sql>
+
+	<select id="find" resultType="Department">
+		<include refid="_find_sql" />
+	</select>
+	
+	<select id="countByDepartment" resultType="int">
+		select count(1) from departments  where 1=1
+		<if test="depName!=null and depName!=''">
+			and NAME = #{depName}
+		</if>
+	</select>
+
+	<select id="load" resultType="Department">
+		<include refid="_find_sql" />
+		where d.id = #{id}
+	</select>
+	
+	<insert id="save">
+		insert into departments
+		  (ID, NAME, PARENT_ID, LEADER_ID, NOTE, CREATED_TIME, LAST_UPDATED_TIME)
+		values
+		  (SEQ_ID.nextval,
+		   #{name, jdbcType=VARCHAR},
+		   #{parentId, jdbcType=INTEGER},
+		   #{leaderId, jdbcType=INTEGER},
+		   #{note, jdbcType=VARCHAR},
+		   #{createdTime, jdbcType=TIMESTAMP},
+		   #{lastUpdatedTime, jdbcType=TIMESTAMP})
+
+	</insert>
+	
+	<update id="update">
+		
+		update departments 
+		set NAME = #{name},
+		PARENT_ID = #{parentId, jdbcType=INTEGER},
+		LEADER_ID = #{leaderId, jdbcType=INTEGER},
+		NOTE = #{note, jdbcType=VARCHAR},
+		LAST_UPDATED_TIME = #{lastUpdatedTime, jdbcType=TIMESTAMP}
+		
+		where id = #{id}
+		
+	</update>
+	
+	<delete id="delete">
+		delete from departments where id = #{id}
+	</delete>
+	
+</mapper>

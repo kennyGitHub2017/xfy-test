@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.OrderLogDao" >
+  <sql id="Base_Column_List" >
+    ID, ORDER_ID, LOG, OPER_USER_ID, OPER_TIME
+  </sql>
+  
+   <select id="load" resultType="OrderLog" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ORDER_LOGS
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.Integer" >
+    delete from ORDER_LOGS
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  
+  <insert id="insert" parameterType="OrderLog" >
+  	<selectKey resultType="int" order="BEFORE" keyProperty="id">
+			select SEQ_ORDER_LOGS.Nextval as ID from DUAL
+	</selectKey>
+    insert into ORDER_LOGS (ID, ORDER_ID, LOG, 
+      OPER_USER_ID, OPER_TIME)
+    values (#{id,jdbcType=DECIMAL}, #{orderId,jdbcType=DECIMAL}, #{log,jdbcType=VARCHAR}, 
+      #{operUserId,jdbcType=VARCHAR}, #{operTime,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="update" parameterType="OrderLog" >
+    update ORDER_LOGS
+    <set >
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=DECIMAL},
+      </if>
+      <if test="log != null" >
+        LOG = #{log,jdbcType=VARCHAR},
+      </if>
+      <if test="operUserId != null" >
+        OPER_USER_ID = #{operUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null" >
+        OPER_TIME = #{operTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  
+  <select id="queryByOrder" resultType="OrderLog" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />,u.name oper_user_name
+    from ORDER_LOGS 
+    left join user_login i on i.username=OPER_USER_ID
+    left join user_info u on u.user_id=i.user_id
+    where order_id = #{orderId,jdbcType=DECIMAL}
+    order by OPER_TIME
+  </select>
+</mapper>

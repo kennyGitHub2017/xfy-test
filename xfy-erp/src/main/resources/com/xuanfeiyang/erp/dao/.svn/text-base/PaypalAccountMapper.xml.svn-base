@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.PaypalAccountDao">
+
+
+<!-- 查询 -->
+<select id="find" resultType="PaypalAccount">
+SELECT * FROM  PAYPAL_ACCOUNTS
+</select>
+
+<!-- 删除-->
+<delete id="delete">
+DELETE FROM PAYPAL_ACCOUNTS WHERE ID=#{id}
+</delete>
+
+<!-- 添加 -->
+<insert id="save">
+INSERT INTO PAYPAL_ACCOUNTS(ID,ACCOUNT,LAST_UPDATED_TIME,API_USERNAME,API_PASSWORD,API_SIGNATURE,EBAY_ACCOUNT,FEES)
+VALUES(SEQ_ID.nextval,#{param.account},sysdate,#{param.apiUserName},
+#{param.apiPassword},#{param.apiSignature},#{param.ebayAccount},#{param.fees, jdbcType=DECIMAL})
+</insert>
+
+<!-- 修改 -->
+<update id="update">
+UPDATE PAYPAL_ACCOUNTS SET ACCOUNT=#{param.account},API_USERNAME=#{param.apiUserName},
+API_PASSWORD=#{param.apiPassword}, API_SIGNATURE=#{param.apiSignature},FEES=#{param.fees, jdbcType=DECIMAL},
+EBAY_ACCOUNT=#{param.ebayAccount},LAST_UPDATED_TIME=sysdate WHERE ID=#{param.id}
+</update>
+
+<!-- 根据id查询 -->
+<select id="findById" resultType="PaypalAccount">
+SELECT * FROM  PAYPAL_ACCOUNTS WHERE ID=#{id}
+</select>
+
+</mapper>

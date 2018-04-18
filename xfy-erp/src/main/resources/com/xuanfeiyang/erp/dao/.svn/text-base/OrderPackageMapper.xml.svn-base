@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanfeiyang.erp.dao.OrderPackageDao">
+
+ 
+	<delete id="deleteByOrderId">
+		delete from ORDER_PACKAGE op where op.ORDER_ID=#{orderId}
+	</delete>
+	
+	<sql id="BASE_SQL">
+	
+	<if test="param.goodsSku != null and param.goodsSku !=''">
+		and  exists (
+			select 1 from ORDER_PACKAGE_ITEM opi
+			left join goods g on g.goods_sku = opi.sku
+			where opi.PACKAGE_ID=op.id
+			and opi.sku = #{param.goodsSku}
+		)
+	</if>
+
+	<if test="param.goodsName != null and param.goodsName !=''">
+		and exists (
+			select 1 from ORDER_PACKAGE_ITEM opi
+			left join goods g on g.goods_sku = opi.sku
+			where opi.PACKAGE_ID=op.id
+			and g.name = #{param.goodsName}
+		)
+	</if>
+	
+	<if test="param.orderNo != null and param.orderNo !=''">
+		AND o.ORDER_NO = #{param.orderNo}
+	</if>
+	<if test="param.suspendFlag != null ">
+		AND o.SUSPEND = #{param.suspendFlag}
+	</if>
+	<if test="param.isNote == 0">
+		AND o.NOTE IS NULL
+	</if>
+
+	<if test="param.isNote == 1">
+		AND o.NOTE IS NOT NULL
+	</if>
+
+	<if test="param.isTrackNumber == 0 ">
+		AND op.TRACK_NUMBER is null
+	</if>
+		
+	<if test="param.isTrackNumber == 1 ">
+		AND op.TRACK_NUMBER is not null
+	</if>
+
+	<if test="param.isShip == 0">
+		AND op.SHIPPING_NAME is null
+	</if>
+
+	<if test="param.isShip == 1">
+		AND op.SHIPPING_NAME is not null
+	</if>
+
+	<if test="param.isMarkShip != null ">
+		AND op.IS_SEND = #{param.isMarkShip}
+	</if>
+
+	<if test="param.orderId != null">
+		AND op.ORDER_ID = #{param.orderId}
+	</if>
+	<if test="param.orderNumber != null and param.orderNumber !='' ">
+		AND op.ORDER_ID = #{param.orderNumber}
+	</if>
+
+	<if test="param.packageNo != null and param.packageNo !='' ">
+		AND op.ID = #{param.packageNo}
+	</if>
+
+	<if test="param.shippingName !=null and param.shippingName !='' ">
+		AND op.SHIPPING_NAME = #{param.shippingName}
+	</if>
+
+	<if test="param.cDateFrom != null and param.cDateFrom != ''">
+			<![CDATA[AND op.CREATED_TIME >= TO_DATE(#{param.cDateFrom},'yyyy-mm-dd hh24:mi:ss') ]]>
+	</if>
+
+	<if test="param.cDateTo != null and param.cDateTo != ''">
+			<![CDATA[AND op.CREATED_TIME <= TO_DATE(#{param.cDateTo},'yyyy-mm-dd hh24:mi:ss') ]]>
+	</if>
+
+	<if test="param.cPrintFrom != null and param.cPrintFrom != ''">
+			<![CDATA[AND op.PRINTED_TIME >= TO_DATE(#{param.cPrintFrom},'yyyy-mm-dd hh24:mi:ss') ]]>
+	</if>
+
+	<if test="param.cPrintTo != null and param.cPrintTo != ''">
+			<![CDATA[AND op.PRINTED_TIME < TO_DATE(#{param.cPrintTo},'yyyy-mm-dd hh24:mi:ss') + 1 ]]>
+	</if>
+
+	<if test="param.cRejectFrom != null and param.cRejectFrom != ''">
+			<![CDATA[AND op.REJECTED_TIME >= TO_DATE(#{param.cRejectFrom},'yyyy-mm-dd hh24:mi:ss') ]]>
+	</if>
+
+	<if test="param.cRejectTo != null and param.cRejectTo != ''">
+			<![CDATA[AND op.REJECTED_TIME < TO_DATE(#{param.cRejectTo},'yyyy-mm-dd hh24:mi:ss') + 1 ]]>
+	</if>
+
+	<if test="param.scannedFrom != null and param.scannedFrom != ''">
+			<![CDATA[AND op.SCANNED_TIME >= TO_DATE(#{param.scannedFrom},'yyyy-mm-dd hh24:mi:ss') ]]>
+	</if>
+
+	<if test="param.scannedTo != null and param.scannedTo != ''">
+			<![CDATA[AND op.SCANNED_TIME < TO_DATE(#{param.scannedTo},'yyyy-mm-dd hh24:mi:ss') + 1 ]]>
+	</if>
+
+	<if test="param.trackNumber != null and param.trackNumber !='' ">
+		AND op.TRACK_NUMBER = #{param.trackNumber}
+	</if>
+
+	<if test="param.status !=null ">
+		AND op.STATUS = #{param.status}
+	</if>
+
+	<if test="param.isMix !=null">
+		AND op.IS_MIX = #{param.isMix}
+	</if>
+
+	<if test="param.scanFlag !=null">
+		AND op.SCAN_FLAG = #{param.scanFlag}
+	</if>
+	<if test="param.scannedUser != null and param.scannedUser != '' ">
+		AND op.SCANNED_USER = #{param.scannedUser}
+	</if>
+
+	<choose>
+		<when test="param.traceNumberFlag !=null">
+			AND (op.STATUS=3 or op.STATUS=4) AND o.suspend = 0
+			<if test="param.printedFlag != null">
+				AND op.PRINTED_FLAG = #{param.printedFlag}
+			</if>
+		</when>
+		<when test="param.printedFlag != null">
+			AND op.PRINTED_FLAG = #{param.printedFlag}
+		</when>
+	</choose>
+	<if test="param.selfSeller !=null">
+		AND  s.self_flag=#{param.selfSeller,jdbcType=INTEGER}
+	</if>
+	</sql>
+	
+	<select id="findPage" resultType="orderPackage">
+		SELECT op.*,ob.buyer_user_id buyerUserId,ob.buyer_email buyerEmail,
+		o.note,o.order_paid_time,o.order_platform
+		FROM ORDER_PACKAGE op
+		left join orders o ON o.id = op.order_id
+		left join order_buyerinfo ob on ob.order_sn = o.order_sn
+		where 1=1
+		<include refid="BASE_SQL"></include>
+		and nvl(o.stop_flag,0)!=1
+	</select>
+	
+	<!-- 根据订单Id查看此订单的包裹数量 -->
+	<select id="countOrderId">
+	select count(*)packageNum from ORDER_PACKAGE p where p.orderid = #{orderId} group by p.order_id 
+	</select>
+	
+	<!--根据Id修改状态-->
+	<update id="updateState">
+		UPDATE ORDER_PACKAGE SET STATUS = #{state} 
+		<if test="state==9">
+			,REJECTED_TIME=sysdate
+		</if>
+		WHERE ID =#{id}
+	</update>
+	
+	<!-- 根据包裹ID查询 -->
+	<select id="getById" resultType="orderPackage">
+		SELECT * FROM ORDER_PACKAGE WHERE ID=#{id}
+	</select>
+	
+	<!-- 根据系统订单id查询 -->
+	<select id="findByOrderId" resultType="orderPackage">
+		SELECT * FROM ORDER_PACKAGE WHERE ORDER_ID = #{orderId} ORDER BY ID DESC
+	</select>
+	
+	
+	<insert id="insert">
+		insert into ORDER_PACKAGE (ID, ORDER_ID, IS_SEND, 
+		PRINTED_FLAG, PACKAGE_WEIGHT, ELECTRON_WEIGHT, 
+		STATUS, CREATED_TIME, TRACK_NUMBER, TRACK_NUMBER_REF,
+		SPECIFICATIONS, SHIPPING_NAME, SCANNED_TIME, 
+		HANDOVER_TIME, SHIPPING_FEE,SCAN_FLAG,IS_MIX)
+		values (#{id,jdbcType=VARCHAR}, #{orderId,jdbcType=DECIMAL}, #{isSend,jdbcType=DECIMAL}, 
+		#{printedFlag,jdbcType=DECIMAL}, #{packageWeight,jdbcType=DECIMAL}, #{electronWeight,jdbcType=DECIMAL}, 
+		#{status,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP}, #{trackNumber,jdbcType=VARCHAR}, #{trackNumberRef,jdbcType=VARCHAR}, 
+		#{specifications,jdbcType=VARCHAR}, #{shippingName,jdbcType=VARCHAR}, #{scannedTime,jdbcType=TIMESTAMP}, 
+		#{handoverTime,jdbcType=TIMESTAMP}, #{shippingFee,jdbcType=DECIMAL},#{scanFlag,jdbcType=DECIMAL},#{isMix,jdbcType=DECIMAL})
+	</insert>
+	
+	<select id="findOrderIdsByIds" resultType="Integer">
+		select distinct p.order_id from order_package p where p.id in 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<select id="getByTrackNumber" resultType="OrderPackage">
+		SELECT * FROM ORDER_PACKAGE WHERE ID = (SELECT MAX(ID) FROM ORDER_PACKAGE WHERE TRACK_NUMBER = #{trackNumber})
+	</select>
+
+	<update id="traceNumberImport">
+		<foreach collection="packages" separator=";" open="begin" close="; end;" item="p">
+			update ORDER_PACKAGE set TRACK_NUMBER=#{p.trackNumber,jdbcType=VARCHAR},SHIPPING_NAME=#{p.shippingName,jdbcType=VARCHAR}
+			where id=#{o.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+	
+	<update id="rejectPackBytraceNumber">
+		<foreach collection="packages" separator=";" open="begin" close="; end;" item="p">
+			update ORDER_PACKAGE set  STATUS=9 where TRACK_NUMBER=#{p,jdbcType=VARCHAR}
+		</foreach>
+	</update>
+	
+	<update id="update">
+		update ORDER_PACKAGE
+		<set>
+			<if test="orderId != null">
+				ORDER_ID = #{orderId,jdbcType=DECIMAL},
+			</if>
+			<if test="isSend != null">
+				IS_SEND = #{isSend,jdbcType=DECIMAL},
+			</if>
+			<if test="printedFlag != null">
+				PRINTED_FLAG = #{printedFlag,jdbcType=DECIMAL},
+			</if>
+			<if test="packageWeight != null">
+				PACKAGE_WEIGHT = #{packageWeight,jdbcType=DECIMAL},
+			</if>
+			<if test="electronWeight != null">
+				ELECTRON_WEIGHT = #{electronWeight,jdbcType=DECIMAL},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=DECIMAL},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trackNumber != null">
+				TRACK_NUMBER = #{trackNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="specifications != null">
+				SPECIFICATIONS = #{specifications,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingName != null">
+				SHIPPING_NAME = #{shippingName,jdbcType=VARCHAR},
+			</if>
+			<if test="scannedTime != null">
+				SCANNED_TIME = #{scannedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="handoverTime != null">
+				HANDOVER_TIME = #{handoverTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="printedTime != null">
+				PRINTED_TIME = #{printedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="rejectedTime != null">
+				REJECTED_TIME = #{rejectedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="shippingFee != null">
+				SHIPPING_FEE = #{shippingFee,jdbcType=DECIMAL},
+			</if>
+			<if test="scanFlag != null">
+				SCAN_FLAG = #{scanFlag,jdbcType=DECIMAL},
+			</if>
+			<if test="isMix != null">
+				IS_MIX = #{isMix,jdbcType=DECIMAL},
+			</if>
+			<if test="printedUser != null">
+				PRINTED_USER = #{printedUser,jdbcType=DECIMAL},
+			</if>
+			<if test="scannedUser != null">
+				SCANNED_USER = #{scannedUser,jdbcType=DECIMAL},
+			</if>
+			<if test="trackNumberRef != null">
+				TRACK_NUMBER_REF = #{trackNumberRef}
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="findMaxById" resultType="OrderPackage">
+	select * from Order_Package  where rownum=1 ORDER BY id desc
+	</select>
+	
+	<select id="findNoShip" resultType="OrderPackage">
+	SELECT * FROM Order_Package WHERE SHIPPING_NAME IS NULL
+	</select>
+	
+	<select id="countPackageStatus" resultType="Integer">
+		select count(case when status=#{status} then 1  else null end ) from order_package
+		<if test="orderId!=null">
+			where order_id=#{orderId}
+		</if>
+	</select>
+	
+	<select id="getByStatus" resultType="OrderPackage">
+	SELECT * FROM  ORDER_PACKAGE WHERE 1=1 AND status = #{param.status}
+	<if test="param.shippingName != null and param.shippingName != ''">
+		AND SHIPPING_NAEM = #{param.shippingName}
+	</if>
+	<if test="param.cDateFrom != null and param.cDateFrom != ''">
+		<![CDATA[AND op.CREATED_TIME >= TO_DATE(#{param.cDateFrom},'yyyy-mm-dd hh24:mi:ss') ]]>
+	</if>
+	<if test="param.cDateTo != null and param.cDateTo != ''">
+		<![CDATA[AND op.CREATED_TIME <= TO_DATE(#{param.cDateTo},'yyyy-mm-dd hh24:mi:ss') ]]>
+	</if>
+	
+	</select>
+	
+	
+	<update id="updateByTrackNo">
+		update Order_Package 
+		<set>
+		 <if test="electronWeight != null ">
+		 ELECTRON_WEIGHT = #{electronWeight}
+		 </if>
+		 <if test="shippingFee != null ">
+		 SHIPPING_FEE = #{shippingFee}
+		 </if>
+		</set>
+		WHERE TRACK_NUMBER = #{trackNumber}
+	</update>
+	<!-- 打印页面查询 -->
+ 	<select id="printFindPage" resultType="orderPackage">
+		SELECT  
+		op.id id,
+		max(ss.code) shelf_code,
+		
+		max(op.ORDER_ID) ORDER_ID,
+		max(op.is_send) is_send,
+		max(op.printed_flag) printed_flag,
+		max(op.package_weight) package_weight,
+		max(op.electron_weight) electron_weight,
+		max(op.status) status,
+		max(op.created_time) created_time,
+		max(op.track_number) track_number,
+		max(op.specifications) specifications,
+		max(op.shipping_name) shipping_name,
+		max(op.scanned_time) scanned_time,
+		max(op.handover_time) handover_time,
+		max(op.shipping_fee) shipping_fee,
+		max(op.scan_flag) scan_flag,
+		max(op.is_mix) is_mix,
+		max(op.printed_time) printed_time,
+		max(op.rejected_time) rejected_time,
+		max(op.printed_user) printed_user,
+		
+		max(o.note) note,
+		max(o.order_paid_time)order_paid_time,
+		max(o.order_platform)order_platform,
+		max(ob.buyer_user_id)buyerUserId,
+		max(ob.buyer_email) buyerEmail,
+		max(self_flag) self_seller
+		FROM ORDER_PACKAGE op
+		left join orders o ON o.id = op.order_id
+		left join order_buyerinfo ob on ob.order_sn = o.order_sn
+		left join order_package_item opi1 on opi1.package_id = op.id
+		left join goods g1 on opi1.sku = g1.goods_sku
+		left join store_shelf ss on ss.id = g1.store_shelf_id
+		left join v_platform_account v on v.id = o.account_id
+   		left join sellers s on s.id = v.seller_id 
+   		where 1=1
+		<include refid="BASE_SQL"></include>
+		and o.order_status!=6
+		and nvl(o.stop_flag,0)!=1
+		group by op.id
+		order by shelf_code ,id
+	</select>
+	 
+	<select id="find" resultType="orderPackage">
+		SELECT  
+		op.id id,
+		max(ss.code) shelf_code,
+		
+		max(op.ORDER_ID) ORDER_ID,
+		max(op.is_send) is_send,
+		max(op.printed_flag) printed_flag,
+		max(op.package_weight) package_weight,
+		max(op.electron_weight) electron_weight,
+		max(op.status) status,
+		max(op.created_time) created_time,
+		max(op.track_number) track_number,
+		max(op.specifications) specifications,
+		max(op.shipping_name) shipping_name,
+		max(op.scanned_time) scanned_time,
+		max(op.handover_time) handover_time,
+		max(op.shipping_fee) shipping_fee,
+		max(op.scan_flag) scan_flag,
+		max(op.is_mix) is_mix,
+		max(op.printed_time) printed_time,
+		max(op.rejected_time) rejected_time,
+		max(op.printed_user) printed_user,
+		
+		max(o.note) note,
+		max(o.order_paid_time)order_paid_time,
+		max(o.order_platform)order_platform,
+		max(ob.buyer_user_id)buyerUserId,
+		max(ob.buyer_email) buyerEmail,
+		max(self_flag) self_seller
+		FROM ORDER_PACKAGE op
+		left join orders o ON o.id = op.order_id
+		left join order_buyerinfo ob on ob.order_sn = o.order_sn
+		left join order_package_item opi1 on opi1.package_id = op.id
+		left join goods g1 on opi1.sku = g1.goods_sku
+		left join store_shelf ss on ss.id = g1.store_shelf_id
+		left join v_platform_account v on v.id = o.account_id
+   		left join sellers s on s.id = v.seller_id
+   		where 1=1
+   		<if test="ids!=null">
+			and op.id in 
+			<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="ids==null">
+			<include refid="BASE_SQL"></include>
+		</if>
+		and o.order_status!=6
+		and nvl(o.stop_flag,0)!=1
+		group by op.id
+		order by shelf_code ,id
+	</select>
+	
+	<!-- 查询记录条数 -->
+	<select id="findCount" resultType="java.lang.Integer">
+		select count(1) from (
+		SELECT  
+		op.id id
+		FROM ORDER_PACKAGE op
+		left join orders o ON o.id = op.order_id
+		left join order_buyerinfo ob on ob.order_sn = o.order_sn
+		left join order_package_item opi1 on opi1.package_id = op.id
+		left join goods g1 on opi1.sku = g1.goods_sku
+		left join store_shelf ss on ss.id = g1.store_shelf_id
+		left join v_platform_account v on v.id = o.account_id
+   		left join sellers s on s.id = v.seller_id
+   		where 1=1
+   		<if test="ids!=null">
+			and op.id in 
+			<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="ids==null">
+			<include refid="BASE_SQL"></include>
+		</if>
+		and o.order_status!=6
+		and nvl(o.stop_flag,0)!=1
+		group by op.id
+		)
+	</select>
+	
+	<!-- 从订单更新跟踪号，如果包裹的状态为1或贼2，更新为3，其他状态不变 -->
+	<update id="updateTrackNumberAndShippingNameByOrderId">
+		update order_package p
+		   set (p.track_number, p.shipping_name, p.track_number_ref, p.status) =
+		       (select o.track_number, o.shipping_name, o.track_number_ref, 
+		       (case when o.track_number is not null and (p.status in (1,2)) then 3 else p.status end)
+		          from orders o
+		         where o.id = p.order_id)
+		 where p.id = (select max(id)
+		                 from order_package p
+		            where p.order_id = #{orderId,jdbcType=DECIMAL})
+	</update>
+	
+</mapper>

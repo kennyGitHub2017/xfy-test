@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.PurchaseWarnDao">
+	<select id="find" resultType="String">
+		select goods_sku from 
+		(
+		    select a.goods_sku,nvl(t4.un_audit,0) un_audit,nvl(t5.need_purchase,0) need_purchase,
+		    (<![CDATA[ case  when p.buy_period<=7 then nvl(c.sales7,0)	]]>
+		     <![CDATA[  when p.buy_period<=15  then nvl(c.sales15,0)	]]>
+		     <![CDATA[  when p.buy_period<=30 then nvl(c.sales30,0)		]]>
+		     <![CDATA[   when p.buy_period<=60 then nvl(c.sales60,0)	]]>
+		     <![CDATA[  when p.buy_period<=180 then nvl(c.sales180,0)	]]>
+				   else nvl(c.sales7,0)  END  
+			) salesVolume,
+		    nvl((t1.all_count + nvl(t2.purchase_count, 0) - nvl(t3.lock_count, 0)),0) available_count
+		    from goods a  
+		    left join STAT_SKU_SALES c on c.goods_sku = a.goods_sku
+				left join GOODS_SUPPLIER_PRICE p on a.goods_sku = p.goods_sku and p.priority=1 and rownum=1
+		    left join (
+		         select g.goods_sku,sum(g.count) all_count from GOODS_INVENTORY g 
+		         group by g.goods_sku
+				) t1 on a.goods_sku = t1.goods_sku
+				left join (
+				     select poi.goods_sku, sum(poi.goods_count) purchase_count
+				               from purchase_order_items poi, purchase_orders po
+				              where poi.order_no = po.order_no
+				                and po.status = 2
+				              group by poi.goods_sku
+				)  t2 on a.goods_sku = t2.goods_sku
+				left join (
+				  select l.goods_sku, count(l.lock_count) lock_count
+				               from goods_inventory_lock l
+				              group by l.goods_sku
+				)  t3 on a.goods_sku = t3.goods_sku
+		      left join (
+		         select i.sku,sum(i.item_quantity) un_audit  from order_items i left join orders o on  o.order_status=1  and o.id=i.order_id
+				     group by i.sku
+				) t4 on a.goods_sku = t4.sku
+		    left join (
+				     select i.sku,sum(i.need_purchase) need_purchase from order_items i left join orders o on (o.order_status=2 or o.order_status=3) and o.id=i.order_id
+				     group by i.sku
+				) t5 on a.goods_sku = t5.sku 
+			where 1=1 
+			<if test="param.firstCategory !=null and param.firstCategory!=''">
+				and a.base_category_id=#{param.firstCategory}
+			</if>
+			<if test="param.secondCategory !=null and param.secondCategory!=''">
+				and a.mid_category_id=#{param.secondCategory}
+			</if>
+			<if test="param.thirdCategory !=null and param.thirdCategory!=''">
+				and a.category_id=#{param.thirdCategory}
+			</if>
+			<if test="param.goodsStatus != null ">
+				and a.status = #{param.goodsStatus}
+			</if>
+			<if test="param.goodsSku != null and param.goodsSku != '' ">
+				and a.goods_sku = #{param.goodsSku}
+			</if>
+		) tb where tb.un_audit+tb.need_purchase+tb.salesVolume>tb.available_count
+		and not exists(
+			select 1 from PURCHASE_REQUEST_ITEMS i inner join PURCHASE_REQUEST_ORDERS o on o.type=2 and o.status=1  and i.ORDER_NO=o.ORDER_NO 
+			where i.goods_sku=tb.goods_sku
+		)
+	</select>
+	<select id="detail" resultType="PurchaseWarn">
+		select a.color,a.goods_size,a.model,a.rules,a.goods_sku,a.name,a.unit,a.cost,b.id category_id,b.name category_name,dt.name goodsStatus,
+		nvl(c.sales30,0) sales30,nvl(c.sales15,0) sales15,nvl(c.sales7,0) sales7,
+		nvl(t1.all_count,0) all_count,nvl(t2.purchase_count,0) purchase_count,nvl(t3.lock_count,0) lock_count,
+		(nvl(t1.all_count,0) + nvl(t2.purchase_count, 0) - nvl(t3.lock_count, 0)) available_count,
+		nvl(t4.un_audit,0) un_audit,
+		nvl(t5.need_purchase,0) need_purchase,
+		( 	 <![CDATA[ case  when p.buy_period<=7 then nvl(c.sales7,0)	]]>
+		     <![CDATA[  when p.buy_period<=15  then nvl(c.sales15,0)	]]>
+		     <![CDATA[  when p.buy_period<=30 then nvl(c.sales30,0)		]]>
+		     <![CDATA[   when p.buy_period<=60 then nvl(c.sales60,0)	]]>
+		     <![CDATA[  when p.buy_period<=180 then nvl(c.sales180,0)	]]>
+		   else nvl(c.sales7,0)  END  
+		) sales_volume,
+		0 suggest_purchase,
+		0 actual_purchase,
+		p.buy_period,
+		p.price suggest_buyprice,
+		p.supplier_id,
+		(select COMPANY_NAME from goods_supplier where id=p.supplier_id) suggest_supplier,
+		po.goods_cost new_cost
+		from goods  a
+		left join goods_category b on a.category_id=b.id
+		left join STAT_SKU_SALES c on c.goods_sku = a.goods_sku
+		left join dict dt on dt.code = a.status 
+		left join (select *
+				  from (select i.*
+				          from purchase_order_items i, purchase_orders o
+				         where i.order_no = o.order_no
+				           and (o.status = 2 or o.status = 3 or o.status = 4 or o.status = 5)
+				           and i.goods_sku = #{sku, jdbcType=VARCHAR}
+				         order by o.last_updated_time desc)
+				  where rownum = 1
+				 ) po on a.goods_sku=po.goods_sku
+		<choose>
+			<!-- 供应商优先级 -->
+			<when test="rule==0">
+				left join GOODS_SUPPLIER_PRICE p on a.goods_sku = p.goods_sku and p.priority=1 and rownum=1
+			</when>
+			<!-- 采购周期优先 -->
+			<when test="rule==1">
+				left join GOODS_SUPPLIER_PRICE p on a.goods_sku= p.goods_sku and  p.id in(
+					select id  from (
+						select id  from GOODS_SUPPLIER_PRICE temp where temp.goods_sku=#{sku,jdbcType=VARCHAR}  order by temp.buy_period,temp.priority 
+					) t where rownum=1
+				)
+			</when>
+			<!-- 采购价格优先 -->
+			<when test="rule==2">
+				left join GOODS_SUPPLIER_PRICE p on a.goods_sku= p.goods_sku and  p.id in (
+					select id  from (
+						select id  from GOODS_SUPPLIER_PRICE temp where temp.goods_sku=#{sku,jdbcType=VARCHAR}  order by temp.price,temp.priority 
+					) t where rownum=1	
+				)
+			</when>
+		</choose>
+		left join (
+		     select g.goods_sku,sum(g.count) all_count from GOODS_INVENTORY g 
+		     group by g.goods_sku
+		) t1 on a.goods_sku = t1.goods_sku
+		left join (
+		     select poi.goods_sku, sum(poi.goods_count) purchase_count
+		               from purchase_order_items poi, purchase_orders po
+		              where poi.order_no = po.order_no
+		                and po.status = 2
+		              group by poi.goods_sku
+		)  t2 on a.goods_sku = t2.goods_sku
+		left join (
+		  select l.goods_sku, count(l.lock_count) lock_count
+		               from goods_inventory_lock l
+		              group by l.goods_sku
+		)  t3 on a.goods_sku = t3.goods_sku
+		left join (
+		     select i.sku,sum(i.item_quantity) un_audit  from orders o inner join order_items i on  o.order_status=1  and o.id=i.order_id
+         	 group by i.sku
+		) t4 on a.goods_sku = t4.sku
+		left join (
+			 select i.sku,sum(i.need_purchase) need_purchase from orders o inner join order_items i on (o.order_status=2 or o.order_status=3) and o.id=i.order_id
+		     group by i.sku
+		) t5 on a.goods_sku = t5.sku
+		where dt.type = 102 AND a.goods_sku=#{sku,jdbcType=VARCHAR}
+	</select>
+	
+	
+	
+	<select id="findPage" resultType="PurchaseWarn">
+		select * from (
+		select a.color,a.goods_size,a.model,a.rules,a.goods_sku,a.name,a.unit,a.cost,b.id category_id,b.name category_name,dt.name goodsStatus,
+		nvl(c.sales30,0) sales30,nvl(c.sales15,0) sales15,nvl(c.sales7,0) sales7,
+		nvl(t1.all_count,0) all_count,nvl(t2.purchase_count,0) purchase_count,nvl(t21.place_order_count,0) place_order_count,nvl(t3.lock_count,0) lock_count,
+		(nvl(t1.all_count,0) + nvl(t2.purchase_count, 0) - nvl(t3.lock_count, 0)) available_count,
+		nvl(t4.un_audit,0) un_audit,
+		nvl(t5.need_purchase,0) need_purchase,
+		nvl(t6.un_outstore_sale,0) un_outstore_sale,
+		( 	 <![CDATA[ case  when p.buy_period<=7 then nvl(c.sales7,0)	]]>
+		     <![CDATA[  when p.buy_period<=15  then nvl(c.sales15,0)	]]>
+		     <![CDATA[  when p.buy_period<=30 then nvl(c.sales30,0)		]]>
+		     <![CDATA[   when p.buy_period<=60 then nvl(c.sales60,0)	]]>
+		     <![CDATA[  when p.buy_period<=180 then nvl(c.sales180,0)	]]>
+		   else nvl(c.sales7,0)  END  
+		) sales_volume,
+		0 suggest_purchase,
+		0 actual_purchase,
+		po.goods_cost new_cost,
+		p.buy_period,
+		p.priority,
+		p.price suggest_buyprice,
+		p.supplier_id,
+		gs.company_name suggest_supplier,
+		a.develop_time,
+		u.name purchase_buyer
+		from goods  a
+		left join user_info u on  u.user_id=a.buy_user
+		left join goods_category b on a.base_category_id=b.id
+		left join STAT_SKU_SALES c on c.goods_sku = a.goods_sku
+		left join dict dt on dt.code = a.status and dt.type=102
+		left join goods_supplier_price p on p.goods_sku=a.goods_sku
+		left join goods_supplier gs on gs.ID = p.supplier_id
+		left join (select *
+				  from (select i.*
+				          from purchase_order_items i, purchase_orders o
+				         where i.order_no = o.order_no
+				           and (o.status = 2 or o.status = 3 or o.status = 4 or o.status = 5)
+				         order by o.last_updated_time desc)
+				  where rownum = 1
+				 ) po on a.goods_sku=po.goods_sku
+		left join (
+		     select g.goods_sku,sum(g.count) all_count from GOODS_INVENTORY g where g.store_id!=142473
+		     group by g.goods_sku
+		) t1 on a.goods_sku = t1.goods_sku
+		left join (
+		     select poi.goods_sku,  sum(poi.goods_count - poi.received_count) purchase_count
+		               from purchase_order_items poi, purchase_orders po
+		              where poi.order_no = po.order_no
+		                and (po.status = 2 or po.status = -1)
+		              group by poi.goods_sku
+		)  t2 on a.goods_sku = t2.goods_sku
+		left join (
+		     select poi.goods_sku,  sum(poi.goods_count) place_order_count
+		               from purchase_order_items poi, purchase_orders po
+		              where poi.order_no = po.order_no
+		                and po.status = 1
+		              group by poi.goods_sku
+		)  t21 on a.goods_sku = t21.goods_sku
+		left join (
+		  select l.goods_sku, sum(l.lock_count) lock_count
+		               from goods_inventory_lock l
+		              group by l.goods_sku
+		)  t3 on a.goods_sku = t3.goods_sku
+		left join (
+		     select i.sku,sum(i.item_quantity) un_audit  from orders o inner join order_items i on  o.order_status=1  and o.id=i.order_id
+         	 group by i.sku
+		) t4 on a.goods_sku = t4.sku
+		left join (
+			 select i.sku,sum(i.need_purchase) need_purchase from orders o inner join order_items i on (o.order_status=2 or o.order_status=3) and o.id=i.order_id
+		     group by i.sku
+		) t5 on a.goods_sku = t5.sku
+		left join (
+		  <![CDATA[  select i.sku,sum(i.item_quantity) un_outstore_sale from  order_items i inner join orders o on (o.order_status>=2 and o.order_status<=5) and o.id=i.order_id  ]]>
+		     group by i.sku
+		) t6 on a.goods_sku=t6.sku
+		where a.BELONG_SELF=1 and
+		not exists(
+			select 1 from PURCHASE_REQUEST_ITEMS i inner join PURCHASE_REQUEST_ORDERS o on o.type=2 and o.status=1  and i.ORDER_NO=o.ORDER_NO 
+			where i.goods_sku=a.goods_sku
+		)
+		<choose>
+    		<when test="param.priorityRule==0">
+    	    	and  p.priority=1
+    		</when>
+    		<when test="param.priorityRule==1">
+    	    	and p.buy_period = (
+                      select min(temp.buy_period) from goods_supplier_price temp where temp.goods_sku=a.goods_sku
+                 )
+    		</when>
+    		<when test="param.priorityRule==2">
+    	    	and p.price = (
+                      select min(temp.price) from goods_supplier_price temp where temp.goods_sku=a.goods_sku
+                 )
+    		</when>
+    	</choose>
+		<if test="param.firstCategory !=null and param.firstCategory!=''">
+			and a.base_category_id=#{param.firstCategory}
+		</if>
+		<if test="param.secondCategory !=null and param.secondCategory!=''">
+			and a.mid_category_id=#{param.secondCategory}
+		</if>
+		<if test="param.thirdCategory !=null and param.thirdCategory!=''">
+			and a.category_id=#{param.thirdCategory}
+		</if>
+		<if test="param.goodsStatus != null ">
+			and a.status = #{param.goodsStatus}
+		</if>
+		<if test="param.goodsSku != null and param.goodsSku != '' ">
+			and a.goods_sku = #{param.goodsSku}
+		</if>
+		<if test="param.supplierId != null and param.supplierId != '' ">
+			and p.supplier_id = #{param.supplierId}
+		</if>
+		<if test="param.purchaseBuyer != null and param.purchaseBuyer != '' ">
+			and u.name = #{param.purchaseBuyer} 
+		</if>
+		) tb
+		 <![CDATA[ where tb.place_order_count < (  case  when tb.buy_period>=7 then (2*tb.sales7+tb.un_outstore_sale-tb.purchase_count-tb.all_count)
+         	else tb.sales7+tb.un_outstore_sale-tb.purchase_count-tb.all_count
+         	end
+    	) ]]>
+    	order by tb.supplier_id
+	</select>
+</mapper>

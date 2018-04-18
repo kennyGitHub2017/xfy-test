@@ -1,0 +1,329 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/project/!svn/ver/3335/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods
+END
+io-order.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/project/!svn/ver/2600/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/io-order.jsp
+END
+supplier-price-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2029/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/supplier-price-form.jsp
+END
+goods-listing-info.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2968/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/goods-listing-info.jsp
+END
+purchase-order-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2748/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchase-order-form.jsp
+END
+purchaserequest-order-detail.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/project/!svn/ver/1796/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchaserequest-order-detail.jsp
+END
+store-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/2195/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/store-form.jsp
+END
+io-order-edit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/2564/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/io-order-edit.jsp
+END
+stockin-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2204/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/stockin-list.jsp
+END
+store-shelf-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/2196/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/store-shelf-form.jsp
+END
+goods-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/3071/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/goods-list.jsp
+END
+categorytype-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/1067/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/categorytype-form.jsp
+END
+allocateorder-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2431/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/allocateorder-list.jsp
+END
+purchaserequest-order-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/2676/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchaserequest-order-list.jsp
+END
+purchase-order-detail.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/2646/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchase-order-detail.jsp
+END
+firstCategory-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/1183/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/firstCategory-list.jsp
+END
+store-shelf.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/1496/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/store-shelf.jsp
+END
+purchaseorder-batchaudit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/1788/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchaseorder-batchaudit.jsp
+END
+packing-material-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/524/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/packing-material-form.jsp
+END
+goods-desc-upload.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/885/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/goods-desc-upload.jsp
+END
+supplier-import.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/1701/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/supplier-import.jsp
+END
+io-order-print.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/2465/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/io-order-print.jsp
+END
+supplier-price.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/2590/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/supplier-price.jsp
+END
+seller-goods.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2204/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/seller-goods.jsp
+END
+purchase-order-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3120/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchase-order-list.jsp
+END
+purchase2stockin.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/2431/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchase2stockin.jsp
+END
+packing-material.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/1183/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/packing-material.jsp
+END
+io-order-import.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/1947/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/io-order-import.jsp
+END
+supplier.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/project/!svn/ver/2203/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/supplier.jsp
+END
+purchaseorder-print.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3333/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchaseorder-print.jsp
+END
+io-journal.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/2204/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/io-journal.jsp
+END
+supplier-score.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/2204/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/supplier-score.jsp
+END
+purchase-warn.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/2821/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchase-warn.jsp
+END
+categorytype-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/2292/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/categorytype-list.jsp
+END
+purchaseorder-batchprint.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/project/!svn/ver/2646/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchaseorder-batchprint.jsp
+END
+stockin-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/3117/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/stockin-form.jsp
+END
+purchaseorder-waybillno.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/project/!svn/ver/2486/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchaseorder-waybillno.jsp
+END
+goods-combination.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/3335/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/goods-combination.jsp
+END
+goods-combination-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/project/!svn/ver/2719/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/goods-combination-form.jsp
+END
+inventory.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/project/!svn/ver/3200/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/inventory.jsp
+END
+io-listing.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/2204/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/io-listing.jsp
+END
+io-order-log.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2483/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/io-order-log.jsp
+END
+purchase-order-report.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/3178/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchase-order-report.jsp
+END
+allocateorder-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2431/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/allocateorder-form.jsp
+END
+inventory-alarm.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/1183/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/inventory-alarm.jsp
+END
+store.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/project/!svn/ver/1183/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/store.jsp
+END
+goods-edit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/3166/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/goods-edit.jsp
+END
+seller-goods-select.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2204/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/seller-goods-select.jsp
+END
+purchaserequest-order-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/project/!svn/ver/1593/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/purchaserequest-order-form.jsp
+END
+firstCategory-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/1067/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/firstCategory-form.jsp
+END
+stockin-detail.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/3136/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/stockin-detail.jsp
+END
+goods-image.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/2882/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/goods-image.jsp
+END
+goods-cost.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/3035/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/goods-cost.jsp
+END
+supplier-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/3269/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/supplier-form.jsp
+END
+inventory-stat.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/3200/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/goods/inventory-stat.jsp
+END

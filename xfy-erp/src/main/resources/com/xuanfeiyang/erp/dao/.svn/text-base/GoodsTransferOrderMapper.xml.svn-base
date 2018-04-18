@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsTransferOrderDao">
+
+	<sql id="_find_sql">
+		select a.*,b.NAME,b.UNIT,b.old_sku,c.NAME as user_name,
+		d.name as from_store,f.code as from_shelf_name,e.name as to_store,
+		g.code as to_shelf_name from GOODS_TRANSFER_ORDER a 
+    inner join GOODS b on a.GOODS_SKU=b.GOODS_SKU
+        left join USER_INFO c on a.OPERATOR_ID=c.USER_ID
+        left join STORE d on a.from_store_id=d.id
+        left join STORE e on a.to_store_id=e.id
+        left join store_shelf f on  f.id=a.FROM_STORE_SHELF_ID
+        left join store_shelf g  on g.id=a.TO_SHORE_SHELF_ID
+	</sql>
+	
+    <select id="findPage"  resultType="GoodsTransferOrder">
+    	<include refid="_find_sql"/>
+		 where 1=1
+		 <if test="param.orderNo!= null and param.orderNo!=''">
+            and a.ORDER_NO=#{param.orderNo}
+          </if>
+          <if test="param.goodsSku != null and param.goodsSku!=''">
+            and a.GOODS_SKU =#{param.goodsSku}
+          </if>
+          <if test="param.name != null and param.name!=''">
+           and b.NAME like  #{param.name}||'%'
+          </if>
+           <if test="param.transferDateFrom != null and param.transferDateFrom!=''">
+           	and a.CREATED_TIME&gt;=TO_DATE(#{param.transferDateFrom},'yyyy-mm-dd hh24:mi:ss')
+          </if>
+          <if test="param.transferDateTo != null and param.transferDateTo!=''">
+            and a.CREATED_TIME&lt;=TO_DATE(#{param.transferDateTo},'yyyy-mm-dd hh24:mi:ss')	
+          </if>
+          <if test="param.userName != null and param.userName!=''">
+            and c.NAME like #{param.userName} ||'%'
+          </if>
+          <if test="param.fromStoreId != null and param.fromStoreId!=''">
+            and a.FROM_STORE_ID=#{param.fromStoreId}
+          </if>
+           <if test="param.fromStoreShelf != null and param.fromStoreShelf!=''">
+            and a.FROM_STORE_SHELF_ID=#{param.fromStoreShelf}
+          </if>
+          <if test="param.toStoreId != null and param.toStoreId!=''">
+            and a.TO_STORE_ID=#{param.toStoreId}
+          </if>
+          <if test="param.toShoreShelf != null and param.toShoreShelf!=''">
+            and a.FROM_STORE_SHELF_ID=#{param.toShoreShelf}
+          </if>
+          <choose>
+          	<when test="param.thirdCategory != null">
+          		and b.CATEGORY_ID=#{param.thirdCategory}
+          	</when>
+          	<when test="param.secondCategory != null">
+          		and b.MID_CATEGORY_ID=#{param.secondCategory}
+          	</when>
+          	<when test="param.firstCategory != null">
+          		and b.BASE_CATEGORY_ID=#{param.firstCategory}
+          	</when>
+          </choose>
+          order by a.CREATED_TIME desc
+	</select>
+	
+    <select id="get" parameterType="int" resultType="GoodsTransferOrder">
+         <include refid="_find_sql"/>
+         where a.id=#{id}
+    </select>
+    <select id="find"  resultType="GoodsTransferOrder">
+    	<include refid="_find_sql"/>
+           where 1=1 
+           <if test="param.orderNo!= null and param.orderNo!=''">
+            and ORDER_NO=#{param.orderNo}
+          </if>
+          <if test="param.goodsSku != null and param.goodsSku!=''">
+            and a.GOODS_SKU =#{param.goodsSku}
+          </if>
+          <if test="param.name != null and param.name!=''">
+            and b.NAME like  #{param.name}||'%'
+          </if>
+           <if test="param.transferDateFrom != null and param.transferDateFrom!=''">
+           	and a.CREATED_TIME&gt;=TO_DATE(#{param.transferDateFrom},'yyyy-mm-dd hh24:mi:ss')
+          </if>
+          <if test="param.transferDateTo != null and param.transferDateTo!=''">
+            and a.CREATED_TIME&lt;=TO_DATE(#{param.transferDateTo},'yyyy-mm-dd hh24:mi:ss')	
+          </if>
+          <if test="param.userName != null and param.userName!=''">
+           and c.NAME like  #{param.userName} ||'%'
+          </if>
+          <if test="param.fromStoreId != null and param.fromStoreId!=''">
+            and a.FROM_STORE_ID=#{param.fromStoreId}
+          </if>
+           <if test="param.fromStoreShelf != null and param.fromStoreShelf!=''">
+            and a.FROM_STORE_SHELF_ID=#{param.fromStoreShelf}
+          </if>
+          <if test="param.toStoreId != null and param.toStoreId!=''">
+            and a.TO_STORE_ID=#{param.toStoreId}
+          </if>
+          <if test="param.toShoreShelf != null and param.toShoreShelf!=''">
+            and a.TO_SHORE_SHELF_ID=#{param.toShoreShelf}
+          </if>
+          <choose>
+          	<when test="param.thirdCategory != null">
+          		and b.CATEGORY_ID=#{param.thirdCategory}
+          	</when>
+          	<when test="param.secondCategory != null">
+          		and b.MID_CATEGORY_ID=#{param.secondCategory}
+          	</when>
+          	<when test="param.firstCategory != null">
+          		and b.BASE_CATEGORY_ID=#{param.firstCategory}
+          	</when>
+          </choose>
+          order by a.CREATED_TIME desc
+    </select>
+    <!-- INSERT  Operate -->
+    <insert id="insert" parameterType="GoodsTransferOrder"
+        useGeneratedKeys="true" keyProperty="id">
+        <selectKey resultType="int" order="BEFORE" keyProperty="id">
+       		select SEQ_GOODS_TRANSFER_ORDER.Nextval as ID from DUAL
+   		</selectKey>
+   				insert into GOODS_TRANSFER_ORDER(ID,ORDER_NO,GOODS_SKU,FROM_STORE_ID,FROM_STORE_SHELF_ID,TO_STORE_ID,TO_SHORE_SHELF_ID,GOODS_COUNT,OPERATOR_ID,NOTE,CREATED_TIME,TRANSFER_DATE,SERIAL_NUMBER)
+             	values(#{id},#{orderNo},#{goodsSku},#{fromStoreId},#{fromStoreShelf},#{toStoreId},#{toShoreShelf},#{goodsCount,jdbcType=INTEGER},#{operatorId},#{note,jdbcType=VARCHAR},sysdate,#{transferDate,jdbcType=DATE},#{serialNumber,jdbcType=VARCHAR})
+    </insert>
+</mapper>

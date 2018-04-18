@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="30">
+	<appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %-5p %c{1} - %m%n" />
+		</Console>
+		<RollingFile name="DebugRollingFile" fileName="d:/www/logs/xfy-erp/debug.log"
+			filePattern="d:/www/logs/xfy-erp/%d{yyyy-MM}/debug-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="InfoRollingFile" fileName="d:/www/logs/xfy-erp/info.log"
+			filePattern="d:/www/logs/xfy-erp/%d{yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="ErrorRollingFile" fileName="d:/www/logs/xfy-erp/error.log"
+			filePattern="d:/www/logs/xfy-erp/%d{yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p %c:%L - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="MarkShippedFile" fileName="d:/www/logs/xfy-erp/mark-shipped.log"
+			filePattern="d:/www/logs/xfy-erp/%d{yyyy-MM}/mark-shipped-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p %c:%L - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="TrackerNumberFile" fileName="d:/www/logs/xfy-erp/tracker-number.log"
+			filePattern="d:/www/logs/xfy-erp/%d{yyyy-MM}/tracker-number-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p %c:%L - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="GeneratePackageFile" fileName="d:/www/logs/xfy-erp/generate-package.log"
+			filePattern="d:/www/logs/xfy-erp/%d{yyyy-MM}/generate-package-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p %c:%L - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="SmsSendFile" fileName="d:/www/logs/xfy-erp/sms-send.log"
+			filePattern="d:/www/logs/xfy-erp/%d{yyyy-MM}/sms-send-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<!-- <Async name="ASYNC">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="DebugRollingFile" />
+			<AppenderRef ref="InfoRollingFile" level="info" />
+			<AppenderRef ref="ErrorRollingFile" level="error" />
+		</Async> -->
+	</appenders>
+	<Loggers>
+		<Logger name="org.apache.axis.ConfigurationException" level="info" />
+		<Logger name="com.xuanfeiyang.erp.service.impl.MarkShippingServiceImpl" level="debug">
+			<AppenderRef ref="MarkShippedFile" />
+		</Logger>
+		<Logger name="com.xuanfeiyang.erp.service.impl.TrackerNumberServiceImpl" level="debug">
+			<AppenderRef ref="TrackerNumberFile" />
+		</Logger>
+		<Logger name="com.xuanfeiyang.erp.service.impl.GeneratePackageServiceImpl" level="debug">
+			<AppenderRef ref="GeneratePackageFile" />
+		</Logger>
+		<Logger name="com.xuanfeiyang.erp.service.impl.SmsSendServiceImpl" level="info">
+			<AppenderRef ref="SmsSendFile" />
+		</Logger>
+		<Logger name="com.xuanfeiyang.erp.dao" level="trace" />
+		
+		<!-- <Logger name="org.springframework.web.servlet" level="info" />
+		<Logger name="org.apache.commons.digester" level="info" />
+		<Logger name="org.apache.tiles" level="info" />
+		<Logger name="org.mybatis.spring" level="info" />
+		<Logger name="org.apache.tiles" level="info" />
+		<Logger name="org.springframework.web.servlet" level="info" />
+		<Logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="info" />
+		<Logger name="org.springframework.context.support.ReloadableResourceBundleMessageSource" level="info" /> -->
+		
+		<Root level="debug">
+			<AppenderRef ref="Console" />
+			<!-- <AppenderRef ref="DebugRollingFile" />
+			<AppenderRef ref="InfoRollingFile" level="info" />
+			<AppenderRef ref="ErrorRollingFile" level="error" /> -->
+		</Root>
+	</Loggers>
+</Configuration>

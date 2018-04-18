@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsSupplierDao">
+
+	<sql id="_column_list">
+		s.ID, s.COMPANY_NAME, s.CODE, s.CONTACT_NAME, s.CONTACT_TEL,
+		s.CONTACT_MOBILE, CONTACT_FAX, s.CONTACT_MAIL, CONTACT_ADDRESS, s.CITY, s.URL,
+		s.BANK_NAME, s.BANK_ACCOUNT_NAME, s.BANK_ACCOUNT_CODE, s.NOTE,
+		s.STATUS, AUDIT_USER_ID, s.AUDIT_TIME, s.BUYER_ID, s.DEVELOPER_ID,
+		s.CREATED_TIME, s.LAST_UPDATED_TIME, s.TYPE, s.PRIORITY, s.SHORT_NAME, 
+		s.START_DATE, s.POST_CODE,s.PAY_METHOD,s.BUY_PERIOD,
+		u0.name AUDIT_USER_NAME, u1.name BUYER_NAME, u2.name DEVELOPER_NAME
+	</sql>
+
+	<sql id="_find_sql">
+		select
+		<include refid="_column_list" />
+		from GOODS_SUPPLIER s
+		left join USER_INFO u0 on u0.USER_ID = s.AUDIT_USER_ID
+		left join USER_INFO u1 on u1.USER_ID = s.BUYER_ID
+		left join USER_INFO u2 on u2.USER_ID = s.DEVELOPER_ID
+		
+	</sql>
+	
+	<select id="find" resultType="GoodsSupplier">
+		select * from GOODS_SUPPLIER
+	</select>
+
+	<select id="load" resultType="GoodsSupplier">
+		<include refid="_find_sql" />
+		where ID = #{id,jdbcType=DECIMAL}
+	</select>
+
+	<select id="findPage" resultType="GoodsSupplier">
+		<include refid="_find_sql" />
+
+		<where>
+			<if test="status != null">
+				and s.STATUS = #{status}
+			</if>
+	
+			<if test="keywords != null and keywords != ''">
+				and (
+				s.COMPANY_NAME like '%' || #{keywords} || '%'
+				or s.CONTACT_NAME like '%' || #{keywords} || '%'
+				or s.CODE like '%' || #{keywords} || '%' 
+				or s.SHORT_NAME like '%' || #{keywords} || '%'
+				)
+			</if>
+		</where>
+
+		order by CREATED_TIME DESC,COMPANY_NAME
+	</select>
+
+	<delete id="delete">
+		delete from GOODS_SUPPLIER
+		where ID =
+		#{id,jdbcType=DECIMAL}
+	</delete>
+
+	<insert id="save">
+		insert into GOODS_SUPPLIER (ID, COMPANY_NAME, CODE,
+		CONTACT_NAME, CONTACT_TEL, CONTACT_MOBILE,
+		CONTACT_FAX, CONTACT_MAIL,
+		CONTACT_ADDRESS,
+		CITY, URL, BANK_NAME,
+		BANK_ACCOUNT_NAME,
+		BANK_ACCOUNT_CODE, NOTE,
+		STATUS, AUDIT_USER_ID, AUDIT_TIME,
+		BUYER_ID,
+		DEVELOPER_ID, CREATED_TIME,
+		LAST_UPDATED_TIME, TYPE, PRIORITY, SHORT_NAME, 
+		START_DATE, POST_CODE,PAY_METHOD, BUY_PERIOD)
+		values (SEQ_GOODS_SUPPLIER.nextval,
+		#{companyName,jdbcType=VARCHAR},
+		#{code,jdbcType=VARCHAR},
+		#{contactName,jdbcType=VARCHAR}, #{contactTel,jdbcType=VARCHAR},
+		#{contactMobile,jdbcType=VARCHAR},
+		#{contactFax,jdbcType=VARCHAR},
+		#{contactMail,jdbcType=VARCHAR},
+		#{contactAddress,jdbcType=VARCHAR},
+		#{city,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR},
+		#{bankName,jdbcType=VARCHAR},
+		#{bankAccountName,jdbcType=VARCHAR},
+		#{bankAccountCode,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR},
+		#{status,jdbcType=DECIMAL}, #{auditUserId,jdbcType=DECIMAL},
+		#{auditTime,jdbcType=TIMESTAMP},
+		#{buyerId,jdbcType=DECIMAL},
+		#{developerId,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP},
+		#{lastUpdatedTime,jdbcType=TIMESTAMP},
+		#{type,jdbcType=DECIMAL},
+		#{priority,jdbcType=VARCHAR},
+		#{shortName,jdbcType=VARCHAR},
+		#{startDate,jdbcType=DATE},
+		#{postCode,jdbcType=VARCHAR},
+		#{payMethod,jdbcType=VARCHAR},
+		#{buyPeriod,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="update">
+		update GOODS_SUPPLIER
+		<set>
+			<if test="companyName != null">
+				COMPANY_NAME = #{companyName,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				CODE = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="contactName != null">
+				CONTACT_NAME = #{contactName,jdbcType=VARCHAR},
+			</if>
+			<if test="contactTel != null">
+				CONTACT_TEL = #{contactTel,jdbcType=VARCHAR},
+			</if>
+			<if test="contactMobile != null">
+				CONTACT_MOBILE = #{contactMobile,jdbcType=VARCHAR},
+			</if>
+			<if test="contactFax != null">
+				CONTACT_FAX = #{contactFax,jdbcType=VARCHAR},
+			</if>
+			<if test="contactMail != null">
+				CONTACT_MAIL = #{contactMail,jdbcType=VARCHAR},
+			</if>
+			<if test="contactAddress != null">
+				CONTACT_ADDRESS = #{contactAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				CITY = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				URL = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="bankName != null">
+				BANK_NAME = #{bankName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAccountName != null">
+				BANK_ACCOUNT_NAME = #{bankAccountName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAccountCode != null">
+				BANK_ACCOUNT_CODE = #{bankAccountCode,jdbcType=VARCHAR},
+			</if>
+			<if test="note != null">
+				NOTE = #{note,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=DECIMAL},
+			</if>
+			<if test="auditUserId != null">
+				AUDIT_USER_ID = #{auditUserId,jdbcType=DECIMAL},
+			</if>
+			<if test="auditTime != null">
+				AUDIT_TIME = #{auditTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="buyerId != null">
+				BUYER_ID = #{buyerId,jdbcType=DECIMAL},
+			</if>
+			<if test="developerId != null">
+				DEVELOPER_ID = #{developerId,jdbcType=DECIMAL},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+			
+			<if test="type != null">
+				TYPE = #{type,jdbcType=DECIMAL},
+			</if>
+			<if test="priority != null">
+				PRIORITY = #{priority,jdbcType=VARCHAR},
+			</if>
+			<if test="shortName != null">
+				SHORT_NAME = #{shortName,jdbcType=VARCHAR},
+			</if>
+			<if test="startDate != null">
+				START_DATE = #{startDate,jdbcType=DATE},
+			</if>
+			<if test="postCode != null">
+				POST_CODE = #{postCode,jdbcType=VARCHAR},
+			</if>
+			<if test="payMethod != null and payMethod != '' ">
+				PAY_METHOD = #{payMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="buyPeriod != null and buyPeriod != '' ">
+				BUY_PERIOD = #{buyPeriod,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+	<select id="findByCode" resultType="GoodsSupplier">
+	SELECT * FROM GOODS_SUPPLIER WHERE CODE = #{code}
+	</select>
+
+</mapper>

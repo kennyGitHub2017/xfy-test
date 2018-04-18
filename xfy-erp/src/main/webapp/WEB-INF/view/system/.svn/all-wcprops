@@ -1,0 +1,395 @@
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/project/!svn/ver/3414/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system
+END
+login-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/2144/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/login-form.jsp
+END
+shipping-fee2.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/3388/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/shipping-fee2.jsp
+END
+shipping.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/project/!svn/ver/3384/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/shipping.jsp
+END
+currencyRates-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/1058/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/currencyRates-form.jsp
+END
+dict.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/project/!svn/ver/557/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/dict.jsp
+END
+seller-power.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/3348/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-power.jsp
+END
+role-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/1058/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/role-form.jsp
+END
+seller-shipping.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/194/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-shipping.jsp
+END
+weixin-pay.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/2742/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/weixin-pay.jsp
+END
+withdraw-apply-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/3371/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/withdraw-apply-list.jsp
+END
+sys-page-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/2586/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sys-page-form.jsp
+END
+seller-deposit-log.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2236/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-deposit-log.jsp
+END
+account-recharge.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/3122/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/account-recharge.jsp
+END
+shipping-edit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/3366/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/shipping-edit.jsp
+END
+user.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/project/!svn/ver/2144/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/user.jsp
+END
+bankcard.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/project/!svn/ver/3277/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/bankcard.jsp
+END
+sellerShipping.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/163/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sellerShipping.jsp
+END
+seller-depositLog-export.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/project/!svn/ver/2530/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-depositLog-export.jsp
+END
+seller-deposit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/2216/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-deposit.jsp
+END
+platformAccount-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/3189/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/platformAccount-list.jsp
+END
+department.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/986/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/department.jsp
+END
+seller-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/884/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-form.jsp
+END
+seller-approve-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/2892/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-approve-form.jsp
+END
+listing-sku.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/3246/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/listing-sku.jsp
+END
+shipping-address.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/1176/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/shipping-address.jsp
+END
+seller-account-log.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2947/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-account-log.jsp
+END
+sysinfo-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/1930/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sysinfo-form.jsp
+END
+accountRecharge-list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/project/!svn/ver/3181/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/accountRecharge-list.jsp
+END
+notice.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/project/!svn/ver/3114/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/notice.jsp
+END
+department-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/1058/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/department-form.jsp
+END
+shipping-fee.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/1989/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/shipping-fee.jsp
+END
+shipping-fee-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2839/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/shipping-fee-form.jsp
+END
+sys-module.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/2586/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sys-module.jsp
+END
+role-power.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/923/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/role-power.jsp
+END
+role.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/project/!svn/ver/1200/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/role.jsp
+END
+dict-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/1058/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/dict-form.jsp
+END
+sysinfo.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/project/!svn/ver/1963/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sysinfo.jsp
+END
+seller.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/project/!svn/ver/2964/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller.jsp
+END
+currencyRates.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/990/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/currencyRates.jsp
+END
+user-power.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/311/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/user-power.jsp
+END
+sys-module-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/2586/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sys-module-form.jsp
+END
+user-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/1058/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/user-form.jsp
+END
+user-power-setting.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/2050/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/user-power-setting.jsp
+END
+agent-application.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/3407/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/agent-application.jsp
+END
+shipping-fee-form2.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3382/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/shipping-fee-form2.jsp
+END
+register-process1.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2965/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/register-process1.jsp
+END
+agent-approve-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/project/!svn/ver/3414/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/agent-approve-form.jsp
+END
+register-process2.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2965/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/register-process2.jsp
+END
+sys-powers.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/549/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sys-powers.jsp
+END
+alipayapi.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/project/!svn/ver/3123/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/alipayapi.jsp
+END
+seller-login-log.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/2204/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-login-log.jsp
+END
+sku-mapping-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/project/!svn/ver/2630/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sku-mapping-form.jsp
+END
+alipay-return.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/2933/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/alipay-return.jsp
+END
+country.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/project/!svn/ver/1147/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/country.jsp
+END
+sys-function-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/project/!svn/ver/2586/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sys-function-form.jsp
+END
+notice-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/3083/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/notice-form.jsp
+END
+country-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/project/!svn/ver/1058/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/country-form.jsp
+END
+sku-mapping.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2596/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sku-mapping.jsp
+END
+sysinfoview.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2129/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/sysinfoview.jsp
+END
+seller-deposit-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/2659/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/seller-deposit-form.jsp
+END
+shipFee-log.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/1990/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/shipFee-log.jsp
+END
+login-user-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/project/!svn/ver/913/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/login-user-form.jsp
+END
+login-users.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/2711/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/login-users.jsp
+END
+agent-view-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/project/!svn/ver/3332/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/agent-view-form.jsp
+END
+bankcard-form.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/project/!svn/ver/3276/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/system/bankcard-form.jsp
+END

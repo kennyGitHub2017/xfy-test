@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.SellerDepositDao">
+	<sql id="_column_list">
+		SELLER_ID, DEPOSIT, CREATED_TIME, LAST_UPDATED_TIME
+	</sql>
+	
+	<select id="load" resultType="SellerDeposit" parameterType="java.lang.Integer">
+		select
+		<include refid="_column_list" />
+		from SELLER_DEPOSIT
+		where SELLER_ID = #{sellerId,jdbcType=DECIMAL}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from SELLER_DEPOSIT
+		where SELLER_ID = #{sellerId,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="insert" parameterType="SellerDeposit">
+		insert into SELLER_DEPOSIT (SELLER_ID, DEPOSIT, CREATED_TIME,
+		LAST_UPDATED_TIME)
+		values (#{sellerId,jdbcType=DECIMAL}, #{deposit,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP},
+		#{lastUpdatedTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="update" parameterType="SellerDeposit">
+		update SELLER_DEPOSIT
+		<set>
+			<if test="deposit != null">
+				DEPOSIT = #{deposit,jdbcType=DECIMAL},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where SELLER_ID = #{sellerId,jdbcType=DECIMAL}
+	</update>
+</mapper>

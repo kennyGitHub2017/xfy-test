@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.EmailTaskDao">
+	<sql id="Base_Column_List">
+		ID, SUBJECT, CONTENT, SENDER_EMAIL, RECEIVER_EMAIL, CREATOR, CREATED_TIME, STATUS,
+		STATUS_TIME
+	</sql>
+	
+	<select id="findById" resultType="EmailTask" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from EMAIL_TASK
+		where ID = #{id,jdbcType=DECIMAL}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from EMAIL_TASK
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="insert" parameterType="EmailTask">
+		<selectKey resultType="int" order="BEFORE" keyProperty="id">
+			select SEQ_EMAIL_TASK.nextval as ID from DUAL
+		</selectKey>
+	
+		insert into EMAIL_TASK (ID, SUBJECT, CONTENT,
+		SENDER_EMAIL, RECEIVER_EMAIL, CREATOR,
+		CREATED_TIME, STATUS, STATUS_TIME
+		)
+		values (#{id,jdbcType=DECIMAL}, #{subject,jdbcType=VARCHAR}, #{content,jdbcType=CLOB},
+		#{senderEmail,jdbcType=VARCHAR}, #{receiverEmail,jdbcType=VARCHAR}, #{creator,jdbcType=DECIMAL},
+		#{createdTime,jdbcType=TIMESTAMP}, #{status,jdbcType=DECIMAL}, #{statusTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+	<update id="update" parameterType="EmailTask">
+		update EMAIL_TASK
+		<set>
+			<if test="subject != null">
+				SUBJECT = #{subject,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				CONTENT = #{content,jdbcType=CLOB},
+			</if>
+			<if test="senderEmail != null">
+				SENDER_EMAIL = #{senderEmail,jdbcType=VARCHAR},
+			</if>
+			<if test="receiverEmail != null">
+				RECEIVER_EMAIL = #{receiverEmail,jdbcType=VARCHAR},
+			</if>
+			<if test="creator != null">
+				CREATOR = #{creator,jdbcType=DECIMAL},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=DECIMAL},
+			</if>
+			<if test="statusTime != null">
+				STATUS_TIME = #{statusTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+	<select id="findPage" resultType="EmailTask">
+		select
+		<include refid="Base_Column_List" />
+		from EMAIL_TASK
+		<where>
+			<if test="params.startDate != null">
+				and CREATED_TIME > #{params.startDate, jdbcType=TIMESTAMP}
+			</if>
+			<if test="params.endDate != null">
+				and CREATED_TIME <![CDATA[<]]> #{params.endDate, jdbcType=TIMESTAMP} + 1
+			</if>
+		</where>
+		order by CREATED_TIME desc
+	</select>
+</mapper>

@@ -1,0 +1,1520 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.OrderDao">
+
+	<resultMap id="BaseResultMap" type="Order">
+		<id column="ID" property="id" jdbcType="INTEGER" />
+		<result column="ORDER_NO" property="orderNo" jdbcType="VARCHAR" />
+		<result column="ORDER_PLATFORM" property="orderPlatform" jdbcType="VARCHAR" />
+		<result column="SRN" property="srn" jdbcType="VARCHAR" />
+		<result column="PAYPALTRANSID" property="paypaltransid" jdbcType="VARCHAR" />
+		<result column="PAY_STATUS" property="payStatus" jdbcType="VARCHAR" />
+		<result column="ORDER_SALE_TIME" property="orderSaleTime" jdbcType="TIMESTAMP" />
+		<result column="ORDER_PAID_TIME" property="orderPaidTime" jdbcType="TIMESTAMP" />
+		<result column="ORDER_TYPE" property="orderType" jdbcType="DECIMAL" />
+		<result column="ORDER_STATUS" property="orderStatus" jdbcType="DECIMAL" />
+		<result column="CURRENCY" property="currency" jdbcType="VARCHAR" />
+		<result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+		<result column="IS_SEND" property="isSend" jdbcType="DECIMAL" />
+		<result column="SEND_PLATFORM" property="sendPlatform" jdbcType="VARCHAR" />
+		<result column="PRINTED_FLAG" property="printedFlag" jdbcType="DECIMAL" />
+		<result column="ACCOUNT_ID" property="accountId" jdbcType="VARCHAR" />
+		<result column="SHIPPING_NAME" property="shippingName" jdbcType="VARCHAR" />
+		<result column="SCANNED_TIME" property="scannedTime" jdbcType="TIMESTAMP" />
+		<result column="TRACK_NUMBER" property="trackNumber" jdbcType="VARCHAR" />
+		<result column="SHIPPED_TIME" property="shippedTime" jdbcType="TIMESTAMP" />
+		<result column="CALC_WEIGHT" property="calcWeight" jdbcType="DECIMAL" />
+		<result column="PACKAGE_WEIGHT" property="packageWeight" jdbcType="DECIMAL" />
+		<result column="SHIPPING_FEE" property="shippingFee" jdbcType="DECIMAL" />
+		<result column="COST" property="cost" jdbcType="DECIMAL" />
+		<result column="PROFIT" property="profit" jdbcType="DECIMAL" />
+		<result column="PAYPAL_FEE" property="paypalFee" jdbcType="DECIMAL" />
+		<result column="STRIKE_COST" property="strikeCost" jdbcType="DECIMAL" />
+		<result column="REFUND_FEE" property="refundFee" jdbcType="DECIMAL" />
+		<result column="REFUND_REASON" property="refundReason" jdbcType="VARCHAR" />
+		<result column="NOTE" property="note" jdbcType="VARCHAR" />
+		<result column="CREATED_TIME" property="createdTime" jdbcType="TIMESTAMP" />
+		<result column="LAST_UPDATED_TIME" property="lastUpdatedTime" jdbcType="TIMESTAMP" />
+		<result column="MIXED_FLAG" property="mixedFlag" jdbcType="DECIMAL" />
+		<result column="REISSUED_FLAG" property="reissuedFlag" jdbcType="DECIMAL" />
+		<result column="COMBINE" property="combine" jdbcType="INTEGER" />
+		<result column="SUSPEND" property="suspend" jdbcType="INTEGER" />
+		<result column="COMBINE_ORDERS" property="combineOrders" jdbcType="VARCHAR" />
+		<result column="CANCELDATE" property="cancelDate" jdbcType="CHAR" />
+		<result column="PLAT_SHIPPINMETHOD" property="platShippinMethod" jdbcType="VARCHAR" />
+		<result column="PLAT_SHIPPINGFEE" property="platShippingFee" jdbcType="VARCHAR" />
+		<result column="BUYERNOTE" property="buyerNote" jdbcType="VARCHAR" />
+		<result column="EXCHANGE_RATE"  property="exchangeRate" jdbcType="DECIMAL"  />
+		<result column="packing_material_fee"  property="packingMaterialFee" jdbcType="DECIMAL"  />
+		<result column="VERSION"  property="version" jdbcType="DECIMAL"  />
+	</resultMap>
+
+	<resultMap id="WithItemResultMap" type="Order" extends="BaseResultMap">
+		<association property="buyinfo" column="ID" select="getBuyInfoByOrderId"></association>
+		<collection property="items" column="ID" select="com.xuanfeiyang.erp.dao.OrderItemDao.queryByOrder" ofType="OrderItem" />
+	</resultMap>
+	
+	<resultMap id="WithItemForShippingResultMap" type="Order" extends="BaseResultMap">
+		<association property="buyinfo" column="ID" select="getBuyInfoByOrderId"></association>
+		<collection property="items" column="ID" select="com.xuanfeiyang.erp.dao.OrderItemDao.findForShippingByOrderId" ofType="OrderItem" />
+	</resultMap>
+	
+	<update id="orderSuspendAndEnable">
+		update ORDERS set SUSPEND=#{suspendEnbale}
+		where id =#{orderId}
+	</update>
+	
+	<update id="reStoreOrder">
+		update ORDERS 
+		set SEND_PLATFORM=null,
+		SCANNED_TIME=null,
+		SHIPPED_TIME=null,
+		SHIPPING_FEE=null,
+		CALC_WEIGHT=null,
+		COST=null,
+		STOP_FLAG=null,
+		PACKAGE_WEIGHT=null,
+		PROFIT=null,
+		PRINTED_FLAG=0,
+		MIXED_FLAG=null,
+		ORDER_STATUS=1
+		where ID =#{orderId}
+	</update>
+	<update id="mixedOrder">
+		update orders o
+  		 set o.mixed_flag =
+       (select (case
+                 when count(distinct i.item_sku) > 1 then
+                  1
+                 else
+                  0
+               end) cnt
+          from order_items i
+         where i.order_id = o.id)
+		where o.mixed_flag is null
+		<if test="orderId!=null">
+      		and o.id=#{orderId}
+      	</if>
+	</update>
+
+	<update id="calculateOrderCost">
+		update orders o set o.cost = (
+			select  sum((i.item_quantity-nvl(i.cancel_amount,0))*nvl(g.CUSTOM_COST,0)) from order_items i
+			inner join goods g on i.sku = g.goods_sku
+			where length(i.sku)>0 and i.order_id = o.id
+		)
+		where o.order_status!=7 and
+		exists(
+		    select 1 from order_items i2 inner join goods g2 on i2.sku = g2.goods_sku
+		    where i2.order_id=o.id
+      	)
+      	<if test="orderId!=null">
+      		and o.id=#{orderId}
+      	</if>
+	</update>
+	<update id="calculateOrderProfit">
+		update  orders o set profit =#{profit}
+		where o.order_status!=7
+		<if test="orderId!=null">
+      		and o.id=#{orderId}
+      	</if>
+	</update>
+	<update id="configOrderOtherInfo">
+		update orders o set o.calc_weight=
+		(
+		  select sum(p.package_weight) from order_package p where  p.order_id=o.id and p.status!=7
+		),
+		 o.scanned_time = (
+		   select min(p.scanned_time) from order_package p where  p.order_id=o.id and (p.status=5 or p.status=6 or p.status=8)
+		 )
+		where o.order_status!=7 and
+		exists(
+		  select 1 from order_package p where p.order_id=o.id
+		)
+		<if test="orderId!=null">
+      		and o.id=#{orderId}
+      	</if>
+	</update>
+	<sql id="Column_List">
+		a.ID,a.ORDER_NO,a.ORDER_PLATFORM,a.ORDER_SN, a.PAY_STATUS, a.ORDER_SALE_TIME, a.ORDER_PAID_TIME,
+		a.ORDER_TYPE, a.ORDER_STATUS, a.CURRENCY, a.AMOUNT, a.IS_SEND, a.SEND_PLATFORM,
+		a.PRINTED_FLAG, a.ACCOUNT_ID, a.SHIPPING_NAME, a.SCANNED_TIME, a.TRACK_NUMBER, a.TRACK_NUMBER_REF, a.SHIPPED_TIME,
+		a.CALC_WEIGHT, a.PACKAGE_WEIGHT, a.SHIPPING_FEE, a.COST, a.PROFIT, a.STRIKE_COST, a.REFUND_FEE,
+		a.REFUND_REASON, a.NOTE, a.CREATED_TIME, a.LAST_UPDATED_TIME,a.MIXED_FLAG,a.REISSUED_FLAG,a.PAYPALTRANSID,a.SRN,a.SITE,
+		a.COMBINE,a.COMBINE_ORDERS,a.SUSPEND,a.CANCELDATE,a.PAYPAL_FEE,a.PLAT_SHIPPINMETHOD,a.PLAT_SHIPPINGFEE,a.BUYERNOTE,
+		a.EXCHANGE_RATE,a.PACKAGE_SHIPFEE,a.RETURN_TYPE,a.RETURN_NOTE,a.PACKING_MATERIAL_FEE,a.RETURN_TIME,a.VERSION
+	</sql>
+
+	<select id="load" resultMap="WithItemResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Column_List" />
+		,v.account_name
+		from ORDERS a
+		left join v_platform_account v on v.id=a.account_id
+		where a.ID = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="findByOrderSn" resultType="Order">
+		select
+		<include refid="Column_List" />
+		,v.account_name
+		from ORDERS a
+		left join v_platform_account v on v.id=a.account_id
+		where a.order_sn = #{orderSn,jdbcType=VARCHAR}
+	</select>
+	
+
+	<select id="findAll" resultType="Order">
+		select
+		<include refid="Column_List" />
+		from ORDERS a
+	</select>
+
+	<update id="batchUpdateOrder">
+		<if test="columnValue!=null">
+			update orders
+			<set>
+				<foreach collection="columnValue.keys" separator="," item="k">
+					${k}=#{columnValue[${k}]}
+				</foreach>
+			</set>
+			<if test="id!=null">
+				where id in
+				<foreach collection="id" separator="," item="item" open="(" close=")">
+					#{item}
+				</foreach>
+			</if>
+		</if>
+	</update>
+
+	<update id="traceNumberImport" parameterType="java.util.List">
+		<foreach collection="orders" separator=";" open="begin" close="; end;" item="o">
+			update orders set TRACK_NUMBER=#{o.trackNumber,jdbcType=VARCHAR},SHIPPING_NAME=#{o.shippingName,jdbcType=VARCHAR}
+			where id=#{o.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+	
+	<select id="findAfterGepackOrderId" resultType="java.lang.Integer">
+		select a.id
+		from  ORDERS a
+		where a.ORDER_STATUS=5
+	</select>
+
+	<select id="find" resultMap="WithItemResultMap">
+		select
+		<include refid="Column_List" />
+		from ORDERS a
+		left join ORDER_BUYERINFO b on a.order_sn=b.order_sn
+		where 1=1
+		<if test="param.combine!=null and param.combine!=''">
+			and a.COMBINE=#{param.combine}
+		</if>
+		<if test="param.searchValue!=null and param.searchValue!=''">
+			<choose>
+				<when test="param.searchColumn=='c.sku' or param.searchColumn=='c.item_id' ">
+					and exists(
+					select 1 from ORDER_ITEMS c where a.id = c.order_id and ${param.searchColumn} like #{param.searchValue} || '%'
+					)
+				</when>
+				<otherwise>
+					and ${param.searchColumn}=#{param.searchValue}
+				</otherwise>
+			</choose>
+		</if>
+		<choose>
+			<when test="param.sellerId==null and param.accountId!=''">
+				and  a.ACCOUNT_ID=#{param.accountId}
+			</when>
+			<when test="param.sellerId!=null and param.sellerId!=''">
+			    and a.ACCOUNT_ID in (
+			    select id from v_platform_account where  seller_id=#{param.sellerId}
+				<if test="param.accountId!=null and  param.accountId!=''">
+					and  account_name=#{param.accountId}
+				</if>
+				)
+			</when>
+		</choose>
+		
+		<if test="param.site!=null and param.site!=''">
+			and a.SITE=#{param.site}
+		</if>
+		<if test="param.note!=null  and param.note!=''">
+			<if test="param.note==1">
+				and length(a.note)>0
+			</if>
+			<if test="param.note==0">
+				and a.note is null or length(a.note)=0
+			</if>
+		</if>
+		<if test="param.country!=null and param.country!=''">
+			and b.shipping_country_name=#{param.country}
+		</if>
+		<if test="param.status!=null and param.status!=''">
+			and a.order_status=#{param.status}
+		</if>
+		<if test="param.shipping!=null and param.shipping!=''">
+			and a.shipping_name=#{param.shipping}
+		</if>
+		<if test="param.type!=null and param.type!=''">
+			and a.order_type=#{param.type}
+		</if>
+		<if test="param.payStatus!=null and param.payStatus!=''">
+			and a.pay_status=#{param.payStatus}
+		</if>
+		<if test="param.currency!=null and param.currency!=''">
+			and a.currency=#{param.currency}
+		</if>
+		<if test="param.mixed!=null and param.mixed!=''">
+			and a.mixed_flag=#{param.mixed}
+		</if>
+		<if test="param.printedSend!=null and param.printedSend!=''">
+			<choose>
+				<when test="param.printedSend=='p1'">
+					and a.printed_flag=0
+				</when>
+				<when test="param.printedSend=='p2'">
+					and a.printed_flag=1
+				</when>
+				<when test="param.printedSend=='s1'">
+					and a.is_send=0
+				</when>
+				<when test="param.printedSend=='s2'">
+					and a.is_send=1
+				</when>
+			</choose>
+		</if>
+		<if test="param.packingMaterial!=null and param.packingMaterial!=''">
+			and exists(
+			select 1 from ORDER_PACKAGE c where c.order_id=a.id and c.specifications=#{param.packingMaterial}
+			)
+		</if>
+		<if test="param.packageWeightFrom!=null and param.packageWeightFrom!=''">
+			and a.package_weight&gt;=#{param.packageWeightFrom}
+		</if>
+		<if test="param.packageWeightTo!=null and param.packageWeightTo!=''">
+			and a.package_weight&lt;=#{param.packageWeightTo!=}
+		</if>
+		<if test="param.amountFrom!=null and param.amountFrom!=''">
+			and a.amount&gt;=#{param.amountFrom}
+		</if>
+		<if test="param.amountTo!=null and param.amountTo!=''">
+			and a.amount&lt;=#{param.amountTo}
+		</if>
+		<if test="param.platform!=null and param.platform!=''">
+			and a.order_platform=#{param.platform}
+		</if>
+		<if test="param.payDateFrom!=null and param.payDateFrom!=''">
+			and a.order_paid_time&gt;=TO_DATE(#{param.payDateFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.payDateTo!=null and param.payDateTo!=''">
+			and a.order_paid_time&lt;=TO_DATE(#{param.payDateTo},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.saleDateFrom!=null and param.saleDateFrom!=''">
+			and a.order_sale_time&gt;=TO_DATE(#{param.saleDateFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.saleDateTo!=null and param.saleDateTo!=''">
+			and a.order_sale_time&lt;=TO_DATE(#{param.saleDateTo},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.scanDateFrom!=null and param.scanDateFrom!=''">
+			and a.scanned_time&gt;=TO_DATE(#{param.scanDateFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.scanDateTo!=null and param.scanDateTo!=''">
+			and a.scanned_time&lt;=TO_DATE(#{param.scanDateTo},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.reissue!=null and param.reissue!=''">
+			and a.reissued_flag=#{param.reissue}
+		</if>
+	<if test="param.category !=null and param.category !=''">
+			and exists(
+			select 1 from ORDER_ITEMS i left join goods g on g.goods_sku = i.sku
+			where i.order_id = a.id and g.category_id = #{param.category}
+			)
+		</if>
+		<if test="param.packageStatus!=null and param.packageStatus!=''">
+			and exists(
+			select 1 from ORDER_PACKAGE d where d.order_id=a.id and d.status=#{param.packageStatus}
+			)
+		</if>
+	</select>
+
+	<select id="findPage" resultMap="WithItemResultMap">
+		select
+		<include refid="Column_List" />
+		, v.account_name,s.contacts account_real_name,s.qq_no seller_qq
+		from ORDERS a
+		left join v_platform_account v on v.id=a.account_id
+		LEFT JOIN SELLERS s on s.id = v.SELLER_ID
+		where 1=1
+		<include refid="BASE_SEARCH"></include>
+		order by  ${param.orderStr}	
+	</select>
+	
+	<select id="findEbabyTwoSendPage" resultMap="WithItemResultMap">
+		select
+		<include refid="Column_List" />
+		, v.account_name,s.contacts account_real_name
+		from ORDERS a
+		left join v_platform_account v on v.id=a.account_id
+		LEFT JOIN SELLERS s on s.id = v.SELLER_ID
+		<where>
+			<if test="param.idList!=null and param.idList.size()>0">
+				and a.id in 
+				<foreach collection="param.idList"  separator=" or a.id in " item="item">
+					(${item})
+				</foreach>
+			</if>
+		</where>
+		order by  ${param.orderStr}
+	</select>
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from ORDERS
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+
+	<insert id="insert" parameterType="Order">
+		<selectKey resultType="int" order="BEFORE" keyProperty="id">
+			select SEQ_ORDERS.Nextval as ID from DUAL
+		</selectKey>
+		insert into ORDERS (ID, ORDER_NO, ORDER_PLATFORM,
+		ORDER_SN, PAY_STATUS, ORDER_SALE_TIME,
+		ORDER_PAID_TIME, ORDER_TYPE, ORDER_STATUS,
+		CURRENCY, AMOUNT, IS_SEND,
+		SEND_PLATFORM, PRINTED_FLAG, ACCOUNT_ID,
+		SHIPPING_NAME, SCANNED_TIME, TRACK_NUMBER,
+		SHIPPED_TIME, CALC_WEIGHT, PACKAGE_WEIGHT,
+		SHIPPING_FEE, COST, PROFIT,
+		STRIKE_COST, REFUND_FEE, REFUND_REASON,
+		NOTE, CREATED_TIME, LAST_UPDATED_TIME,
+		MIXED_FLAG, REISSUED_FLAG, SITE,
+		PAYPALTRANSID, SRN, COMBINE,
+		COMBINE_ORDERS, SUSPEND, CANCELDATE,
+		PAYPAL_FEE,EXCHANGE_RATE,PACKING_MATERIAL_FEE,PLAT_SHIPPINMETHOD,PLAT_SHIPPINGFEE,BUYERNOTE)
+		values (#{id,jdbcType=DECIMAL}, #{orderNo,jdbcType=VARCHAR}, #{orderPlatform,jdbcType=VARCHAR},
+		#{orderSn,jdbcType=VARCHAR}, #{payStatus,jdbcType=VARCHAR}, #{orderSaleTime,jdbcType=TIMESTAMP},
+		#{orderPaidTime,jdbcType=TIMESTAMP}, #{orderType,jdbcType=DECIMAL}, #{orderStatus,jdbcType=DECIMAL},
+		#{currency,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{isSend,jdbcType=DECIMAL},
+		#{sendPlatform,jdbcType=VARCHAR}, 0, #{accountId,jdbcType=DECIMAL},
+		#{shippingName,jdbcType=VARCHAR}, #{scannedTime,jdbcType=TIMESTAMP}, #{trackNumber,jdbcType=VARCHAR},
+		#{shippedTime,jdbcType=TIMESTAMP}, #{calcWeight,jdbcType=DECIMAL}, #{packageWeight,jdbcType=DECIMAL},
+		#{shippingFee,jdbcType=DECIMAL}, #{cost,jdbcType=DECIMAL}, #{profit,jdbcType=DECIMAL},
+		#{strikeCost,jdbcType=DECIMAL}, #{refundFee,jdbcType=DECIMAL}, #{refundReason,jdbcType=VARCHAR},
+		#{note,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{lastUpdatedTime,jdbcType=TIMESTAMP},
+		#{mixedFlag,jdbcType=DECIMAL}, #{reissuedFlag,jdbcType=DECIMAL}, #{site,jdbcType=VARCHAR},
+		#{paypaltransid,jdbcType=VARCHAR}, #{srn,jdbcType=VARCHAR}, #{combine,jdbcType=DECIMAL},
+		#{combineOrders,jdbcType=VARCHAR}, 0, #{cancelDate,jdbcType=CHAR},
+		#{paypalFee,jdbcType=DECIMAL},#{exchangeRate,jdbcType=DECIMAL},#{packingMaterialFee,jdbcType=DECIMAL},
+		#{platShippinMethod,jdbcType=VARCHAR},#{platShippingFee,jdbcType=DECIMAL},#{buyerNote,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<insert id="batchinsert">
+		insert into orders(id,order_platform,order_sn,pay_status,order_sale_time,order_paid_time,order_status,currency,
+		amount,account_id,strike_cost,site,note,srn,paypaltransid,reissued_flag,combine, paypal_fee,plat_shippinmethod,plat_shippingfee,buyernote,exchange_rate)
+		select SEQ_ORDERS.Nextval,platid,orderid,paymentstatu,saledate,paiddate,1,currency,
+		amount,acctid,feeorcreditamount,siteid,memo,srn,paypaltransid,0,0,feeorcreditamount,
+		(case when platid='ebay' then (select shippinmethod from profile.t_orders o1 where o1.orderid=o.orderid) when platid='smt' then 
+     		(select max(SHIPMETHOD) from  profile.t_orders_det d1 where d1.orderid=o.orderid )
+     		end
+    	) shippinmethod
+		,(select sum(SHIPPINGFEE) from profile.t_orders_det d where d.orderid=o.orderid) plat_shippingfee,
+		buyernote,
+		(select  exchange_rate from currency_rates c where c.currency=o.currency)/(select  exchange_rate from currency_rates c where c.currency='RMB')
+		from profile.t_orders o
+		where SYNC_FLAG =0
+		and exists(select 1 from profile.t_orders_det d where d.orderid=o.orderid)
+		and id in
+		<foreach collection="id" separator="," open="(" close=")" item="item">
+			#{item}
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="Order">
+		update ORDERS
+		<set>
+			<if test="orderPlatform != null">
+				ORDER_PLATFORM = #{orderPlatform,jdbcType=VARCHAR},
+			</if>
+			<if test="orderSn != null">
+				ORDER_SN = #{orderSn,jdbcType=VARCHAR},
+			</if>
+			<if test="payStatus != null">
+				PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="orderSaleTime != null">
+				ORDER_SALE_TIME = #{orderSaleTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderPaidTime != null">
+				ORDER_PAID_TIME = #{orderPaidTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderType != null">
+				ORDER_TYPE = #{orderType,jdbcType=DECIMAL},
+			</if>
+			<if test="orderStatus != null">
+				ORDER_STATUS = #{orderStatus,jdbcType=DECIMAL},
+			</if>
+			<if test="currency != null">
+				CURRENCY = #{currency,jdbcType=VARCHAR},
+			</if>
+			<if test="amount != null">
+				AMOUNT = #{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="isSend != null">
+				IS_SEND = #{isSend,jdbcType=DECIMAL},
+			</if>
+			<if test="sendPlatform != null">
+				SEND_PLATFORM = #{sendPlatform,jdbcType=VARCHAR},
+			</if>
+			<if test="printedFlag != null">
+				PRINTED_FLAG = #{printedFlag,jdbcType=DECIMAL},
+			</if>
+			<if test="accountId != null">
+				ACCOUNT_ID = #{accountId,jdbcType=DECIMAL},
+			</if>
+			<if test="shippingName != null">
+				SHIPPING_NAME = #{shippingName,jdbcType=VARCHAR},
+			</if>
+			<if test="scannedTime != null">
+				SCANNED_TIME = #{scannedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="trackNumber != null">
+				TRACK_NUMBER = #{trackNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="shippedTime != null">
+				SHIPPED_TIME = #{shippedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="calcWeight != null">
+				CALC_WEIGHT = #{calcWeight,jdbcType=DECIMAL},
+			</if>
+			<if test="packageWeight != null">
+				PACKAGE_WEIGHT = #{packageWeight,jdbcType=DECIMAL},
+			</if>
+			<if test="shippingFee != null">
+				SHIPPING_FEE = #{shippingFee,jdbcType=DECIMAL},
+			</if>
+			<if test="strikeCost != null">
+				STRIKE_COST = #{strikeCost,jdbcType=DECIMAL},
+			</if>
+			<if test="refundFee != null">
+				REFUND_FEE = #{refundFee,jdbcType=DECIMAL},
+			</if>
+			<if test="refundReason != null">
+				REFUND_REASON = #{refundReason,jdbcType=VARCHAR},
+			</if>
+			<if test="note != null">
+				NOTE = #{note,jdbcType=VARCHAR},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="mixedFlag != null">
+				MIXED_FLAG = #{mixedFlag,jdbcType=DECIMAL},
+			</if>
+			<if test="reissuedFlag != null">
+				REISSUED_FLAG = #{reissuedFlag,jdbcType=DECIMAL},
+			</if>
+			<if test="site != null">
+				SITE = #{site,jdbcType=VARCHAR},
+			</if>
+			<if test="paypaltransid != null">
+				PAYPALTRANSID = #{paypaltransid,jdbcType=VARCHAR},
+			</if>
+			<if test="srn != null">
+				SRN = #{srn,jdbcType=VARCHAR},
+			</if>
+			<if test="combine != null">
+				COMBINE = #{combine,jdbcType=DECIMAL},
+			</if>
+			<if test="combineOrders != null">
+				COMBINE_ORDERS = #{combineOrders,jdbcType=VARCHAR},
+			</if>
+			<if test="suspend != null">
+				SUSPEND = #{suspend,jdbcType=DECIMAL},
+			</if>
+			<if test="cancelDate != null">
+				CANCELDATE = #{cancelDate,jdbcType=CHAR},
+			</if>
+			<if test="packageShipfee != null">
+				PACKAGE_SHIPFEE = #{packageShipfee,jdbcType=DECIMAL},
+			</if>
+			<if test="returnType != null ">
+				RETURN_TYPE = #{returnType},
+			</if>
+			<if test="returnNote != null">
+				RETURN_NOTE = #{returnNote},
+			</if>
+			<if test="trackNumberRef != null">
+				TRACK_NUMBER_REF = #{trackNumberRef},
+			</if>
+			<if test="returnTime != null">
+				RETURN_TIME = #{returnTime},
+			</if>
+			<if test="version != null">
+				VERSION = #{version}+1
+			</if>
+			<if test="stopFlag != null">
+				and STOP_FLAG = #{stopFlag}
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+		<if test="version != null">
+				and VERSION = #{version}
+		</if>
+	</update>
+
+	<select id="getBuyInfoByOrderId" resultType="OrderBuyerInfo" parameterType="java.lang.Integer">
+		select a.*
+		from ORDER_BUYERINFO a
+		where exists(
+		select 1 from ORDERS b
+		where a.order_sn=b.order_sn and
+		b.ID = #{orderId,jdbcType=INTEGER}
+		)
+	</select>
+
+	<insert id="addOrderBuyerInfo" parameterType="OrderBuyerInfo">
+		<selectKey resultType="int" order="BEFORE" keyProperty="id">
+			select SEQ_ORDER_BUYERINFO.Nextval as ID from DUAL
+		</selectKey>
+		insert into ORDER_BUYERINFO (ID, ORDER_SN,ORDER_PLATFORM, BUYER_USER_ID,
+		BUYER_EMAIL, SHIPPING_NAME, SHIPPING_STREET1,
+		SHIPPING_STREET2, SHIPPING_CITY, SHIPPING_STATE,
+		SHIPPING_COUNTRY, SHIPPING_COUNTRY_NAME, SHIPPING_POSTCODE,
+		SHIPPING_PHONE, SHIPPING_MOBILE
+		)
+		values (#{id,jdbcType=DECIMAL}, #{orderSn,jdbcType=VARCHAR},#{orderPlatform,jdbcType=VARCHAR},
+		#{buyerUserId,jdbcType=VARCHAR},
+		#{buyerEmail,jdbcType=VARCHAR}, #{shippingName,jdbcType=VARCHAR}, #{shippingStreet1,jdbcType=VARCHAR},
+		#{shippingStreet2,jdbcType=VARCHAR}, #{shippingCity,jdbcType=VARCHAR}, #{shippingState,jdbcType=VARCHAR},
+		#{shippingCountry,jdbcType=VARCHAR}, #{shippingCountryName,jdbcType=VARCHAR}, #{shippingPostcode,jdbcType=VARCHAR},
+		#{shippingPhone,jdbcType=VARCHAR}, #{shippingMobile,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<insert id="batchAddOrderBuyerInfo">
+		insert into order_buyerinfo
+		(id,order_platform,order_sn,buyer_user_id,shipping_name,shipping_street1,shipping_street2,
+		shipping_city,shipping_state,shipping_country_name,shipping_country,shipping_postcode,shipping_phone,shipping_mobile,buyer_email)
+		select
+		SEQ_ORDER_BUYERINFO.Nextval,o.platid,o.orderid,o.buyerid,nvl(addr_recipients,a.ebay_addr_recipients) addr_recipients,
+	    nvl(addr_street1,a.ebay_addr_street1) addr_street1,nvl(addr_street2,a.ebay_addr_street2) addr_street2,nvl(addr_city,a.ebay_addr_city) addr_city,
+	    nvl(addr_provincestate,a.ebay_addr_provincestate) addr_provincestate,nvl(addr_country,a.ebay_addr_country) addr_country,nvl(addr_countrycode,a.ebay_addr_countrycode) addr_countrycode,
+	    nvl(o.addr_zip,a.ebay_addr_postcode) addr_zip ,nvl(addr_phone,a.ebay_addr_phone) addr_phone,nvl(addr_mobile,a.ebay_addr_mobile) addr_mobile,nvl(addr_email,a.ebay_addr_email) addr_email
+	    from profile.t_orders o
+	    left join profile.t_ebay_address a on o.orderid=a.orderid
+   		where SYNC_FLAG=0
+   		and not exists(select 1 from order_buyerinfo b where o.orderid=b.order_sn)
+		and o.id in
+		<foreach collection="id" open="(" close=")" separator="," item="item">
+			#{item}
+		</foreach>
+	</insert>
+
+	<update id="updateOrderBuyerInfo" parameterType="OrderBuyerInfo">
+		update ORDER_BUYERINFO
+		<set>
+			<if test="orderPlatform != null">
+				ORDER_PLATFORM = #{orderPlatform,jdbcType=VARCHAR},
+			</if>
+			<if test="orderSn != null">
+				ORDER_SN = #{orderSn,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerUserId != null">
+				BUYER_USER_ID = #{buyerUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="buyerEmail != null">
+				BUYER_EMAIL = #{buyerEmail,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingName != null">
+				SHIPPING_NAME = #{shippingName,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingStreet1 != null">
+				SHIPPING_STREET1 = #{shippingStreet1,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingStreet2 != null">
+				SHIPPING_STREET2 = #{shippingStreet2,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingCity != null">
+				SHIPPING_CITY = #{shippingCity,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingState != null">
+				SHIPPING_STATE = #{shippingState,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingCountry != null">
+				SHIPPING_COUNTRY = #{shippingCountry,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingCountryName != null">
+				SHIPPING_COUNTRY_NAME = #{shippingCountryName,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingPostcode != null">
+				SHIPPING_POSTCODE = #{shippingPostcode,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingPhone != null">
+				SHIPPING_PHONE = #{shippingPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="shippingMobile != null">
+				SHIPPING_MOBILE = #{shippingMobile,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateflagOrderBuyinfo" parameterType="java.lang.Integer">
+		update  ORDER_BUYERINFO set UPDATE_FLAG = #{updateFlag,jdbcType=INTEGER}
+		where id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<insert id="batchOrderItem">
+		insert into order_items (id,order_id,order_sn,item_id,item_pic,
+			item_title,item_sku,sku, old_sku, item_price,item_quantity, 
+			ebay_fee, order_limit_id,plat_shipfee,message,ordersrn,created_time)
+		    select
+		    SEQ_ORDER_ITEMS.NEXTVAL,0,i.orderid,i.ittemid,i.pic,i.title,i.sku,
+		    m.new_sku sku, m.old_sku, i.price,i.qty, i.ebayfee, i.orderlimiteid,i.shippingfee,i.message,i.ordersrn,sysdate
+		    from profile.T_ORDERS_DET i
+		    left join sku_mapping m on m.platform_sku = i.sku
+		    where exists(
+		    select 1 from profile.t_orders o where o.SYNC_FLAG=0 and o.ORDERID=i.ORDERID
+		    and o.id in
+			<foreach collection="id" separator="," open="(" close=")" item="item">
+				#{item}
+			</foreach>
+			)
+			and  not exists(
+			  select 1 from  order_items oi where oi.order_sn=i.orderid and oi.ORDER_LIMIT_ID=i.ORDERLIMITEID
+			  and oi.item_id=i.ITTEMID
+			)
+	</insert>
+	<update id="updateOrderItemRelation">
+		update order_items o set o.order_id = (select min(id) from orders b where b.order_sn=o.order_sn)
+		where (o.order_id=0 or o.order_id is null)
+	</update>
+
+	<select id="getUnSyncOrderId" resultType="INTEGER">
+		select id from profile.t_orders o1 where SYNC_FLAG=0 and statecode=100
+		and  not exists( select 1 from orders o2 where  o2.order_sn=o1.orderid)
+		and  exists (select 1 from  profile.t_orders_det  i where i.orderid=o1.orderid)
+	</select>
+
+	<update id="updateOrderSyncflag">
+		update profile.t_orders set SYNC_FLAG=1 where SYNC_FLAG=0
+		and id in
+		<foreach collection="id" separator="," open="(" close=")" item="item">
+			#{item}
+		</foreach>
+	</update>
+
+	<select id="getByState" resultType="Order">
+		SELECT * FROM ORDERS WHERE ORDER_STATUS = #{status} and suspend != 1 order by created_time desc
+	</select>
+	<!-- 临时处理 -->
+	<select id="getByStateAdTkNo" resultType="Order">
+	SELECT * FROM ORDERS a WHERE a.ORDER_STATUS = 3  AND a.suspend = 0 and a.track_number is not null and nvl(a.stop_flag,0)!=1
+	</select>
+
+	<update id="updateStateById">
+		UPDATE ORDERS SET ORDER_STATUS = #{status} WHERE ID=#{id}
+	</update>
+	
+	<update id="cancelOrder">
+		UPDATE ORDERS SET ORDER_STATUS = 6,CANCELDATE=#{cancelDate} WHERE ID=#{id}
+	</update>
+
+	<sql id="orderMarkShippingSql">
+		select o.*,
+			a.*,
+			s.shipping_name,
+			s.ebay_value ebay_shipping_name,
+			s.smt_value smt_shipping_name,
+			s.wish_value wish_shipping_name
+			from orders o
+			left join v_platform_account a
+			on a.id = o.account_id
+			left join shippings s
+			on s.shipping_name = o.shipping_name
+	</sql>
+
+	<select id="findOrderMarkShipping" resultType="OrderMarkShipping">
+		<include refid="orderMarkShippingSql" />
+		where o.id in
+
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+			#{item, jdbcType=DECIMAL}
+		</foreach>
+	</select>
+	
+	<select id="findOrderMarkShippingByOrderSn" resultType="OrderMarkShipping">
+		<include refid="orderMarkShippingSql" />
+		where o.order_sn in
+
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+			#{item, jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	
+	<update id="setShipping">
+	UPDATE ORDERS SET SHIPPING_NAME=#{param.shippingName},SHIPPING_FEE=#{param.shippingFee} WHERE ID = #{param.orderId} 
+	</update>
+	
+	<select id="getWithShippingInfo" resultMap="WithItemForShippingResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Column_List" />
+		from ORDERS a
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="findNoShip" resultType="Order">
+		select distinct o.id
+	  from orders o
+	  left join order_items oi on o.id = oi.order_id
+	 where o.order_status = 1
+	   and oi.sku is not null
+	   AND not exists
+	 (select 1 from order_shipping_fee s where s.order_id = o.id)
+	</select>
+	
+
+	<select id="getSimpleOrderAccountById" resultType="SimpleOrderWithAccount">
+		select o.id order_id, o.track_number, a.account_name, a.ebay_token, a.ebay_devid, a.ebay_appid, a.ebay_certid
+	      from orders o
+	      left join v_platform_account a
+	        on o.account_id = a.id
+	     where o.id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="findmergeOrder" resultMap="WithItemResultMap">
+		select 
+		<include refid="Column_List" />
+		from orders a where id in(
+			select orderId  from(
+			  select  a.id orderId,a.account_id,b.buyer_user_id,b.shipping_street1,b.shipping_city,b.shipping_state  from orders a left join order_buyerinfo b
+			  on  a.order_status=1 and a.combine=0 and  b.order_sn = a.order_sn   
+			) o1 where exists(
+			      select * from (
+			             select  a.id orderId,a.account_id,b.buyer_user_id,b.shipping_street1,b.shipping_city,b.shipping_state  from orders a left join order_buyerinfo b
+			              on a.order_status=1 and b.order_sn = a.order_sn
+			       ) o2
+			       where  
+			        o1.account_id = o2.account_id and o1.buyer_user_id=o2.buyer_user_id
+			        and o1.shipping_street1 = o2.shipping_street1 and o1.shipping_city=o2.shipping_city
+			        and o1.shipping_state=o2.shipping_state
+			      <![CDATA[  and o1.orderId<>o2.orderId ]]>
+			 )
+		)
+		<if test="sellerId!=null">
+			and a.ACCOUNT_ID in (
+				select account_id from user_powers where  user_id=#{userId}
+			)
+		</if>
+	</select>
+
+	<select id="exportInvoice" resultType="ExportOrder">
+	select gc.name baseCategorie,t1.* from (
+	select 
+	g.goods_sku goodsSku,
+	g.base_category_id,
+	sum(i.item_quantity) totalCount,
+	sum(i.item_quantity * i.item_price) amount,
+	sum(i.item_quantity * g.cost),
+	sum(i.item_quantity * g.weight) totalWeight
+	from order_items i 
+	left join goods g on g.goods_sku = i.sku
+	left join orders a on a.id = i.order_id
+	left join order_buyerinfo b on b.order_sn = a.order_sn
+	left join v_platform_account v on v.ID = a.account_id
+	LEFT JOIN SELLERS s on s.id = v.SELLER_ID
+	where 1=1 <include refid="BASE_SEARCH"></include>
+	group by g.goods_sku, g.base_category_id) t1
+	left join GOODS_CATEGORY gc on gc.id = t1.base_category_id
+	</select>
+	
+	<!-- 根据查询条件查询订单信息 -导出订单-->
+	<select id="findOrderInfoByParam" resultType="ExportOrder">
+	<include refid="BASE_ORDER_EPT_COLUMN"></include>
+	<include refid="BASE_ORDER_EPT"></include>
+	<include refid="BASE_SEARCH"></include>
+	</select>
+	
+	<!-- 根据查询条件查询订单信息 总数-导出订单-->
+	<select id="findOrderInfoCountByParam" resultType="INTEGER">
+	SELECT COUNT(*)
+	<include refid="BASE_ORDER_EPT"></include>
+	<include refid="BASE_SEARCH"></include>
+	</select>
+	
+	
+	<!-- 根据订单ID查询订单信息 -->
+	<select id="findOrderInfoById" resultType="ExportOrder">
+		<include refid="BASE_ORDER_EPT_COLUMN"></include>
+		<include refid="BASE_ORDER_EPT"></include>
+		AND a.id IN
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+		</foreach>
+	</select>
+	
+	<!-- 订单报表-导出订单 -->
+	<sql id="BASE_ORDER_EPT">
+		from  order_items oi
+		left join orders a  on  a.id = oi.order_id
+		left join order_buyerinfo b on a.order_sn = b.order_sn
+		left join goods g on g.goods_sku = oi.sku
+		left join v_platform_account v on v.ID = a.account_id
+		LEFT JOIN SELLERS s on s.id = v.SELLER_ID
+		WHERE 1=1
+	</sql>
+	
+	<!--订单信息字段-导出订单  -->
+	<sql id="BASE_ORDER_EPT_COLUMN">
+		select a.id orderId, oi.item_quantity itemQuantity,a.order_sn orderSn,b.buyer_email buyEmail,
+		oi.sku sku,a.shipping_name shippingName,b.shipping_country_name shippingCountryName,
+		a.track_number trackNumber,a.ORDER_SALE_TIME orderSaleTime,a.ORDER_PAID_TIME orderPaidTime,
+		b.shipping_street1 shippingStreet1,b.shipping_street2 shippingStreet2,
+		b.shipping_city shippingCity,b.shipping_state shippingState,
+		b.shipping_postcode shippingPostcode,b.shipping_country shippingCountry,
+		b.shipping_phone shippingPhone,g.cost goodsCost,g.weight weight,
+		b.shipping_name buyName,a.Track_Number trackNumber,v.ACCOUNT_NAME accountName,
+		oi.Lock_Amount,oi.need_purchase,oi.shipment_amount,
+		g.DECLARATION_NAME_EN declarationNameEn,a.REFUND_FEE,
+		g.Declaration_Name_Cn declarationNameCn,
+		b.Shipping_Mobile mobile,
+		oi.Purchase_Price purchasePrice,
+		a.scanned_time  scannedTime,
+		a.PACKAGE_WEIGHT packageWeight,
+		a.package_shipfee packageShipfee,
+		a.ORDER_PLATFORM orderPlatform,
+		a.CALC_WEIGHT calcWeight,
+		a.SHIPPING_FEE calcShipfee,
+		g.old_sku oldSku,
+		a.Order_Sale_Time orderSaleTime,
+		g.name goodsName,
+		g.en_name enName
+		
+	</sql>
+	
+	<!-- 销售报表 -->
+	<select id="findSaleByParam" resultType="ExportOrder">
+		<include refid="BASE_ORDER_SALE"></include>
+		WHERE 1=1 <include refid="BASE_SEARCH"></include>
+		group by a.account_id, a.order_platform,v.ACCOUNT_NAME
+	</select>
+	
+	<!-- 销售报表 -->
+	<select id="findSaleById" resultType="ExportOrder">
+		<include refid="BASE_ORDER_SALE"></include>
+		WHERE  a.id IN
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+				#{item}
+		</foreach>
+		group by a.account_id, a.order_platform,v.ACCOUNT_NAME
+	</select>
+		
+	<!-- 销售报表 -->
+	<sql id="BASE_ORDER_SALE">
+	select a.account_id accountId,
+        v.ACCOUNT_NAME accountName,
+        a.order_platform orderPlatform,
+        count(distinct a.id) countOrder,
+        sum(i.item_quantity) countItem,
+        
+       sum(nvl(a.SHIPPING_FEE, 0) /
+            (select count(*)
+               from order_items ii
+              where ii.order_id = i.order_id)) calcShipfee,
+        
+        SUM(nvl(a.CALC_WEIGHT, 0) /
+            (select count(*)
+               from order_items ii
+              where ii.order_id = i.order_id)) calcWeight,
+        
+        
+        sum(nvl(a.PACKAGE_SHIPFEE, 0) /
+            (select count(*)
+               from order_items ii
+              where ii.order_id = i.order_id)) totalShippingFee,
+              
+        SUM(nvl(a.PACKAGE_WEIGHT, 0) /
+            (select count(*)
+               from order_items ii
+              where ii.order_id = i.order_id)) totalWeight,
+        
+        sum(a.amount * nvl(c.exchange_rate, 1) /
+            (select count(*)
+               from order_items ii
+              where ii.order_id = i.order_id)) totalAmount,
+        
+        sum(a.paypal_fee * nvl(c.exchange_rate, 1) /
+            (select count(*)
+               from order_items ii
+              where ii.order_id = i.order_id)) paypal_fee,
+        
+        sum(i.ebay_fee * nvl(c.exchange_rate, 1)) ebayFee,
+        
+        sum(round(nvl(i.PURCHASE_PRICE, 1) * nvl(i.Item_Quantity, 1) / 1.1,2)) totalCost,
+                   
+        sum(a.refund_fee * nvl(c.exchange_rate, 1) /
+            (select count(*)
+               from order_items ii
+              where ii.order_id = i.order_id)) refundFee
+              
+	   from order_items i
+	   left join goods g on g.goods_sku = i.sku
+	   left join orders a on a.id = i.order_id
+	   left join order_buyerinfo b on b.order_sn = a.order_sn
+	   left join v_platform_account v on v.ID = a.account_id
+	   LEFT JOIN CURRENCY_RATES c on c.currency = a.currency
+	   LEFT JOIN SELLERS s on s.id = v.SELLER_ID
+	</sql>
+		
+	<update id="batchSetShip">
+	UPDATE ORDERS O SET (O.SHIPPING_NAME, O.SHIPPING_FEE) = (
+	select shipping_name, shipping_fee from ( SELECT * FROM ORDER_SHIPPING_FEE S WHERE S.ORDER_ID = #{id} order by S.Shipping_Fee ) where rownum = 1
+	)WHERE O.ID = #{id} AND O.SHIPPING_NAME IS NULL
+	</update>
+	
+	
+	<select id="findOrder" resultMap="WithItemResultMap">
+	SELECT * FROM ORDERS a left join ORDER_BUYERINFO b on a.order_sn=b.order_sn where 1=1
+	<include refid="BASE_SEARCH"></include>
+	</select>
+	
+	<select id="getById" resultMap="WithItemResultMap">
+	SELECT * FROM ORDERS a left join ORDER_BUYERINFO b on a.order_sn=b.order_sn where 1=1 AND a.ID = #{orderId}
+	</select>
+	
+	<!-- 列表查询条件 -->
+	<sql id="BASE_SEARCH">
+		
+		<if test="param.returnType != null and param.returnType != '' ">
+			and a.RETURN_TYPE = #{param.returnType}
+		</if>
+		<if test="param.sellerType != null and param.sellerType != '' ">
+			and s.Self_Flag = #{param.sellerType}
+		</if>
+		<if test="param.combine !=null and param.combine!=''">
+			and a.COMBINE=#{param.combine}
+		</if>
+		<if test="param.isSend == 1 ">
+			And a.IS_SEND = #{param.isSend}
+		</if>
+		
+		<if test="param.isSend == 0 ">
+			And a.IS_SEND IS NULL
+		</if>
+		
+		<if test="param.searchValue!=null and param.searchValue!=''">
+			<choose>
+				<when test="param.searchColumn=='c.sku'">
+					and exists(
+					select 1 from ORDER_ITEMS c where a.id = c.order_id and c.sku in 
+						<foreach collection="param.skuList" separator="," index="index" item="item" open="(" close=")">
+							#{param.skuList[${index}],jdbcType=VARCHAR}
+						</foreach>
+					)
+				</when>
+				<when test="param.searchColumn=='c.item_id'">
+					and exists(
+					select 1 from ORDER_ITEMS c where a.id = c.order_id and c.item_id like #{param.searchValue,jdbcType=VARCHAR} || '%'
+					)
+				</when>
+				<when test="param.searchColumn=='b.buyer_user_id' or param.searchColumn=='b.buyer_email' or param.searchColumn=='b.shipping_name' or param.searchColumn=='b.shipping_street1'">
+					and exists(
+					select 1 from ORDER_BUYERINFO b where a.order_sn = b.order_sn and ${param.searchColumn}=#{param.searchValue,jdbcType=VARCHAR}
+					)
+				</when>
+				<when test="param.searchColumn=='d.contacts'">
+					and exists (
+					select 1 from sellers d where d.id=v.seller_id and d.contacts=#{param.searchValue,jdbcType=VARCHAR}
+					)
+				</when>
+				<when test="param.searchColumn=='a.order_sn'">
+					and a.order_sn like '%' || #{param.searchValue,jdbcType=VARCHAR} || '%'
+				</when>
+				<when test="param.searchColumn=='a.track_number'">
+					and ${param.searchColumn} like #{param.searchValue} || '%'
+				</when>
+				<when test="param.searchColumn!='' and param.searchValue!=''">
+					and ${param.searchColumn} = #{param.searchValue,jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+				</otherwise>
+			</choose>
+		</if>
+		<choose>
+			<when test="param.accountId!=null and  param.accountId!=''">
+				and  a.ACCOUNT_ID=#{param.accountId}
+			</when>
+			<when test="param.agent!=null and param.agent!='' ">
+				and  s.agent_user_id=#{param.userId}
+			</when>
+			<when test="param.sellerId!=null and param.sellerId!=''">
+				and s.id=#{param.sellerId}
+				<!-- 
+				and a.ACCOUNT_ID in (
+				select id from v_platform_account where  seller_id=#{param.sellerId}
+				)
+				-->
+			</when>
+			<when test="param.userId != null">
+				AND a.ACCOUNT_ID in(select ACCOUNT_ID from user_powers up where user_id =#{param.userId})
+			</when>
+		</choose>
+		<if test="param.site!=null and param.site!=''">
+			and a.SITE=#{param.site}
+		</if>
+		<if test="param.note!=null  and param.note!=''">
+			<if test="param.note==1">
+				and length(a.note)>0
+			</if>
+			<if test="param.note==0">
+				and ( a.note is null )
+			</if>
+		</if>
+		<if test="param.country!=null and param.country!=''">
+			and 
+			exists(
+				select 1 from ORDER_BUYERINFO b  where b.order_sn = a.order_sn
+				and (rtrim(b.SHIPPING_COUNTRY_NAME) = #{param.country} or rtrim(b.SHIPPING_COUNTRY) = #{param.country})
+			)
+		</if>
+		<if test="param.status!=null and param.status!=''">
+			and a.order_status=#{param.status}
+		</if>
+		<if test="param.shipping!=null and param.shipping!=''">
+				and  a.shipping_name=#{param.shipping}
+		</if>
+		<if test="param.type!=null and param.type!=''">
+			and a.order_type=#{param.type}
+		</if>
+		<if test="param.payStatus!=null and param.payStatus!=''">
+			and a.pay_status=#{param.payStatus}
+		</if>
+		<if test="param.currency!=null and param.currency!=''">
+			and a.currency=#{param.currency}
+		</if>
+		<if test="param.mixed!=null and param.mixed!=''">
+			and a.mixed_flag=#{param.mixed}
+		</if>
+		<if test="param.printedSend!=null and param.printedSend!=''">
+			<choose>
+				<when test="param.printedSend=='p1'">
+					and a.printed_flag=0
+				</when>
+				<when test="param.printedSend=='p2'">
+					and a.printed_flag=1
+				</when>
+				<when test="param.printedSend=='s1'">
+					and a.is_send=0
+				</when>
+				<when test="param.printedSend=='s2'">
+					and a.is_send=1
+				</when>
+			</choose>
+		</if>
+		<if test="param.packingMaterial!=null and param.packingMaterial!=''">
+			and exists(
+			select 1 from ORDER_PACKAGE c where c.order_id=a.id and c.specifications=#{param.packingMaterial}
+			)
+		</if>
+		<if test="param.packageWeightFrom!=null and param.packageWeightFrom!=''">
+			and a.package_weight&gt;=#{param.packageWeightFrom}
+		</if>
+		<if test="param.packageWeightTo!=null and param.packageWeightTo!=''">
+			and a.package_weight&lt;=#{param.packageWeightTo}
+		</if>
+		<if test="param.amountFrom!=null and param.amountFrom!=''">
+			and a.amount&gt;=#{param.amountFrom}
+		</if>
+		<if test="param.amountTo!=null and param.amountTo!=''">
+			and a.amount&lt;=#{param.amountTo}
+		</if>
+		<if test="param.platform!=null and param.platform!=''">
+			and a.order_platform=#{param.platform}
+		</if>
+		<if test="param.payDateFrom!=null and param.payDateFrom!=''">
+			and a.order_paid_time&gt;=TO_DATE(#{param.payDateFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.payDateTo!=null and param.payDateTo!=''">
+			and a.order_paid_time <![CDATA[ < ]]> TO_DATE(#{param.payDateTo},'yyyy-mm-dd hh24:mi:ss') + 1
+		</if>
+		<if test="param.saleDateFrom!=null and param.saleDateFrom!=''">
+			and a.order_sale_time&gt;=TO_DATE(#{param.saleDateFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.saleDateTo!=null and param.saleDateTo!=''">
+			and a.order_sale_time <![CDATA[ < ]]>  TO_DATE(#{param.saleDateTo},'yyyy-mm-dd hh24:mi:ss') + 1
+		</if>
+		<if test="param.scanDateFrom!=null and param.scanDateFrom!=''">
+			and a.scanned_time &gt;= TO_DATE(#{param.scanDateFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.scanDateTo!=null and param.scanDateTo!=''">
+			and a.scanned_time <![CDATA[ < ]]> TO_DATE(#{param.scanDateTo},'yyyy-mm-dd hh24:mi:ss') + 1
+		</if>
+		<if test="param.createDateFrom != null and param.createDateFrom != '' ">
+			and a.CREATED_TIME &gt;= TO_DATE(#{param.createDateFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.createDateTo != null and param.createDateTo != '' ">
+			and a.CREATED_TIME <![CDATA[ < ]]> TO_DATE(#{param.createDateTo},'yyyy-mm-dd hh24:mi:ss') + 1
+		</if>
+		<if test="param.returnTimeFrom != null and param.returnTimeFrom != '' ">
+			AND a.RETURN_TIME > TO_DATE(#{param.returnTimeFrom},'yyyy-mm-dd hh24:mi:ss')
+		</if>
+		<if test="param.returnTimeTo != null and param.returnTimeTo != '' ">
+			AND a.RETURN_TIME <![CDATA[ < ]]> TO_DATE(#{param.returnTimeTo},'yyyy-mm-dd hh24:mi:ss')+1
+		</if>
+		<if test="param.refund != null and param.refund !='' ">
+			<choose>
+				<when test="param.refund=='PARTIALLYREFUNDED'">
+					and a.REFUND_FEE>0  and a.REFUND_FEE!=a.AMOUNT 
+				</when>
+				<when test="param.refund=='REFUNDED'">
+					and a.REFUND_FEE=a.AMOUNT
+				</when>
+				<when test="param.refund=='ALL'">
+					and a.REFUND_FEE>0
+				</when>
+			</choose>
+		</if>
+		
+		<if test="param.reissue!=null and param.reissue!=''">
+			and a.reissued_flag=#{param.reissue}
+		</if>
+		<if test="param.firstCategory!=null and param.firstCategory!=''">
+			and exists(
+			select 1 from ORDER_ITEMS i left join goods g on g.goods_sku = i.sku
+			where i.order_id = a.id and g.base_category_id = #{param.firstCategory}
+			)
+		</if>
+		<if test="param.secondCategory!=null and param.secondCategory!=''">
+			and exists(
+			select 1 from ORDER_ITEMS i left join goods g on g.goods_sku = i.sku
+			where i.order_id = a.id and g.mid_category_id = #{param.secondCategory}
+			)
+		</if>
+		<if test="param.thirdCategory!=null and param.thirdCategory!=''">
+			and exists(
+			select 1 from ORDER_ITEMS i left join goods g on g.goods_sku = i.sku
+			where i.order_id = a.id and g.category_id = #{param.thirdCategory}
+			)
+		</if>
+		<if test="param.packageStatus!=null and param.packageStatus!=''">
+			and exists(
+			select 1 from ORDER_PACKAGE d where d.order_id=a.id and d.status=#{param.packageStatus}
+			)
+		</if>
+		<if test="param.skuTypeSearch!=null and param.skuTypeSearch=='s1'">
+			and (
+				 a.order_status = 1  and exists (
+				 		 select 1 from order_items i where i.order_id = a.id and not exists (select 1 from goods g where g.goods_sku = i.sku)
+				 )
+			)
+		</if>
+		<if test="param.skuTypeSearch!=null and param.skuTypeSearch=='s2'">
+			and a.SUSPEND=0 and  (a.order_status = 2  or  exists(
+			    		select 1 from order_items i where i.order_id = a.id
+			    		and (a.order_status=3 or a.order_status=4) 
+			    		and i.item_quantity<![CDATA[> ]]> i.lock_amount
+			    		)
+			)
+		</if>
+		<if test="param.skuTypeSearch!=null and param.skuTypeSearch=='s3'">
+			and  exists(
+				select 1 from order_package p where p.order_id = a.id and  p.status=8
+			)
+		</if>
+		<if test="param.skuTypeSearch!=null and param.skuTypeSearch=='s4'">
+			and  ( a.track_number is null)
+		</if>
+		<if test="param.skuTypeSearch!=null and param.skuTypeSearch=='s5'">
+			and ( a.shipping_name is null)
+		</if>
+		<if test="param.skuTypeSearch!=null and param.skuTypeSearch=='s6'">
+			and (  a.refund_fee>0 )
+		</if>
+		<if test="param.skuTypeSearch!=null and param.skuTypeSearch=='s7'">
+			and a.stop_flag=1
+		</if>
+		<if test="param.skuTypeSearch != null and param.skuTypeSearch =='s8'">
+			and a.suspend = 1
+		</if>
+		<if test="param.skuTypeSearch != null and param.skuTypeSearch =='s9'">
+			and a.track_number is not null
+		</if>
+		<if test="param.skuTypeSearch != null and param.skuTypeSearch =='s10'">
+			and a.order_type=-1
+		</if>
+		<if test="param.skuStatus != null and param.skuStatus!=''">
+			and  exists(
+				select 1 from order_items i where i.order_id = a.id and exists (select 1 from goods g where g.goods_sku = i.sku and g.status=#{param.skuStatus})
+			)
+		</if>
+		  
+		<choose>
+			<when test="param.skuTypeSearch!=null and param.skuTypeSearch=='s7'">
+				and a.stop_flag=1
+			</when>
+			<otherwise>
+				and nvl(a.stop_flag,0)!=1
+			</otherwise>
+		</choose>
+		
+	</sql>
+	
+	<select id="statOrderStatusCount" resultType="OrderStatistic">
+		select count(decode(o.order_status, 1, 1, null)) pending_count,
+		       count(decode(o.order_status, 2, 1, 3, 1, 4, 1, 5, 1, null)) shipping_count,
+		       count(decode(o.order_status, 7, 1, null)) shipped_count,
+		       count(decode(o.order_status, 6, 1, null))+count(decode(o.suspend, 1, 1, null)) error_count
+		  from orders o
+		  where COMBINE=0
+		<if test="sellerId != null">
+		 and exists (select 1
+		          from v_platform_account pa
+		         where pa.seller_id = #{sellerId, jdbcType=INTEGER}
+		           and pa.id = o.account_id)
+		</if>
+	</select>
+	<select id="statExceptionOrderCount" resultType="java.lang.Integer">
+		select count(1) from orders  a where COMBINE=0
+		<choose>
+			<when test="type=='s1'">
+				 and a.order_status = 1 and  exists (
+				select 1 from order_items i where i.order_id = a.id and not exists (select 1 from goods g where g.goods_sku = i.sku)
+					 )
+			</when>
+			<when test="type=='s2'">
+ 				and a.SUSPEND=0 and  (a.order_status = 2  or  exists(
+			    		select 1 from order_items i where i.order_id = a.id
+			    		and a.order_status=3 
+			    		and i.item_quantity<![CDATA[> ]]> i.lock_amount
+			    		)
+			)
+			</when>
+			<when test="type=='s3'">
+ 				and exists(
+					select 1 from order_package p where p.order_id = a.id and  p.status=8
+				)
+			</when>
+			<when test="type=='s4'">
+				and (a.track_number is null)
+			</when>
+			<when test="type=='s5'">
+				and (a.shipping_name is null) 
+			</when>
+			<when test="type=='s6'">
+				 and  a.refund_fee>0
+			</when>
+			<when test="type=='s7'">
+				 and  a.stop_flag=1
+			</when>
+			<when test="type=='s8'">
+				 and  a.suspend = 1
+			</when>
+			<when test="type=='s9'">
+				  and a.track_number is not null 
+			</when>
+			<when test="type=='s10'">
+				  and a.order_type=-1 
+			</when>
+		</choose>
+
+		<if test="sellerId != null">
+		 	and a.ACCOUNT_ID in (select 
+		         id from v_platform_account pa
+		         where pa.seller_id = #{sellerId, jdbcType=INTEGER}
+		    )
+		</if>
+		
+		<if test="userId != null">
+			<choose>
+				<when test="isAgent!=null and isAgent">
+					and  exists (
+ 				  		select 1 from xfy.sellers s
+ 				  		left join V_PLATFORM_ACCOUNT pa on pa.SELLER_ID=s.id
+ 				  		 where s.agent_user_id=#{userId, jdbcType=INTEGER}
+ 				  		 and pa.id=a.account_id
+					)
+				</when>
+				<otherwise>
+					and a.ACCOUNT_ID in(select ACCOUNT_ID from user_powers up where user_id =#{userId, jdbcType=INTEGER})	
+				</otherwise>
+			</choose>
+		</if>
+		
+	</select>
+	
+	<select id="exportStockOut"  resultType="StockOutSku">
+		select a.id as order_id,
+		       a.order_platform as plat_form,
+		       a.order_sn,
+		       a.created_time,
+		       i.sku,
+		       i.item_sku,
+		       i.item_title as item_name,
+		       i.item_quantity,
+		       us.name as buyer_name,
+		       (i.item_quantity - gis.available_count) stock_out
+		  from ORDERS a
+		  left join ORDER_ITEMS i
+		    on a.id = i.order_id
+		  left join goods g
+		    on g.goods_sku = i.sku
+		  left join user_info us
+		    on us.user_id = g.buy_user
+		  left join v_goods_inventory_stat gis
+		    on gis.goods_sku = i.sku
+		 where a.COMBINE = 0
+		   and a.SUSPEND = 0
+		   and a.order_status = 2
+		   and (i.item_quantity - gis.available_count) > 0
+		 order by sku
+	</select>
+	
+	<select id="getOrderIdAfterSortByQuantity" resultType="java.lang.Integer">
+		select id from (
+		 	select o.id,sum(i.item_quantity) sku_count,min(order_sale_time) sale_time from orders o,order_items i
+			where o.id=i.order_id and o.order_status=1 
+			<if test="ids!=null">
+				and o.id in
+				<foreach collection="ids" open="("  close=")" separator="," item="id">
+					#{id}
+				</foreach>
+			</if>
+		 	group by o.id 
+		 )  order by sku_count,sale_time
+	</select>
+	
+	<select id="findInventoryLockOrder" resultType="Order">
+		  select sum(oi.item_quantity) buyCount,
+				 oi.order_id id,
+				 max(o.ORDER_PAID_TIME) orderPaidTime
+			from order_items oi
+			left join orders o on oi.order_id = o.id
+			where o.order_status = 2 and o.suspend != 1
+		group by oi.order_id
+		order by buyCount, orderPaidTime asc
+	</select>
+	
+	<select id="loadByParam" resultMap="WithItemResultMap">
+		select
+		<include refid="Column_List" />
+		,v.account_name
+		from ORDERS a
+		left join v_platform_account v on v.id=a.account_id
+		where 1=1
+		<if test="param.traceNumber != null and param.traceNumber != '' ">
+		 AND a.TRACK_NUMBER = #{param.traceNumber}
+		</if>
+	</select>
+	
+	<update id="setOrderPackingMaterialFee">
+		    update orders o1 set PACKING_MATERIAL_FEE=(
+		    	select sum(i.item_quantity*t.PACKING_MATERIAL_FEE) from order_items i
+		    	left join xfy.goods g on i.sku=g.goods_sku
+				left join (
+		           select * from (
+		          		select row_number() over(partition by oi.goods_sku order by o.last_updated_time desc) rn, oi.* from io_order_items oi, io_orders o
+		          		where oi.order_no = o.order_no and o.type=0 and o.type_detail=56
+		          	) where rn = 1 
+		        ) t on  t.goods_sku = i.sku
+			    where i.order_id=#{orderId,jdbcType=INTEGER} 
+		    )
+		    where o1.id=#{orderId,jdbcType=INTEGER}
+	</update>
+	
+	<select id="orderStatistic" resultType="OrderStatistic">
+		select sum(i.item_quantity) sku_count, sum(a.amount*nvl(a.exchange_rate,0) / (select count(1) from order_items ii where ii.order_id = i.order_id)) amount_count from xfy.order_items  i
+		inner join xfy.orders  a
+		on i.order_id=a.id
+		left join v_platform_account v on v.id=a.account_id
+		LEFT JOIN SELLERS s on s.id = v.SELLER_ID
+		where 1=1
+		<include refid="BASE_SEARCH"></include> 
+	</select>
+	
+	<select id="findOrderFee" resultType="ExportOrder">
+		select a.scanned_time scannedTime,
+		       a.Id orderId,
+		       s.Contacts contacts,
+		       v.ACCOUNT_NAME accountName,
+		       (NVL(a.Cost, 0) + nvl(a.Packing_Material_Fee, 0)) totalCost,
+		       a.PACKAGE_SHIPFEE packageShipfee,
+		       (nvl(a.cost, 0) + nvl(a.PACKAGE_SHIPFEE, 0)+
+		       nvl(a.PACKING_MATERIAL_FEE, 0)+2) totalAmount
+		  from orders a
+		  left join v_Platform_Account v on a.account_id = v.ID
+		  left join sellers s on s.id = v.SELLER_ID WHERE 1=1
+		  <include refid="BASE_SEARCH"></include>
+	</select>
+	
+	<select id="findOrderFeeCount" resultType="INTEGER">
+		SELECT COUNT(*) from orders a
+		left join v_Platform_Account v on a.account_id = v.ID
+		left join sellers s on s.id = v.SELLER_ID WHERE 1=1
+		<include refid="BASE_SEARCH"></include>
+	</select>
+	
+	<select id="findBuyerEmailsByOrderIds" resultType="String">
+		select b.buyer_email
+		  from order_buyerinfo b
+		 where b.order_sn in
+		       (select order_sn from orders o where o.id in 
+		<foreach collection="list" separator="," item="item" open="(" close=")">
+					#{item}
+		</foreach>
+			)
+	</select>
+	<insert id="applyRefund">
+    insert into profile.T_EBAY_REFUND (ACCOUNTID, ACCTID, 
+      ORDERID, ITEMID, TRANSACTIONID, 
+      BUYERID, CASEID, SRN, CURRENCY, 
+      TOTAL, SKU, COUNTRY, PAIDDATE, 
+      SHIPPINGDATE, REFUNDRESON, REFUNDTYPE, 
+      REFUNDSTATUS, CREATETIME, CREATEUSER, 
+      VOIDFLAG, MOME, PLATID, 
+      REFUNDFROM, BUYERREV_ACCOUNT, MAX_TIME,ORDERTOTAL,REFUNDRESON_SELF,REFUNDTYPE_SELF
+      )
+    values (#{accountid,jdbcType=VARCHAR}, #{acctid,jdbcType=VARCHAR}, 
+      #{orderid,jdbcType=VARCHAR}, #{itemid,jdbcType=VARCHAR}, #{transactionid,jdbcType=VARCHAR}, 
+      #{buyerid,jdbcType=VARCHAR}, #{caseid,jdbcType=VARCHAR}, #{srn,jdbcType=VARCHAR}, #{currency,jdbcType=VARCHAR}, 
+      #{total,jdbcType=DECIMAL}, #{sku,jdbcType=VARCHAR}, #{country,jdbcType=VARCHAR}, #{paiddate,jdbcType=TIMESTAMP}, 
+      #{shippingdate,jdbcType=TIMESTAMP}, #{refundreson,jdbcType=VARCHAR}, #{refundtype,jdbcType=VARCHAR}, 
+      #{refundstatus,jdbcType=DECIMAL}, #{createtime,jdbcType=TIMESTAMP}, #{createuser,jdbcType=VARCHAR}, 
+      #{voidflag,jdbcType=DECIMAL}, #{mome,jdbcType=VARCHAR}, #{platid,jdbcType=VARCHAR}, 
+      #{refundfrom,jdbcType=DECIMAL}, #{buyerrevAccount,jdbcType=VARCHAR}, #{maxTime,jdbcType=TIMESTAMP},#{orderAmount,jdbcType=DECIMAL},
+      #{refundresonSelf,jdbcType=VARCHAR}, #{refundtypeSelf,jdbcType=VARCHAR}
+      )
+	</insert>
+	
+	<select id="readSmtOrderMessage" resultType="String">
+		select message from profile.t_orders_det d where orderid=#{orderSn,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="countByTrackNumber" resultType="DECIMAL">
+		select count(1) from orders where TRACK_NUMBER=#{trackNumber,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getByTrackNo" resultType="Order">
+	 select * from orders o where o.track_number = #{trackNumber,jdbcType=VARCHAR} and rownum = 1
+	</select>
+	
+	<select id="orderNumbers" resultType="INTEGER">
+		select count(o.id) from orders o 
+		<where>
+			<if test="param.accountIdsList != null and param.accountIdsList.size()>0">
+				and o.account_id in 
+				<foreach collection="param.accountIdsList" open="(" close=")" separator="," item="id">
+					#{id}
+				</foreach>
+			</if>
+			<if test="param.suspend != null">
+				and o.suspend = #{param.suspend}
+			</if>
+			<if test="param.orderStatus != null">
+				and o.order_status = #{param.orderStatus}
+			</if>
+		</where>
+	</select>
+</mapper>

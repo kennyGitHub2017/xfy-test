@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xuanfeiyang.erp.dao.BankCardDao">
+	
+	<sql id="basic_column">
+		id,bank_card_name,branch_info,card_number,
+		created_time,last_updated_time,deleted_time,note,is_delete,user_id
+	</sql>
+	
+	<insert id="insert">
+		insert into bank_card_config(id,bank_card_name,branch_info,card_number,note,user_id) 
+			values
+			(seq_bank_card.nextval,#{param.bankCardName,jdbcType=VARCHAR},#{param.branchInfo,jdbcType=VARCHAR},
+			#{param.cardNumber,jdbcType=VARCHAR},#{param.note,jdbcType=VARCHAR},#{param.userId,jdbcType=INTEGER})
+	</insert>
+	
+	<select id="findAll" resultType="BankCard">
+		select 
+		<include refid="basic_column"/>
+		from bank_card_config
+		where is_delete = 0
+	</select>
+	
+	<select id="load" resultType="BankCard">
+		select
+		<include refid="basic_column"/>
+		from bank_card_config
+		where card_number = #{cardNumber}
+	</select>
+	
+	<select id="findById" resultType="BankCard">
+		select
+		<include refid="basic_column"/>
+		from bank_card_config
+		where id = #{id}
+	</select>
+	
+	<update id="update" parameterType="BankCard">
+		update bank_card_config
+		<set>
+			<if test="param.bankCardName != null and param.bankCardName != '' ">
+				bank_card_name = #{param.bankCardName,jdbcType=VARCHAR},
+			</if>
+			<if test="param.branchInfo != null and param.branchInfo != '' ">
+				branch_info = #{param.branchInfo,jdbcType=VARCHAR},
+			</if>
+		    <if test="param.cardNumber != null and param.cardNumber != '' ">
+				card_number = #{param.cardNumber,jdbcType=VARCHAR},
+			</if>  
+			<if test="param.note != null and param.note != '' ">
+				note = #{param.note,jdbcType=VARCHAR},
+			</if>
+			last_updated_time = sysdate
+		</set>
+		where id = #{param.id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="deleteById">
+		update bank_card_config set is_delete = 1,deleted_time=sysdate where id = #{id}
+	</update>
+	
+	<select id="findPage" resultType="BankCard">
+		select 
+		<include refid="basic_column"/>
+		from bank_card_config
+		<where>
+			<if test="params.userId != null">
+				and user_id = #{params.userId}
+			</if>
+				and is_delete = 0
+			<if test="params.bankCardName != null and params.bankCardName != '' ">
+				and bank_card_name like '%' || #{params.bankCardName} || '%'
+			</if>
+			<if test="params.branchInfo != null and params.branchInfo != '' ">
+				and branch_info like '%' || #{params.branchInfo} || '%'
+			</if>
+			<if test="params.cardNumber != null and params.cardNumber != '' ">
+				and card_number like '%' || #{params.cardNumber} || '%'
+			</if>
+			<if test="params.createdTimeFrom != null and params.createdTimeFrom != '' ">
+				and created_time >= TO_DATE(#{params.createdTimeFrom},'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="params.createdTimeTo != null and params.createdTimeTo != '' ">
+				and created_time <![CDATA[<]]> TO_DATE(#{params.createdTimeTo},'yyyy-mm-dd hh24:mi:ss')+1
+			</if>
+			<if test="params.lastUpdatedTimeFrom != null and params.lastUpdatedTimeFrom != '' ">
+				and last_updated_time >= TO_DATE(#{params.lastUpdatedTimeFrom},'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="params.lastUpdatedTimeTo != null and params.lastUpdatedTimeTo != '' ">
+				and last_updated_time <![CDATA[<]]> TO_DATE(#{params.lastUpdatedTimeTo},'yyyy-mm-dd hh24:mi:ss')+1
+			</if>
+		</where>
+		order by created_time desc
+	</select>
+</mapper>

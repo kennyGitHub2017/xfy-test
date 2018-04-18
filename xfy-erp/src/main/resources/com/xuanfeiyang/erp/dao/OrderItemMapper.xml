@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.OrderItemDao">
+	<sql id="Base_Column_List">
+		i.ID, i.ORDER_ID, i.ORDER_SN, i.ITEM_ID,i.ITEM_TITLE, i.ITEM_PIC, i.ITEM_URL, i.SKU, i.ITEM_SKU, i.ITEM_PRICE,i.ITEM_WEIGHT,
+		i.ITEM_QUANTITY, i.PACKAGE_AMOUNT, i.LOCK_AMOUNT, i.CANCEL_AMOUNT, i.SHIPMENT_AMOUNT,
+		i.CREATED_TIME, i.ITEM_ID, i.old_sku, i.ebay_fee, i.order_limit_id,i.PURCHASE_PRICE,i.PLAT_SHIPFEE,i.PACKING_MATERIAL_FEE,i.MESSAGE,i.ORDERSRN
+	</sql>
+	
+	<!-- 增加限制，只查询自营卖家 和 系统SKU added by Adam @20150821 -->
+	<select id="queryNoSku" resultType="OrderItem">
+		select id, item_sku from ORDER_ITEMS where sku is null and item_sku is not null
+		and order_id in (select id from orders o where o.account_id in (select id from v_platform_account pa where pa.SELLER_ID in (select id from sellers s where s.self_flag = 1)))
+		union
+		select id, item_sku from ORDER_ITEMS where sku is null and item_sku is not null
+		and exists (select 1 from goods g where g.goods_sku = item_sku)
+	</select>
+	
+	<select id="findByOldSkuNull" resultType="OrderItem">
+		select id, item_sku from ORDER_ITEMS where old_sku is null and item_sku is not null
+	</select>
+	
+	<select id="queryByOrder" resultType="OrderItem">
+		select
+		<include refid="Base_Column_List" />
+		,g.name as sku_name
+		,d.name sku_status
+		,t3.purchase_count item_purchased_count
+		,g.CUSTOM_COST item_cost
+		from ORDER_ITEMS i
+		 left join goods g
+		    on i.sku = g.goods_sku
+		 left join dict d on d.type=102 and d.code=g.status
+		 left join (select poi.goods_sku, sum(poi.goods_count-poi.received_count) purchase_count
+               from purchase_order_items poi, purchase_orders po
+              where poi.order_no = po.order_no
+                and (po.status = 2 or po.status = -1)
+              group by poi.goods_sku) t3
+   		 on i.sku = t3.goods_sku   
+		where ORDER_ID = #{orderId,jdbcType=INTEGER}
+	</select>
+
+	<select id="queryByOrderAndSku" resultType="OrderItem">
+		select
+		<include refid="Base_Column_List" />
+		from ORDER_ITEMS i
+		where ORDER_ID = #{orderId,jdbcType=INTEGER}
+		and SKU=#{sku,jdbcType=VARCHAR}
+	</select>
+
+	<select id="load" resultType="OrderItem" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from ORDER_ITEMS i
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from ORDER_ITEMS
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<delete id="deleteByOrder" parameterType="java.lang.Integer">
+		delete from ORDER_ITEMS
+		where order_id = #{orderId,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="OrderItem">
+		<selectKey resultType="int" order="BEFORE" keyProperty="id">
+			select SEQ_ORDER_ITEMS.Nextval as ID from DUAL
+		</selectKey>
+		insert into ORDER_ITEMS (ID, ORDER_ID, ORDER_SN,
+		ITEM_TITLE, ITEM_PIC, ITEM_URL,
+		SKU, ITEM_SKU, ITEM_PRICE,ITEM_WEIGHT,
+		ITEM_QUANTITY, PACKAGE_AMOUNT, LOCK_AMOUNT,
+		CANCEL_AMOUNT, SHIPMENT_AMOUNT,
+		CREATED_TIME, ITEM_ID, OLD_SKU,
+		EBAY_FEE, ORDER_LIMIT_ID,PURCHASE_PRICE,PLAT_SHIPFEE,PACKING_MATERIAL_FEE)
+		values (#{id,jdbcType=DECIMAL}, #{orderId,jdbcType=DECIMAL}, #{orderSn,jdbcType=VARCHAR},
+		#{itemTitle,jdbcType=VARCHAR}, #{itemPic,jdbcType=VARCHAR}, #{itemUrl,jdbcType=VARCHAR},
+		#{sku,jdbcType=VARCHAR}, #{itemSku,jdbcType=VARCHAR}, #{itemPrice,jdbcType=DECIMAL}, #{itemWeight,jdbcType=DECIMAL},
+		#{itemQuantity,jdbcType=DECIMAL}, #{packageAmount,jdbcType=DECIMAL}, #{lockAmount,jdbcType=DECIMAL},
+		#{cancelAmount,jdbcType=DECIMAL}, #{shipmentAmount,jdbcType=DECIMAL},
+		#{createdTime,jdbcType=TIMESTAMP}, #{itemId,jdbcType=VARCHAR}, #{oldSku,jdbcType=VARCHAR},
+		#{ebayFee,jdbcType=DECIMAL}, #{orderLimitId,jdbcType=VARCHAR},#{purchasePrice,jdbcType=DECIMAL},#{platShipfee,jdbcType=DECIMAL},#{packingMaterialFee,jdbcType=DECIMAL})
+	</insert>
+
+	<update id="update" parameterType="OrderItem">
+		update ORDER_ITEMS
+		<set>
+			<if test="orderId != null">
+				ORDER_ID = #{orderId,jdbcType=DECIMAL},
+			</if>
+			<if test="orderSn != null">
+				ORDER_SN = #{orderSn,jdbcType=VARCHAR},
+			</if>
+			<if test="itemTitle != null">
+				ITEM_TITLE = #{itemTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="itemPic != null">
+				ITEM_PIC = #{itemPic,jdbcType=VARCHAR},
+			</if>
+			<if test="itemUrl != null">
+				ITEM_URL = #{itemUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="sku != null">
+				SKU = #{sku,jdbcType=VARCHAR},
+			</if>
+			<if test="itemSku != null">
+				ITEM_SKU = #{itemSku,jdbcType=VARCHAR},
+			</if>
+			<if test="itemPrice != null">
+				ITEM_PRICE = #{itemPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="itemWeight != null">
+				ITEM_WEIGHT = #{itemWeight,jdbcType=DECIMAL},
+			</if>
+			<if test="itemQuantity != null">
+				ITEM_QUANTITY = #{itemQuantity,jdbcType=DECIMAL},
+			</if>
+			<if test="packageAmount != null">
+				PACKAGE_AMOUNT = #{packageAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="lockAmount != null">
+				LOCK_AMOUNT = #{lockAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="amountBeforelock != null">
+				AMOUNT_BEFORELOCK = #{amountBeforelock,jdbcType=DECIMAL},
+			</if>
+			<if test="cancelAmount != null">
+				CANCEL_AMOUNT = #{cancelAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="shipmentAmount != null">
+				SHIPMENT_AMOUNT = #{shipmentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="itemId != null">
+				ITEM_ID = #{itemId,jdbcType=VARCHAR},
+			</if>
+			<if test="oldSku != null">
+				OLD_SKU = #{oldSku,jdbcType=VARCHAR},
+			</if>
+			<if test="ebayFee != null">
+				EBAY_FEE = #{ebayFee,jdbcType=DECIMAL},
+			</if>
+			<if test="orderLimitId != null">
+				ORDER_LIMIT_ID = #{orderLimitId,jdbcType=VARCHAR},
+			</if>
+			<if test="purchasePrice != null">
+				PURCHASE_PRICE = #{purchasePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="platShipfee != null">
+				PLAT_SHIPFEE = #{platShipfee,jdbcType=DECIMAL},
+			</if>
+			<if test="packingMaterialFee != null">
+				PACKING_MATERIAL_FEE = #{packingMaterialFee,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+
+	<select id="findForShippingByOrderId" resultType="OrderItemWithShippingInfo">
+		select i.sku,
+			i.item_title,
+			i.item_quantity,
+			i.item_id,
+			i.order_limit_id,
+			g.declaration_name_en,
+			g.declaration_name_cn,
+			g.declaration_cost,
+			g.cost,
+			g.customs_code,
+			g.weight,
+			g.unit goods_unit
+		  from order_items i
+		  left join goods g
+		    on i.sku = g.goods_sku
+		 where i.order_id = #{orderId,jdbcType=INTEGER}
+	</select>
+	
+	<update id="updateBySkuAndOrderId">
+	
+	UPDATE ORDER_ITEMS SET
+	<if test="lockAmount != null">
+	LOCK_AMOUNT = #{lockAmount},
+	</if>
+	<if test="packageAmount != null">
+	PACKAGE_AMOUNT = #{packageAmount} 
+	</if>
+	WHERE SKU = #{sku} AND ORDER_ID = #{orderId}
+	</update>
+	
+	<update id="updateSkuByoldSku">
+		UPDATE ORDER_ITEMS i SET
+		(old_sku, sku)=(select old_sku, GOODS_SKU from goods g where OLD_SKU=#{oldSku,jdbcType=VARCHAR} and rownum = 1)
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="restoreItem">
+		UPDATE ORDER_ITEMS set PACKAGE_AMOUNT=null,LOCK_AMOUNT=null,CANCEL_AMOUNT=null,NEED_PURCHASE=null,SHIPMENT_AMOUNT=null
+		<if test="orderId!=null">
+			where ORDER_ID=#{orderId}
+		</if>
+	</update>
+	
+	<update id="batchUpdateSkuByoldSku">
+		<foreach collection="items" separator=";" open="begin" close="; end;" item="item">
+			UPDATE ORDER_ITEMS i SET
+			old_sku = #{item.oldSku,jdbcType=VARCHAR}, 
+			sku = (select GOODS_SKU from goods g where OLD_SKU=#{item.oldSku,jdbcType=VARCHAR} and rownum = 1)
+			where id = #{item.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+	
+	<update id="batchUpdateSku">
+		<foreach collection="items" separator=";" open="begin" close="; end;" item="item">
+			UPDATE ORDER_ITEMS i SET sku = #{item.sku, jdbcType=VARCHAR}
+			where id = #{item.id,jdbcType=INTEGER}
+		</foreach>
+	</update>
+	
+	<select id="findCombItemIds" resultType="java.lang.Integer">
+		select *
+		  from order_items i
+		 where exists
+		 (select 1 from goods_combination g where g.comb_sku = i.old_sku)
+		   and i.sku is null
+	</select>
+	
+	<select id="findDetailByParam" resultType="OrderItem">
+	SELECT oi.Sku,oi.item_quantity FROM  ORDER_ITEMS oi
+	left join orders o on oi.Order_Id = o.Id
+	LEFT JOIN GOODS g on g.goods_sku = oi.sku
+	WHERE 1=1 
+	<if test="trackNumber != null and trackNumber != '' ">
+	AND  o.Track_Number = #{trackNumber}
+	</if>
+
+	</select>
+</mapper>

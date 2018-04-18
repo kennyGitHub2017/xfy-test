@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.RoleDao">
+	
+	<sql id="_column_list">
+		ID, NAME, NOTE, CREATED_TIME, LAST_UPDATED_TIME
+	</sql>
+	
+	<sql id="_find_sql">
+		select
+		<include refid="_column_list" />
+		from ROLES
+	</sql>
+	
+	<select id="load" resultType="Role" parameterType="java.lang.Integer">
+		<include refid="_find_sql" />
+		where ID = #{id,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="find" resultType="Role" parameterType="java.lang.Integer">
+		<include refid="_find_sql" />
+		order by ID
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from ROLES
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="insert" parameterType="Role">
+		insert into ROLES (ID, NAME, NOTE,
+		CREATED_TIME, LAST_UPDATED_TIME)
+		values (SEQ_ROLES.nextval, #{name,jdbcType=VARCHAR},
+		#{note,jdbcType=VARCHAR},
+		#{createdTime,jdbcType=TIMESTAMP}, #{lastUpdatedTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="update" parameterType="Role">
+		update ROLES
+		<set>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="note != null">
+				NOTE = #{note,jdbcType=VARCHAR},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+
+</mapper>

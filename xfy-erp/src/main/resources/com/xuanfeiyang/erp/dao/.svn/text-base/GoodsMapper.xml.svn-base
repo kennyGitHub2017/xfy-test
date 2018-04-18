@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsDao">
+
+
+	<!-- BASESQL -->
+	<sql id="BASESQL">
+		SELECT g.*,
+		s.company_name supplier_name, 
+		s2.company_name supplier2_name, 
+		s3.company_name supplier3_name,
+		st.name store_name,
+		ss.code store_shelf_code,
+		gc.name category_name,
+		d.name status_desc,
+		nvl(sa.sales7,0) sales7,
+		nvl(sa.sales15,0) sales15,
+		nvl(sa.sales30,0) sales30,
+		v.all_count count,
+		v.lock_count lockCount,
+		v.purchase_count purchaseCount,
+		gic.Price costPrice,
+		
+		us.name buyUser_name,
+		us1.name  pickUser_name,
+		us2.name assembleUser_name,
+		us3.name developUser_name,
+		t.goods_cost new_cost,
+		gpm.model materialModel,
+		t1.sales_occupy occupy
+		FROM GOODS g
+		left join goods_supplier s on g.supplier_id = s.id
+		left join goods_supplier s2 on g.supplier2_id = s2.id
+		left join goods_supplier s3 on g.supplier3_id = s3.id
+		left join store st on st.id = g.store_id
+		left join store_shelf ss on ss.id = g.store_shelf_id
+		left join goods_category gc on gc.id = g.category_id
+		left join dict d on (d.type = 102 and d.code = g.status)
+		left join STAT_SKU_SALES sa on sa.goods_sku = g.goods_sku
+		left join v_goods_inventory_stat v on v.goods_sku = g.goods_sku
+		left join GOODS_INVENTORY_COST gic on gic.goods_sku = g.goods_sku
+		left join user_info us on us.user_id = g.buy_user
+		left join user_info us1 on us1.user_id = g.pick_user
+		left join user_info us2 on us2.user_id = g.assemble_user
+		left join user_info us3 on us3.user_id = g.develop_user
+		left join goods_packing_material gpm on gpm.id = g.packing_material_id
+		LEFT JOIN stat_sku_sales_accupy t1 ON t1.goods_sku = g.Goods_Sku
+		left join stat_sku_latest_cost t
+ 		on t.goods_sku = g.goods_sku
+	</sql>
+	
+	<sql id="_basic_sql">
+	SELECT g.*
+	FROM GOODS g
+	</sql>
+	
+	<sql id="_store_shelf_sql">
+	SELECT g.*, s.name store_name, ss.code store_shelf_code
+	FROM GOODS g
+	left join store s on s.id = g.store_id
+	left join store_shelf ss on ss.id = g.store_shelf_id
+	</sql>
+
+	<!-- 查询 -->
+	<select id="findPage" resultType="Goods">
+		<include refid="BASESQL" />
+		<where>
+		<include refid="BASE_SEARCH"></include>
+		</where>
+		order by ${params.orderByStr}
+	</select>
+
+	<select id="findById" resultType="Goods">
+		<include refid="_basic_sql" />
+		WHERE g.ID=#{id}
+	</select>
+
+
+	<select id="findBySku" resultType="Goods">
+		<include refid="_store_shelf_sql" />
+		WHERE g.GOODS_SKU=#{sku}
+	</select>
+	
+	<select id="findByOldSkuOrGoodsSku" resultType="Goods">
+		<include refid="_basic_sql" />
+		WHERE g.GOODS_SKU= #{sku} or g.OLD_SKU = #{sku} and rownum = 1
+	</select>
+	
+	<select id="findByIdWithSupplierName" resultType="Goods">
+		select g.*,
+		       s.company_name  supplier_name,
+		       s2.company_name supplier2_name,
+		       s3.company_name supplier3_name
+		  from GOODS g
+		  left join goods_supplier s
+		    on g.supplier_id = s.id
+		  left join goods_supplier s2
+		    on g.supplier2_id = s2.id
+		  left join goods_supplier s3
+		    on g.supplier3_id = s3.id
+		
+		WHERE g.ID=#{id}
+	</select>
+
+
+	<!-- 添加 -->
+	<insert id="insert">
+		insert into GOODS (ID, GOODS_SKU, NAME,EN_NAME, PRICE,
+		COST,UNIT,WEIGHT, STORE_ID,STORE_SHELF_ID, LENGTH, WIDTH,HEIGHT,
+		CATEGORY_ID,DECLARATION_NAME_EN,CUSTOMS_CODE, DECLARATION_NAME_CN,
+		DECLARATION_COST,
+		COLOR, GOODS_SIZE, MATERIL,BRAND, SUPPLIER_ID, SUPPLIER2_ID,SUPPLIER3_ID,
+		STATUS, PACKING_MATERIAL_ID,PACKING_CAPACITY, ISPACKING, PACKING_FEE,
+		BARCODE, TEST_TYPE, BASE_CODE,DEVELOP_TIME, DEVELOP_USER,
+		SALE_USER,BUY_USER, PACK_USER, PICK_USER,ASSEMBLE_USER, IS_BATTERY,
+		IS_COPYRIGHT,IS_SHIPPING, IS_LIQUID, IS_REGULATED,
+		NOTE, NOTE1, NOTE2,NOTE3, NOTE4, NOTE5,CREATED_TIME,
+		LAST_UPDATED_TIME,IMG_URL, BASE_CATEGORY_ID, MID_CATEGORY_ID,OLD_SKU,
+		IS_MAGNETIC,RULES,MODEL,REFERENCE_URL,EBAY_REFERENCE_URL,SMT_REFERENCE_URL,AM_REFERENCE_URL,BELONG_SELF,CUSTOM_COST,FIRST_COST)
+		values (SEQ_GOODS.nextval, #{goodsSku,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{enName,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{cost,jdbcType=DECIMAL},
+		#{unit,jdbcType=VARCHAR}, #{weight,jdbcType=DECIMAL},
+		#{storeId,jdbcType=DECIMAL},
+		#{storeShelfId,jdbcType=INTEGER}, #{length,jdbcType=DECIMAL}, #{width,jdbcType=DECIMAL},
+		#{height,jdbcType=DECIMAL}, #{categoryId,jdbcType=DECIMAL},
+		#{declarationNameEn,jdbcType=VARCHAR},
+		#{customsCode,jdbcType=VARCHAR},
+		#{declarationNameCn,jdbcType=VARCHAR},
+		#{declarationCost,jdbcType=DECIMAL},
+		#{color,jdbcType=VARCHAR}, #{goodsSize,jdbcType=VARCHAR}, #{materil,jdbcType=VARCHAR},
+		#{brand,jdbcType=VARCHAR}, #{supplierId,jdbcType=INTEGER},
+		#{supplier2Id,jdbcType=INTEGER},
+		#{supplier3Id,jdbcType=INTEGER}, #{status,jdbcType=DECIMAL}, #{packingMaterialId,jdbcType=DECIMAL},
+		#{packingCapacity,jdbcType=VARCHAR}, #{ispacking,jdbcType=DECIMAL},
+		#{packingFee,jdbcType=DECIMAL},
+		#{barcode,jdbcType=VARCHAR}, #{testType,jdbcType=DECIMAL}, #{baseCode,jdbcType=VARCHAR},
+		#{developTime,jdbcType=TIMESTAMP}, #{developUser,jdbcType=DECIMAL},
+		#{saleUser,jdbcType=DECIMAL},
+		#{buyUser,jdbcType=DECIMAL}, #{packUser,jdbcType=DECIMAL}, #{pickUser,jdbcType=DECIMAL},
+		#{assembleUser,jdbcType=DECIMAL}, #{isBattery,jdbcType=DECIMAL},
+		#{isCopyright,jdbcType=DECIMAL},
+		#{isShipping,jdbcType=DECIMAL}, #{isLiquid,jdbcType=DECIMAL}, #{isRegulated,jdbcType=DECIMAL},
+		#{note,jdbcType=VARCHAR}, #{note1,jdbcType=VARCHAR},
+		#{note2,jdbcType=VARCHAR},
+		#{note3,jdbcType=VARCHAR}, #{note4,jdbcType=VARCHAR}, #{note5,jdbcType=VARCHAR},
+		sysdate, sysdate,#{imgUrl,jdbcType=VARCHAR},
+		#{baseCategoryId,jdbcType=DECIMAL}, #{midCategoryId,jdbcType=DECIMAL},
+		#{oldSku,jdbcType=VARCHAR},#{isMagnetic,jdbcType=DECIMAL},#{rules,jdbcType=VARCHAR},
+		#{model,jdbcType=VARCHAR},#{referenceUrl,jdbcType=VARCHAR},#{ebayReferenceUrl,jdbcType=VARCHAR},
+		#{smtReferenceUrl,jdbcType=VARCHAR},#{amReferenceUrl,jdbcType=VARCHAR},#{belongSelf,jdbcType=DECIMAL},#{customCost,jdbcType=DECIMAL},#{firstCost,jdbcType=DECIMAL})
+	</insert>
+
+
+	<update id="update">
+
+		update GOODS
+		set GOODS_SKU = #{goodsSku,jdbcType=VARCHAR},
+		NAME = #{name,jdbcType=VARCHAR},
+		EN_NAME = #{enName,jdbcType=VARCHAR},
+		PRICE = #{price,jdbcType=DECIMAL},
+		COST = #{cost,jdbcType=DECIMAL},
+		UNIT = #{unit,jdbcType=VARCHAR},
+		WEIGHT = #{weight,jdbcType=DECIMAL},
+		STORE_ID = #{storeId,jdbcType=DECIMAL},
+		STORE_SHELF_ID = #{storeShelfId,jdbcType=VARCHAR},
+		LENGTH = #{length,jdbcType=DECIMAL},
+		WIDTH = #{width,jdbcType=DECIMAL},
+		HEIGHT = #{height,jdbcType=DECIMAL},
+		CATEGORY_ID = #{categoryId,jdbcType=DECIMAL},
+		DECLARATION_NAME_EN = #{declarationNameEn,jdbcType=VARCHAR},
+		CUSTOMS_CODE = #{customsCode,jdbcType=VARCHAR},
+		DECLARATION_NAME_CN = #{declarationNameCn,jdbcType=VARCHAR},
+		DECLARATION_COST = #{declarationCost,jdbcType=DECIMAL},
+		COLOR = #{color,jdbcType=VARCHAR},
+		GOODS_SIZE = #{goodsSize,jdbcType=VARCHAR},
+		MATERIL = #{materil,jdbcType=VARCHAR},
+		BRAND = #{brand,jdbcType=VARCHAR},
+		SUPPLIER_ID = #{supplierId,jdbcType=INTEGER},
+		SUPPLIER2_ID = #{supplier2Id,jdbcType=INTEGER},
+		SUPPLIER3_ID = #{supplier3Id,jdbcType=INTEGER},
+		STATUS = #{status,jdbcType=DECIMAL},
+		PACKING_MATERIAL_ID = #{packingMaterialId,jdbcType=DECIMAL},
+		PACKING_CAPACITY = #{packingCapacity,jdbcType=VARCHAR},
+		ISPACKING = #{ispacking,jdbcType=DECIMAL},
+		PACKING_FEE = #{packingFee,jdbcType=DECIMAL},
+		BARCODE = #{barcode,jdbcType=VARCHAR},
+		TEST_TYPE = #{testType,jdbcType=DECIMAL},
+		BASE_CODE = #{baseCode,jdbcType=VARCHAR},
+		DEVELOP_TIME = #{developTime,jdbcType=TIMESTAMP},
+		DEVELOP_USER = #{developUser,jdbcType=DECIMAL},
+		SALE_USER = #{saleUser,jdbcType=DECIMAL},
+		BUY_USER = #{buyUser,jdbcType=DECIMAL},
+		PACK_USER = #{packUser,jdbcType=DECIMAL},
+		PICK_USER = #{pickUser,jdbcType=DECIMAL},
+		ASSEMBLE_USER = #{assembleUser,jdbcType=DECIMAL},
+		IS_BATTERY = #{isBattery,jdbcType=DECIMAL},
+		IS_COPYRIGHT = #{isCopyright,jdbcType=DECIMAL},
+		IS_SHIPPING = #{isShipping,jdbcType=DECIMAL},
+		IS_LIQUID = #{isLiquid,jdbcType=DECIMAL},
+		IS_REGULATED = #{isRegulated,jdbcType=DECIMAL},
+		NOTE = #{note,jdbcType=VARCHAR},
+		NOTE1 = #{note1,jdbcType=VARCHAR},
+		NOTE2 = #{note2,jdbcType=VARCHAR},
+		NOTE3 = #{note3,jdbcType=VARCHAR},
+		NOTE4 = #{note4,jdbcType=VARCHAR},
+		NOTE5 = #{note5,jdbcType=VARCHAR},
+		LAST_UPDATED_TIME = sysdate,IMG_URL=#{imgUrl,jdbcType=VARCHAR},
+		BASE_CATEGORY_ID = #{baseCategoryId,jdbcType=DECIMAL}, MID_CATEGORY_ID = #{midCategoryId,jdbcType=DECIMAL},
+		OLD_SKU = #{oldSku,jdbcType=VARCHAR},
+		IS_MAGNETIC = #{isMagnetic,jdbcType=DECIMAL},
+		RULES = #{rules,jdbcType=VARCHAR},
+		MODEL = #{model,jdbcType=VARCHAR},
+		REFERENCE_URL = #{referenceUrl,jdbcType=VARCHAR},
+		EBAY_REFERENCE_URL = #{ebayReferenceUrl,jdbcType=VARCHAR},
+		SMT_REFERENCE_URL = #{smtReferenceUrl,jdbcType=VARCHAR},
+		AM_REFERENCE_URL = #{amReferenceUrl,jdbcType=VARCHAR},
+		BELONG_SELF=#{belongSelf,jdbcType=DECIMAL}
+		where ID = #{id,jdbcType=INTEGER}
+
+	</update>
+
+	<!-- 删除 -->
+	<delete id="delete">
+		DELETE FROM GOODS WHERE ID=#{id}
+	</delete>
+	<!-- 根据类别统计 -->
+	<select id="countGoodsByCategory" resultType="int">
+		select count(1) from GOODS where CATEGORY_ID=#{categoryId}
+	</select>
+
+	<select id="findGoods" resultType="Goods">
+		select * from Goods g where g.goods_sku=(
+		select max(gg.goods_sku)
+		from goods gg 
+		left join  goods_category gc on gc.id = gg.base_category_id
+		where 1=1 AND  substr(gg.goods_sku,0,2) = gc.code
+		<include refid="SEARCH_SQL" />
+		)
+	</select>
+
+	<sql id="SEARCH_SQL">
+		<if test="goods.goodsSku != null and goods.goodsSku != '' ">
+			AND gg.GOODS_SKU = #{goods.goodsSku}
+		</if>
+		<if test="goods.name != null and goods.name != '' ">
+			AND gg.NAME = #{goods.name}
+		</if>
+		<if test="goods.developUser != null">
+			AND gg.DEVELOP_USER = #{goods.developUser}
+		</if>
+
+		<if test="goods.brand != null and goods.brand != '' ">
+			AND gg.BRAND = #{goods.brand}
+		</if>
+
+		<if test="goods.categoryId">
+			AND gg.CATEGORY_ID = #{goods.categoryId}
+		</if>
+
+		<if test="goods.rules != null and goods.rules != '' ">
+			AND gg.RULES = #{goods.rules}
+		</if>
+		<if test="goods.model != null and goods.model != ''">
+			AND gg.MODEL = #{goods.model}
+		</if>
+		<if test="goods.goodsSize != null and goods.goodsSize != ''">
+			AND gg.GOODS_SIZE = #{goods.goodsSize}
+		</if>
+		<if test="goods.color != null and goods.color != '' ">
+			AND gg.COLOR = #{goods.color}
+		</if>
+
+		<if test="goods.baseCategoryId != null">
+			AND gg.BASE_CATEGORY_ID = #{goods.baseCategoryId}
+		</if>
+	</sql>
+	
+	<update id="updateOpenFlag">
+		update goods set open_flag = #{openFlag} where id = #{id}
+	</update>
+	
+	<select id="findByParam" resultType="Goods">
+		<include refid="BASESQL" />
+		<where>
+		1=1
+		<include refid="BASE_SEARCH"></include>
+		</where>
+	</select>
+	
+	<select id="findListById" resultType="Goods">
+		<include refid="BASESQL"></include>
+		WHERE g.id IN
+		<foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+	<sql id="BASE_SEARCH">
+			<if test="params.createTimeFrom != null and params.createTimeFrom != '' ">
+				AND g.DEVELOP_TIME >= TO_DATE(#{params.createTimeFrom},'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="params.createTimeTo != null and params.createTimeTo != '' ">
+				AND g.DEVELOP_TIME <![CDATA[ < ]]> TO_DATE(#{params.createTimeTo},'yyyy-mm-dd hh24:mi:ss')+1
+			</if>
+			
+			<if test="params.goodsSku != null and params.goodsSku != '' ">
+				AND g.GOODS_SKU = #{params.goodsSku}
+			</if>
+			<if test="params.name != null and params.name != '' ">
+				AND g.NAME like '%' || #{params.name} || '%'
+			</if>
+			<if test="params.enName != null and params.enName != '' ">
+				AND g.EN_NAME = #{params.enName}
+			</if>
+			<if test="params.status != null and params.status != '' ">
+				AND g.STATUS = #{params.status}
+			</if>
+			<if test="params.baseCategoryId != null">
+				AND g.BASE_CATEGORY_ID = #{params.baseCategoryId}
+			</if>
+			<if test="params.midCategoryId != null ">
+				AND g.MID_CATEGORY_ID =#{params.midCategoryId}
+			</if>
+			<if test="params.storeId != null ">
+				AND g.STORE_ID = #{params.storeId}
+			</if>
+			<if test="params.storeShelfId != null ">
+				AND g.STORE_SHELF_ID = #{params.storeShelfId}
+			</if>
+			<if test="params.developUser != null">
+				AND g.DEVELOP_USER = #{params.developUser}
+			</if>
+			<if test="params.buyUser != null ">
+				AND g.BUY_USER = #{params.buyUser}
+			</if>
+			<if test="params.packUser != null ">
+				AND g.PACK_USER = #{params.packUser}
+			</if>
+			<if test="params.pickUser != null ">
+				AND g.PICK_USER = #{params.pickUser}
+			</if>
+			<if test="params.sellerId != null">
+				AND exists (select 1 from SELLER_GOODS sg where sg.SELLER_ID = #{params.sellerId} and g.ID = sg.GOODS_ID)
+			</if>
+			<if test="params.keywords != null and params.keywords != ''">
+				AND (g.GOODS_SKU like '%' || #{params.keywords} || '%'
+				OR g.OLD_SKU like UPPER('%' || #{params.keywords} || '%'))
+				OR g.NAME like '%' || #{params.keywords} || '%'
+			</if>
+			<if test="params.supplier != null and params.supplier != '' ">
+			AND (s.company_name like '%' || #{params.supplier} || '%'
+			OR s2.company_name like '%' || #{params.supplier} || '%'
+			OR s3.company_name like '%' || #{params.supplier} || '%')
+			</if>
+			<if test="params.count == 1">
+				<![CDATA[ AND v.all_count > 0]]>
+			</if>
+			<if test="params.count == 0">
+				<![CDATA[ AND v.all_count = 0]]>
+			</if>
+			<if test="params.openFlag != null and params.openFlag != ''">
+				AND g.OPEN_FLAG = #{params.openFlag}
+			</if>
+			<if test="params.belongSelf !=null ">
+			    AND g.BELONG_SELF=#{params.belongSelf}
+			</if>
+	</sql>
+	
+	<select id="findAllOldSkus" resultType="java.lang.String">
+		select distinct upper(g.old_sku) from goods g
+	</select>
+	
+	<select id="findGoodsSkuByOldSku" resultType="java.lang.String">
+		select goods_sku from goods g where g.old_sku = #{oldSku,jdbcType=VARCHAR} and rownum = 1
+	</select>
+	
+	<select id="getCountByParam" resultType="Integer">
+	SELECT COUNT(*) from goods g 
+ 	left join STAT_SKU_SALES sa on sa.goods_sku = g.goods_sku where 1=1
+ 	
+	<if test="params.status != null and params.status != '' ">
+	 AND g.Status = #{params.status}
+	</if>
+	<if test="params.hotGoods == 50 ">
+	AND sa.sales30 > #{params.hotGoods}
+	</if>
+	
+	<if test="params.newGoodsKey == 5">
+	AND g.OPEN_FLAG = 1 
+	AND g.CREATED_TIME > #{params.createTime} - 30 
+	AND g.DEVELOP_TIME <![CDATA[ <= ]]> sysdate
+	</if>
+	
+	</select>
+	
+	<update id="updateSelective" parameterType="Goods">
+		update GOODS
+		<set>
+			<if test="goodsSku != null">
+				GOODS_SKU = #{goodsSku,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="enName != null">
+				EN_NAME = #{enName,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				PRICE = #{price,jdbcType=DECIMAL},
+			</if>
+			<if test="cost != null">
+				COST = #{cost,jdbcType=DECIMAL},
+			</if>
+			<if test="unit != null">
+				UNIT = #{unit,jdbcType=VARCHAR},
+			</if>
+			<if test="weight != null">
+				WEIGHT = #{weight,jdbcType=DECIMAL},
+			</if>
+			<if test="storeId != null">
+				STORE_ID = #{storeId,jdbcType=DECIMAL},
+			</if>
+			<if test="storeShelfId != null">
+				STORE_SHELF_ID = #{storeShelfId,jdbcType=DECIMAL},
+			</if>
+			<if test="length != null">
+				LENGTH = #{length,jdbcType=DECIMAL},
+			</if>
+			<if test="width != null">
+				WIDTH = #{width,jdbcType=DECIMAL},
+			</if>
+			<if test="height != null">
+				HEIGHT = #{height,jdbcType=DECIMAL},
+			</if>
+			<if test="categoryId != null">
+				CATEGORY_ID = #{categoryId,jdbcType=DECIMAL},
+			</if>
+			<if test="declarationNameEn != null">
+				DECLARATION_NAME_EN = #{declarationNameEn,jdbcType=VARCHAR},
+			</if>
+			<if test="customsCode != null">
+				CUSTOMS_CODE = #{customsCode,jdbcType=VARCHAR},
+			</if>
+			<if test="declarationNameCn != null">
+				DECLARATION_NAME_CN = #{declarationNameCn,jdbcType=VARCHAR},
+			</if>
+			<if test="declarationCost != null">
+				DECLARATION_COST = #{declarationCost,jdbcType=DECIMAL},
+			</if>
+			<if test="color != null">
+				COLOR = #{color,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsSize != null">
+				GOODS_SIZE = #{goodsSize,jdbcType=VARCHAR},
+			</if>
+			<if test="materil != null">
+				MATERIL = #{materil,jdbcType=VARCHAR},
+			</if>
+			<if test="brand != null">
+				BRAND = #{brand,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierId != null">
+				SUPPLIER_ID = #{supplierId,jdbcType=DECIMAL},
+			</if>
+			<if test="supplier2Id != null">
+				SUPPLIER2_ID = #{supplier2Id,jdbcType=DECIMAL},
+			</if>
+			<if test="supplier3Id != null">
+				SUPPLIER3_ID = #{supplier3Id,jdbcType=DECIMAL},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=DECIMAL},
+			</if>
+			<if test="packingMaterialId != null">
+				PACKING_MATERIAL_ID = #{packingMaterialId,jdbcType=DECIMAL},
+			</if>
+			<if test="packingCapacity != null">
+				PACKING_CAPACITY = #{packingCapacity,jdbcType=VARCHAR},
+			</if>
+			<if test="ispacking != null">
+				ISPACKING = #{ispacking,jdbcType=DECIMAL},
+			</if>
+			<if test="packingFee != null">
+				PACKING_FEE = #{packingFee,jdbcType=DECIMAL},
+			</if>
+			<if test="barcode != null">
+				BARCODE = #{barcode,jdbcType=VARCHAR},
+			</if>
+			<if test="testType != null">
+				TEST_TYPE = #{testType,jdbcType=DECIMAL},
+			</if>
+			<if test="baseCode != null">
+				BASE_CODE = #{baseCode,jdbcType=VARCHAR},
+			</if>
+			<if test="developTime != null">
+				DEVELOP_TIME = #{developTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="developUser != null">
+				DEVELOP_USER = #{developUser,jdbcType=DECIMAL},
+			</if>
+			<if test="saleUser != null">
+				SALE_USER = #{saleUser,jdbcType=DECIMAL},
+			</if>
+			<if test="buyUser != null">
+				BUY_USER = #{buyUser,jdbcType=DECIMAL},
+			</if>
+			<if test="packUser != null">
+				PACK_USER = #{packUser,jdbcType=DECIMAL},
+			</if>
+			<if test="pickUser != null">
+				PICK_USER = #{pickUser,jdbcType=DECIMAL},
+			</if>
+			<if test="assembleUser != null">
+				ASSEMBLE_USER = #{assembleUser,jdbcType=DECIMAL},
+			</if>
+			<if test="isBattery != null">
+				IS_BATTERY = #{isBattery,jdbcType=DECIMAL},
+			</if>
+			<if test="isCopyright != null">
+				IS_COPYRIGHT = #{isCopyright,jdbcType=DECIMAL},
+			</if>
+			<if test="isShipping != null">
+				IS_SHIPPING = #{isShipping,jdbcType=DECIMAL},
+			</if>
+			<if test="isLiquid != null">
+				IS_LIQUID = #{isLiquid,jdbcType=DECIMAL},
+			</if>
+			<if test="isRegulated != null">
+				IS_REGULATED = #{isRegulated,jdbcType=DECIMAL},
+			</if>
+			<if test="note != null">
+				NOTE = #{note,jdbcType=VARCHAR},
+			</if>
+			<if test="note1 != null">
+				NOTE1 = #{note1,jdbcType=VARCHAR},
+			</if>
+			<if test="note2 != null">
+				NOTE2 = #{note2,jdbcType=VARCHAR},
+			</if>
+			<if test="note3 != null">
+				NOTE3 = #{note3,jdbcType=VARCHAR},
+			</if>
+			<if test="note4 != null">
+				NOTE4 = #{note4,jdbcType=VARCHAR},
+			</if>
+			<if test="note5 != null">
+				NOTE5 = #{note5,jdbcType=VARCHAR},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="imgUrl != null">
+				IMG_URL = #{imgUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="baseCategoryId != null">
+				BASE_CATEGORY_ID = #{baseCategoryId,jdbcType=DECIMAL},
+			</if>
+			<if test="midCategoryId != null">
+				MID_CATEGORY_ID = #{midCategoryId,jdbcType=DECIMAL},
+			</if>
+			<if test="oldSku != null">
+				OLD_SKU = #{oldSku,jdbcType=VARCHAR},
+			</if>
+			<if test="isMagnetic != null">
+				IS_MAGNETIC = #{isMagnetic,jdbcType=DECIMAL},
+			</if>
+			<if test="rules != null">
+				RULES = #{rules,jdbcType=VARCHAR},
+			</if>
+			<if test="model != null">
+				MODEL = #{model,jdbcType=VARCHAR},
+			</if>
+			<if test="referenceUrl != null">
+				REFERENCE_URL = #{referenceUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="openFlag != null">
+				OPEN_FLAG = #{openFlag,jdbcType=CHAR},
+			</if>
+			<if test="imgCount != null">
+				IMG_COUNT = #{imgCount,jdbcType=DECIMAL},
+			</if>
+			<if test="customCost != null">
+				custom_cost = #{customCost,jdbcType=VARCHAR},
+			</if>
+			<if test="costUpdateType != null">
+				cost_update_type = #{costUpdateType,jdbcType=INTEGER},
+			</if>
+			<if test="customUpdateType != null ">
+				Custom_Update_Type = #{customUpdateType,jdbcType=INTEGER},
+			</if>
+			<if test="firstCost != null ">
+				FIRST_COST = #{firstCost,jdbcType=DECIMAL},
+			</if>
+			<if test="belongSelf != null ">
+				BELONG_SELF=#{belongSelf,jdbcType=DECIMAL},
+			</if>
+				LAST_UPDATED_TIME = sysdate
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+	
+	
+	<select id="getListingInfo" resultType="Goods">
+	select t2.*,ss.Self_Flag belongSelf from (<include refid="listing_sql"></include>) t2 
+	left join sellers ss on ss.id = t2.sellerId
+	where t2.NEW_SKU = #{goodsSku}
+	</select>
+
+	<sql id="listing_sql">
+	 select t.itemId,
+	               t.platform,
+	               sm.NEW_SKU,
+	               t.price,
+	               t.accountName,
+	               t.galleryUrl,
+	               t.title,
+	               t.occupy,
+	               t.siteId,
+	               t.account_id,
+	               t.sellerId
+	          from (select to_char(a.Itemnumber) itemId,
+	                       to_char(tp.platid) platform,
+	                       to_char(nvl(b.varsku, a.sku)) sku,
+	                       nvl(b.varprice, a.startprice) price,
+	                       to_char(tp.acctid) accountName,
+	                       to_char(galleryurl) galleryUrl,
+	                	to_char(a.ItemTitle0) title,
+	                       nvl(varqty, a.QUANTITY) occupy,
+	                       to_char(a.siteid) siteId,
+	                       to_char(a.acctid) account_id,
+	                       tp.Seller_Id sellerId
+	                  from profile.t_Ebay_Listing a
+	                  left join profile.t_Ebay_Varsku b on a.Itemnumber =
+	                                                       b.itemId
+	                  left join profile.T_plataccount tp on tp.id = a.acctid
+	                 where a.status = 1) t
+	          left join profile.v_Sku_Mapping sm on sm.PLATFORM_SKU = t.sku
+	        union all
+	
+	      select to_char(p.product_id) itemId,
+	               to_char('smt') platform,
+	               to_char(s.old_sku_code) sku,
+	               s.sku_price price,
+	               to_char(p.owner_member_id) accountName,
+	               profile.substrbysep(p.image_urls, ';', 1) galleryUrl,
+	               to_char(p.subject) title,
+	               s.ipm_sku_stock occupy,
+	               to_char('siteId') siteId,
+	               to_char(TP.id) account_Id,
+	               tp.Seller_Id sellerId
+	          from profile.t_smt_product p
+	          left join profile.t_smt_productskus s on p.product_id = s.product_id
+	          left join profile.T_plataccount tp on tp.acctid = P.OWNER_MEMBER_ID
+	          where p.product_status_type = 'onSelling'
+	          
+	        union all
+	        
+	        select to_char(tapo.asin) itemId,
+	               to_char(tp.platid) platform,
+	               to_char(tapo.syssku) sku,
+	               tapo.price price,
+	               to_char(tp.acctid) accountName,
+	               to_char(tapo.smallimage) galleryUrl,
+	               to_char(tapo.title) title,
+	               tapo.quantity occupy,
+	               to_char(tad.shopname) siteId,
+	               to_char(tp.id) accout_id,
+	               tp.Seller_Id sellerId
+	          from profile.t_amazon_product_online tapo
+	          left join profile.t_plataccount tp on tp.id = tapo.rid
+	          left join profile.t_amazon_developer tad on tad.id = tp.id
+	         where tapo.status = 1
+	</sql>
+	
+<select id="getListingCount" resultType="Goods">
+
+select sku goodsSku, sum(cnt) count from (
+select to_char(old_sku_code) sku, count(1) cnt
+  from profile.t_smt_product p
+  left join profile.t_smt_productskus s on p.product_id = s.product_id
+  left join profile.T_plataccount tp on tp.acctid = P.OWNER_MEMBER_ID
+ where s.old_sku_code in
+	<foreach collection="sku" index="index" item="item" open="(" separator="," close=")">
+		#{item,jdbcType=VARCHAR}
+	</foreach>
+	AND p.product_status_type = 'onSelling'
+group by old_sku_code
+
+union all
+
+select to_char(tapo.syssku) sku, count(1) cnt
+  from profile.t_amazon_product_online tapo
+  left join profile.t_plataccount tp on tp.id = tapo.rid
+  left join profile.t_amazon_developer tad on tad.id = tp.id
+ where tapo.syssku in
+	<foreach collection="sku" index="index" item="item" open="(" separator="," close=")">
+		#{item,jdbcType=VARCHAR}
+	</foreach>
+
+   and tapo.status = 1
+group by tapo.syssku
+union all
+
+select to_char(NEW_SKU) sku, COUNT(1) cnt
+  from profile.t_Ebay_Listing a
+  left join profile.t_Ebay_Varsku b on a.Itemnumber = b.itemId
+  left join profile.T_plataccount tp on tp.id = a.acctid
+  left join profile.v_Sku_Mapping sm on sm.PLATFORM_SKU = a.sku
+ where sm.NEW_SKU in
+	<foreach collection="sku" index="index" item="item" open="(" separator="," close=")">
+		#{item,jdbcType=VARCHAR}
+	</foreach>
+AND a.status = 1
+group by sm.NEW_SKU) group by sku
+	</select>
+	
+</mapper>

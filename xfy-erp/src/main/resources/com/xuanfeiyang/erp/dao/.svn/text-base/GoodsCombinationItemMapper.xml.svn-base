@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsCombinationItemDao">
+	<sql id="_column_list">
+		ID, COMB_ID, OLD_SKU, NEW_SKU, QUANTITY, CREATED_TIME, LAST_UPDATED_TIME
+	</sql>
+
+	<select id="load" resultType="GoodsCombinationItem" parameterType="java.lang.Integer">
+		select
+		<include refid="_column_list" />
+		from GOODS_COMBINATION_ITEM
+		where ID = #{id,jdbcType=DECIMAL}
+	</select>
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from GOODS_COMBINATION_ITEM
+		where ID =
+		#{id,jdbcType=DECIMAL}
+	</delete>
+
+	<insert id="insert" parameterType="GoodsCombinationItem">
+
+		insert into GOODS_COMBINATION_ITEM (ID, COMB_ID, OLD_SKU, NEW_SKU,
+		QUANTITY, CREATED_TIME, LAST_UPDATED_TIME )
+		values
+		(SEQ_GOODS_COMBINATION.nextval, #{combId,jdbcType=DECIMAL},
+		#{oldSku,jdbcType=VARCHAR}, #{newSku,jdbcType=VARCHAR},
+		#{quantity,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP},
+		#{lastUpdatedTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+
+	<update id="update" parameterType="GoodsCombinationItem">
+		update GOODS_COMBINATION_ITEM
+		set COMB_ID = #{combId,jdbcType=DECIMAL},
+		OLD_SKU
+		= #{oldSku,jdbcType=VARCHAR},
+		NEW_SKU = #{newSku,jdbcType=VARCHAR},
+		QUANTITY = #{quantity,jdbcType=DECIMAL},
+		CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+		LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP}
+
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+
+	<select id="findByCombSku" resultType="GoodsCombinationItem">
+		select
+		<include refid="_column_list" />
+		from GOODS_COMBINATION_ITEM i
+		where i.comb_id =
+		(select id from goods_combination gc where gc.comb_sku = #{combSku, jdbcType=VARCHAR})
+	</select>
+
+	<select id="findByCombId" resultType="GoodsCombinationItem">
+		select
+		<include refid="_column_list" />
+		from GOODS_COMBINATION_ITEM i
+		where i.comb_id = #{combId, jdbcType=DECIMAL}
+	</select>
+
+	<delete id="deleteByCombId" parameterType="java.lang.Integer">
+		delete from GOODS_COMBINATION_ITEM
+		where comb_id = #{combId,jdbcType=DECIMAL}
+	</delete>
+</mapper>

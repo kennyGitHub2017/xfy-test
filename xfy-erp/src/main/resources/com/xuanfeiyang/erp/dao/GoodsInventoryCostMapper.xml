@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsInventoryCostDao">
+
+	<sql id="_column_list">
+		GOODS_SKU, AMOUNT, PRICE, COUNT, LAST_UPDATED_TIME
+	</sql>
+	
+	<select id="load" resultType="GoodsInventoryCost">
+		select
+		<include refid="_column_list" />
+		from GOODS_INVENTORY_COST
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="insert" parameterType="GoodsInventoryCost">
+		insert into GOODS_INVENTORY_COST (GOODS_SKU, AMOUNT, PRICE,
+		COUNT, LAST_UPDATED_TIME)
+		values (#{goodsSku,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL},
+		#{price,jdbcType=DECIMAL},
+		#{count,jdbcType=DECIMAL}, #{lastUpdatedTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<update id="update" parameterType="GoodsInventoryCost">
+		update GOODS_INVENTORY_COST
+		set AMOUNT = #{amount,jdbcType=DECIMAL},
+		PRICE = #{price,jdbcType=DECIMAL},
+		COUNT = #{count,jdbcType=DECIMAL},
+		LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP}
+		where GOODS_SKU = #{goodsSku,jdbcType=VARCHAR}
+	</update>
+</mapper>

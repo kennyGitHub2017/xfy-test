@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsPackingMaterialDao">
+
+<!--获取列表-->
+<select id="find" resultType="GoodsPackingMaterial">
+SELECT * FROM GOODS_PACKING_MATERIAL
+</select>
+
+<!-- 删除 -->
+<delete id="delete">
+DELETE  FROM GOODS_PACKING_MATERIAL WHERE ID = #{id}
+</delete>
+
+<!-- 添加 -->
+<insert id="save">
+INSERT INTO GOODS_PACKING_MATERIAL(ID,MODEL,RULES,NOTE,WEIGHT,PRICE,LAST_UPDATED_TIME)VALUES(
+SEQ_ID.nextval,#{param.model},#{param.rules},#{param.note},#{param.weight},#{param.price},sysdate)
+</insert>
+
+<!-- 修改 -->
+<update id="update">
+UPDATE GOODS_PACKING_MATERIAL SET MODEL=#{param.model},RULES=#{param.rules},
+NOTE=#{param.note},WEIGHT=#{param.weight},PRICE=#{param.price},LAST_UPDATED_TIME=sysdate where id=#{param.id}
+</update>
+
+<!-- 根据id查询 -->
+<select id="getById" resultType="GoodsPackingMaterial">
+SELECT * FROM GOODS_PACKING_MATERIAL WHERE ID = #{id}
+</select>
+
+<!-- 根据型号查询 -->
+<select id="getByModel" resultType="GoodsPackingMaterial">
+SELECT * FROM GOODS_PACKING_MATERIAL WHERE MODEL = #{model}
+	<if test="id != null ">
+	AND ID=#{id}
+	</if>
+</select>
+
+</mapper>

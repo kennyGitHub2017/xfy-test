@@ -1,0 +1,11 @@
+K 10
+svn:ignore
+V 70
+.settings
+.classpath
+.project
+target
+.metadata
+RemoteSystemsTempFiles
+
+END

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/project/!svn/ver/2703/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/include
+END
+message.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/project/!svn/ver/141/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/include/message.jsp
+END
+modal-large.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/project/!svn/ver/314/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/include/modal-large.jsp
+END
+modal-large-scroll.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/project/!svn/ver/2703/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/include/modal-large-scroll.jsp
+END
+modal-ajax.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/project/!svn/ver/112/xfy-erp/trunk/xfy-erp/src/main/webapp/WEB-INF/view/include/modal-ajax.jsp
+END

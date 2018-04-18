@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	
+	<!-- <definition name="metronicTemplate" template="/WEB-INF/view/template/metronic/layout.jsp">
+		<put-attribute name="title" value="My Default Title" />
+		<put-attribute name="page-header" value="/WEB-INF/view/template/metronic/page-header.jsp" />
+		<put-attribute name="page-footer" value="/WEB-INF/view/template/metronic/page-footer.jsp" />
+	</definition> -->
+	
+	<definition name="metronicTemplate" template="/WEB-INF/view/template/left-sidebar/layout.jsp">
+		<put-attribute name="title" value="My Default Title" />
+		<put-attribute name="sidebar" value="/WEB-INF/view/template/left-sidebar/sidebar.jsp" />
+	</definition>
+	
+	<definition name="emptyMetronicTemplate" template="/WEB-INF/view/template/left-sidebar/layout-empty.jsp">
+		<put-attribute name="title" value="My Default Title" />
+	</definition>
+
+</tiles-definitions>

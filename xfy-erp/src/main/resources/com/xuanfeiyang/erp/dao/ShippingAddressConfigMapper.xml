@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.ShippingAddressConfigDao">
+	<sql id="_column_list">
+		SHIPPING_ID, NAME, COMPANY, COUNTRY, PROVINCE, CITY, DISTRICT, STREET, POSTCODE,
+		MOBILE, EMAIL, TELPHONE, EN_RETURN_NAME, EN_RETURN_COMPANY, EN_RETURN_COUNTRY, EN_RETURN_PROVINCE,
+		EN_RETURN_CITY, EN_RETURN_DISTRICT, EN_RETURN_STREET, EN_RETURN_POSTCODE, EN_RETURN_MOBILE,
+		EN_RETURN_EMAIL, EN_RETURN_TELPHONE, CN_RETURN_NAME, CN_RETURN_COMPANY, CN_RETURN_COUNTRY,
+		CN_RETURN_PROVINCE, CN_RETURN_CITY, CN_RETURN_DISTRICT, CN_RETURN_STREET, CN_RETURN_POSTCODE,
+		CN_RETURN_MOBILE, CN_RETURN_EMAIL, CN_RETURN_TELPHONE
+	</sql>
+	
+	<select id="load" resultType="ShippingAddressConfig" parameterType="java.lang.Integer">
+		select
+		<include refid="_column_list" />
+		from SHIPPING_ADDRESS_CONFIG
+		where SHIPPING_ID = #{shippingId,jdbcType=DECIMAL}
+	</select>
+	
+	<select id="loadByShippingName" resultType="ShippingAddressConfig" parameterType="java.lang.String">
+		select
+		<include refid="_column_list" />
+		from SHIPPING_ADDRESS_CONFIG
+		where SHIPPING_ID = (select ID from SHIPPINGS where SHIPPING_NAME = #{shippingName, jdbcType=VARCHAR})
+	</select>
+
+	<insert id="insert" parameterType="ShippingAddressConfig">
+		insert into SHIPPING_ADDRESS_CONFIG (SHIPPING_ID, NAME, COMPANY,
+		COUNTRY, PROVINCE, CITY,
+		DISTRICT, STREET, POSTCODE,
+		MOBILE, EMAIL, TELPHONE,
+		EN_RETURN_NAME, EN_RETURN_COMPANY, EN_RETURN_COUNTRY,
+		EN_RETURN_PROVINCE, EN_RETURN_CITY, EN_RETURN_DISTRICT,
+		EN_RETURN_STREET, EN_RETURN_POSTCODE, EN_RETURN_MOBILE,
+		EN_RETURN_EMAIL, EN_RETURN_TELPHONE, CN_RETURN_NAME,
+		CN_RETURN_COMPANY, CN_RETURN_COUNTRY, CN_RETURN_PROVINCE,
+		CN_RETURN_CITY, CN_RETURN_DISTRICT, CN_RETURN_STREET,
+		CN_RETURN_POSTCODE, CN_RETURN_MOBILE, CN_RETURN_EMAIL,
+		CN_RETURN_TELPHONE)
+		values (#{shippingId,jdbcType=DECIMAL}, #{name,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR},
+		#{country,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR},
+		#{district,jdbcType=VARCHAR}, #{street,jdbcType=VARCHAR}, #{postcode,jdbcType=VARCHAR},
+		#{mobile,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{telphone,jdbcType=VARCHAR},
+		#{enReturnName,jdbcType=VARCHAR}, #{enReturnCompany,jdbcType=VARCHAR}, #{enReturnCountry,jdbcType=VARCHAR},
+		#{enReturnProvince,jdbcType=VARCHAR}, #{enReturnCity,jdbcType=VARCHAR}, #{enReturnDistrict,jdbcType=VARCHAR},
+		#{enReturnStreet,jdbcType=VARCHAR}, #{enReturnPostcode,jdbcType=VARCHAR}, #{enReturnMobile,jdbcType=VARCHAR},
+		#{enReturnEmail,jdbcType=VARCHAR}, #{enReturnTelphone,jdbcType=VARCHAR}, #{cnReturnName,jdbcType=VARCHAR},
+		#{cnReturnCompany,jdbcType=VARCHAR}, #{cnReturnCountry,jdbcType=VARCHAR}, #{cnReturnProvince,jdbcType=VARCHAR},
+		#{cnReturnCity,jdbcType=VARCHAR}, #{cnReturnDistrict,jdbcType=VARCHAR}, #{cnReturnStreet,jdbcType=VARCHAR},
+		#{cnReturnPostcode,jdbcType=VARCHAR}, #{cnReturnMobile,jdbcType=VARCHAR}, #{cnReturnEmail,jdbcType=VARCHAR},
+		#{cnReturnTelphone,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="update" parameterType="ShippingAddressConfig">
+		update SHIPPING_ADDRESS_CONFIG
+		set NAME = #{name,jdbcType=VARCHAR},
+		COMPANY = #{company,jdbcType=VARCHAR},
+		COUNTRY = #{country,jdbcType=VARCHAR},
+		PROVINCE = #{province,jdbcType=VARCHAR},
+		CITY = #{city,jdbcType=VARCHAR},
+		DISTRICT = #{district,jdbcType=VARCHAR},
+		STREET = #{street,jdbcType=VARCHAR},
+		POSTCODE = #{postcode,jdbcType=VARCHAR},
+		MOBILE = #{mobile,jdbcType=VARCHAR},
+		EMAIL = #{email,jdbcType=VARCHAR},
+		TELPHONE = #{telphone,jdbcType=VARCHAR},
+		EN_RETURN_NAME = #{enReturnName,jdbcType=VARCHAR},
+		EN_RETURN_COMPANY = #{enReturnCompany,jdbcType=VARCHAR},
+		EN_RETURN_COUNTRY = #{enReturnCountry,jdbcType=VARCHAR},
+		EN_RETURN_PROVINCE = #{enReturnProvince,jdbcType=VARCHAR},
+		EN_RETURN_CITY = #{enReturnCity,jdbcType=VARCHAR},
+		EN_RETURN_DISTRICT = #{enReturnDistrict,jdbcType=VARCHAR},
+		EN_RETURN_STREET = #{enReturnStreet,jdbcType=VARCHAR},
+		EN_RETURN_POSTCODE = #{enReturnPostcode,jdbcType=VARCHAR},
+		EN_RETURN_MOBILE = #{enReturnMobile,jdbcType=VARCHAR},
+		EN_RETURN_EMAIL = #{enReturnEmail,jdbcType=VARCHAR},
+		EN_RETURN_TELPHONE = #{enReturnTelphone,jdbcType=VARCHAR},
+		CN_RETURN_NAME = #{cnReturnName,jdbcType=VARCHAR},
+		CN_RETURN_COMPANY = #{cnReturnCompany,jdbcType=VARCHAR},
+		CN_RETURN_COUNTRY = #{cnReturnCountry,jdbcType=VARCHAR},
+		CN_RETURN_PROVINCE = #{cnReturnProvince,jdbcType=VARCHAR},
+		CN_RETURN_CITY = #{cnReturnCity,jdbcType=VARCHAR},
+		CN_RETURN_DISTRICT = #{cnReturnDistrict,jdbcType=VARCHAR},
+		CN_RETURN_STREET = #{cnReturnStreet,jdbcType=VARCHAR},
+		CN_RETURN_POSTCODE = #{cnReturnPostcode,jdbcType=VARCHAR},
+		CN_RETURN_MOBILE = #{cnReturnMobile,jdbcType=VARCHAR},
+		CN_RETURN_EMAIL = #{cnReturnEmail,jdbcType=VARCHAR},
+		CN_RETURN_TELPHONE = #{cnReturnTelphone,jdbcType=VARCHAR}
+		where SHIPPING_ID = #{shippingId,jdbcType=DECIMAL}
+	</update>
+</mapper>

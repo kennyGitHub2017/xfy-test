@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="30">
+	<appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d %-5p %c{1} - %m%n" />
+		</Console>
+		<RollingFile name="DebugRollingFile" fileName="c:/www/logs/xfy-erp/debug.log"
+			filePattern="c:/www/logs/xfy-erp/%d{yyyy-MM}/debug-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="InfoRollingFile" fileName="c:/www/logs/xfy-erp/info.log"
+			filePattern="c:/www/logs/xfy-erp/%d{yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="ErrorRollingFile" fileName="c:/www/logs/xfy-erp/error.log"
+			filePattern="c:/www/logs/xfy-erp/%d{yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p %c:%L - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="MarkShippedFile" fileName="c:/www/logs/xfy-erp/mark-shipped.log"
+			filePattern="c:/www/logs/xfy-erp/%d{yyyy-MM}/mark-shipped-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p %c:%L - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<RollingFile name="TrackerNumberFile" fileName="c:/www/logs/xfy-erp/tracker-number.log"
+			filePattern="c:/www/logs/xfy-erp/%d{yyyy-MM}/tracker-number-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout>
+				<Pattern>%d %t %-5p %c:%L - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="50 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20"/>
+		</RollingFile>
+		<Async name="ASYNC">
+			<!-- <AppenderRef ref="Console" />
+			<AppenderRef ref="DebugRollingFile" /> -->
+			<AppenderRef ref="InfoRollingFile" level="info" />
+			<AppenderRef ref="ErrorRollingFile" level="error" />
+		</Async>
+	</appenders>
+	<Loggers>
+		<Logger name="com.xuanfeiyang.erp.service.impl.MarkShippingServiceImpl" level="debug">
+			<AppenderRef ref="MarkShippedFile" />
+		</Logger>
+		<Logger name="com.xuanfeiyang.erp.service.impl.TrackerNumberServiceImpl" level="debug">
+			<AppenderRef ref="TrackerNumberFile" />
+		</Logger>
+		<!-- <Logger name="com.xuanfeiyang.erp.dao" level="trace" /> -->
+		<Root level="info">
+			<AppenderRef ref="ASYNC" />
+		</Root>
+	</Loggers>
+</Configuration>

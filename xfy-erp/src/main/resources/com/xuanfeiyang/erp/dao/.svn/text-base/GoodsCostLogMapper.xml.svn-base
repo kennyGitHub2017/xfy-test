@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.GoodsCostLogDao">
+
+<insert id="add">
+	insert into goods_cost_log(ID,CREATED_TIME,COST,OPER_USER,NOTE,GOODS_SKU,COST_UP_TYPE,custom_cost,custom_update_type)
+	VALUES(SEQ_GOODS_COST_LOG.nextval,#{param.createdTime},#{param.cost,jdbcType=DECIMAL},
+	#{param.operUser},#{param.note},#{param.goodsSku},#{param.costUpType},#{param.customCost},#{param.customUpType})
+</insert>
+
+<select id="findBySku" resultType="GoodsCostLog">
+	SELECT <include refid="column"></include> FROM GOODS_COST_LOG WHERE GOODS_SKU = #{sku} order by CREATED_TIME desc
+</select>
+
+<sql id="column">
+id,created_time,cost,oper_user,note,goods_sku ,cost_up_type ,custom_cost customCost,custom_update_type customUpType 
+</sql>
+
+</mapper>

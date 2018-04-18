@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xuanfeiyang.erp.dao.SellerDao">
+	<sql id="_column_list">
+		s.ID, s.CONTACTS, s.EMAIL, s.PHONE, s.MOBILE, s.ADDRESS, 
+		s.COM_NAME, s.STATUS, s.CREATED_TIME, s.LAST_UPDATED_TIME,
+		s.TYPE, s.STATUS_TIME, s.ID_CARD_NO, s.ID_CARD_URL1, 
+		s.ID_CARD_URL2, s.PHOTO_URL, s.COM_CODE, s.COM_LEGAL_PERSON,
+		s.COM_BIZ_LICENSE_URL, s.APPLY_CERT_TIME, s.STATUS_NOTE, 
+		s.SELF_FLAG, s.PLATFORMS, s.SHOP, s.QQ_NO, s.REFERRER_MOBILE,
+		s.LOCKED, s.LOCKED_TIME,s.INFO_ACQUISITION_CHANNEL, s.VIP_FLAG,s.AGENT_USER_ID
+	</sql>
+	
+	<sql id="_column_list_with_deposit">
+		<include refid="_column_list" />, sd.deposit
+	</sql>
+	
+	<sql id="_find_sql">
+		select
+		<include refid="_column_list" />
+		from SELLERS s
+	</sql>
+	
+	<sql id="_find_with_deposit_sql">
+		select
+		<include refid="_column_list_with_deposit" />
+		from SELLERS s
+		left join SELLER_DEPOSIT sd on sd.SELLER_ID = s.ID
+	</sql>
+	
+	<sql id="_where">
+		<where>
+		
+			<if test="params.createTimeFrom != null and params.createTimeFrom != '' ">
+			and s.CREATED_TIME > TO_DATE(#{params.createTimeFrom},'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			<if test="params.createTimeTo != null and params.createTimeTo != '' ">
+			and s.CREATED_TIME <![CDATA[ < ]]> TO_DATE(#{params.createTimeTo},'yyyy-mm-dd hh24:mi:ss')+1
+			</if>
+			<if test="params.statusTimeFrom != null and params.statusTimeFrom != '' ">
+			and s.STATUS_TIME > TO_DATE(#{params.statusTimeFrom},'yyyy-mm-dd hh24:mi:ss')
+			</if>
+			
+			<if test="params.statusTimeTo != null and params.statusTimeTo != '' ">
+			and s.STATUS_TIME <![CDATA[ < ]]> TO_DATE(#{params.statusTimeTo},'yyyy-mm-dd hh24:mi:ss')+1
+			</if>
+			
+			<if test="params.selfFlag != null and params.selfFlag != '' ">
+			and s.SELF_FLAG = #{params.selfFlag}
+			</if>
+			<if test="params.vipFlag != null and params.vipFlag != '' ">
+			and s.VIP_FLAG = #{params.vipFlag}
+			</if>
+			<if test="params.infoAcquisitionChannel != null and params.infoAcquisitionChannel != '' ">
+			and s.INFO_ACQUISITION_CHANNEL = #{params.infoAcquisitionChannel}
+			</if>
+			<if test="params.status != null">
+				and s.status = #{params.status}
+			</if>
+			<if test="params.agentUserId != null">
+				and s.AGENT_USER_ID = #{params.agentUserId}
+			</if>
+			<if test="params.mobile != null and params.mobile != '' ">
+				and s.MOBILE = #{params.mobile,jdbcType=VARCHAR}
+			</if>
+			<if test="params.contacts != null and params.contacts != '' ">
+				and s.CONTACTS = #{params.contacts,jdbcType=VARCHAR}
+			</if>
+			<if test="params.keywords != null and params.keywords != ''">
+				and (s.CONTACTS like '%' || #{params.keywords} || '%'
+				or s.COM_NAME like '%' || #{params.keywords} || '%'
+				or s.EMAIL like '%' || #{params.keywords} || '%'
+				or s.MOBILE like '%' || #{params.keywords} || '%'
+				or exists (select 1 from v_platform_account pa where pa.SELLER_ID = s.id and pa.account_name like '%' || #{params.keywords} || '%' )
+				)
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findPage" resultType="Seller">
+		<include refid="_find_sql"/>
+		<include refid="_where"/>
+		
+		order by s.ID desc
+	</select>
+	
+	<select id="findPageWithDeposit" resultType="Seller">
+		<include refid="_find_with_deposit_sql"/>
+		<include refid="_where"/>
+		
+		order by s.ID
+	</select>
+	
+	<select id="load" resultType="Seller" parameterType="java.lang.Integer">
+		<include refid="_find_sql"/>
+		where s.ID = #{id,jdbcType=DECIMAL}
+	</select>
+	
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from SELLERS 
+		where ID = #{id,jdbcType=DECIMAL}
+	</delete>
+	
+	<insert id="save" parameterType="Seller">
+		<selectKey keyProperty="id" resultType="java.lang.Integer" order="BEFORE">
+			select SEQ_SELLERS.nextval from DUAL
+		</selectKey>
+	
+		insert into SELLERS (ID, CONTACTS, EMAIL,
+		PHONE, MOBILE, ADDRESS,
+		COM_NAME, STATUS, CREATED_TIME,
+		LAST_UPDATED_TIME, TYPE, STATUS_TIME,
+		ID_CARD_NO, ID_CARD_URL1, ID_CARD_URL2,
+		PHOTO_URL, COM_CODE, COM_LEGAL_PERSON,
+		COM_BIZ_LICENSE_URL, APPLY_CERT_TIME, STATUS_NOTE, 
+		PLATFORMS, SHOP,QQ_NO, REFERRER_MOBILE, INFO_ACQUISITION_CHANNEL, VIP_FLAG, AGENT_USER_ID)
+		values (#{id,jdbcType=DECIMAL}, #{contacts,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR}, #{mobile,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR},
+		#{comName,jdbcType=VARCHAR}, #{status,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP},
+		#{lastUpdatedTime,jdbcType=TIMESTAMP}, #{type,jdbcType=DECIMAL}, #{statusTime,jdbcType=TIMESTAMP},
+		#{idCardNo,jdbcType=VARCHAR}, #{idCardUrl1,jdbcType=VARCHAR}, #{idCardUrl2,jdbcType=VARCHAR},
+		#{photoUrl,jdbcType=VARCHAR}, #{comCode,jdbcType=VARCHAR}, #{comLegalPerson,jdbcType=VARCHAR},
+		#{comBizLicenseUrl,jdbcType=VARCHAR}, #{applyCertTime,jdbcType=TIMESTAMP}, 
+		#{statusNote,jdbcType=VARCHAR}, #{platforms,jdbcType=VARCHAR}, #{shop,jdbcType=VARCHAR},
+		#{qqNo,jdbcType=VARCHAR}, #{referrerMobile,jdbcType=VARCHAR}, #{infoAcquisitionChannel,jdbcType=VARCHAR}, 
+		#{vipFlag,jdbcType=VARCHAR},#{agentUserId,jdbcType=DECIMAL}
+		)
+	</insert>
+
+	<update id="update" parameterType="Seller">
+		update SELLERS
+		<set>
+			<if test="contacts != null">
+				CONTACTS = #{contacts,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				EMAIL = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				PHONE = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="mobile != null">
+				MOBILE = #{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				ADDRESS = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="comName != null">
+				COM_NAME = #{comName,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=DECIMAL},
+			</if>
+			<if test="createdTime != null">
+				CREATED_TIME = #{createdTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="lastUpdatedTime != null">
+				LAST_UPDATED_TIME = #{lastUpdatedTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="type != null">
+				TYPE = #{type,jdbcType=DECIMAL},
+			</if>
+			<if test="statusTime != null">
+				STATUS_TIME = #{statusTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="idCardNo != null">
+				ID_CARD_NO = #{idCardNo,jdbcType=VARCHAR},
+			</if>
+			<if test="idCardUrl1 != null">
+				ID_CARD_URL1 = #{idCardUrl1,jdbcType=VARCHAR},
+			</if>
+			<if test="idCardUrl2 != null">
+				ID_CARD_URL2 = #{idCardUrl2,jdbcType=VARCHAR},
+			</if>
+			<if test="photoUrl != null">
+				PHOTO_URL = #{photoUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="comCode != null">
+				COM_CODE = #{comCode,jdbcType=VARCHAR},
+			</if>
+			<if test="comLegalPerson != null">
+				COM_LEGAL_PERSON = #{comLegalPerson,jdbcType=VARCHAR},
+			</if>
+			<if test="comBizLicenseUrl != null">
+				COM_BIZ_LICENSE_URL = #{comBizLicenseUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="comBizLicenseUrl != null">
+				APPLY_CERT_TIME = #{applyCertTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="statusNote != null">
+				STATUS_NOTE = #{statusNote,jdbcType=VARCHAR},
+			</if>
+			<if test="platforms != null">
+				PLATFORMS = #{platforms,jdbcType=VARCHAR},
+			</if>
+			<if test="shop != null">
+				SHOP = #{shop,jdbcType=VARCHAR},
+			</if>
+			<if test="qqNo != null">
+				QQ_NO = #{qqNo,jdbcType=VARCHAR}
+			</if>
+			<if test="locked != null">
+				LOCKED = #{locked,jdbcType=DECIMAL},
+			</if>
+			<if test="lockedTime != null">
+				LOCKED_TIME = #{lockedTime,jdbcType=DECIMAL},
+			</if>
+			<if test="infoAcquisitionChannel != null">
+				INFO_ACQUISITION_CHANNEL = #{infoAcquisitionChannel,jdbcType=VARCHAR},
+			</if>
+			<if test="vipFlag != null">
+				VIP_FLAG = #{vipFlag,jdbcType=VARCHAR},
+			</if>
+			<if test="agentUserId != null">
+				AGENT_USER_ID = #{agentUserId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=DECIMAL}
+	</update>
+	
+	<update id="updateSelfFlag">
+		update sellers set self_flag = #{selfFlag} where id = #{id}
+	</update>
+	
+	<update id="updateVipFlag">
+		update sellers set vip_flag = #{vipFlag} where id = #{id}
+	</update>
+	
+	<select id="countByStatus" resultType="int">
+		select count(*) from sellers where status = #{status}
+	</select>
+	
+	<select id="findForSendSms" resultType="Seller">
+		select * from sellers where status = 0 and sms_send_times <![CDATA[<]]> #{maxSmsSendTimes}  
+	</select>
+	
+	<update id="increaseSmsSendTimes">
+		update sellers set sms_send_times = (sms_send_times + 1) where id = #{id}
+	</update>
+	
+	<select id="getByPlatformAccountId" resultType="Seller">
+		select * from sellers where id = (select seller_id from v_platform_account where id = #{id, jdbcType=INTEGER})
+	</select>
+	
+	<select id="findAll" resultType="Seller">
+		select
+		<include refid="_column_list" />
+		from SELLERS s
+		where 1=1 AND s.status = #{status}
+		order by NLSSORT(s.CONTACTS,'NLS_SORT = SCHINESE_PINYIN_M')
+	</select>
+	
+	<select id="findAssginColumn" resultType="Seller">
+		select
+		<foreach collection="columns" item="columnName" separator=",">
+			${columnName}
+		</foreach>
+		from SELLERS s
+		where 1=1 AND s.status = #{status}
+		order by NLSSORT(s.CONTACTS,'NLS_SORT = SCHINESE_PINYIN_M')
+	</select>
+	
+	<select id="findByAgent" resultType="Seller">
+		<include refid="_find_sql"/>
+		where AGENT_USER_ID=#{agentUserId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getCountByUserId" resultType="INTEGER">
+	SELECT count(1) from sellers where AGENT_USER_ID=#{agentUserId,jdbcType=INTEGER}
+	</select>
+	
+</mapper>
